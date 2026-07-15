@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 4, Lesson 2: Masters of Space</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components (teal/coral accents; green retired; red = AI only) ===== */
+    .art-fig { margin: 14px 0; text-align: center; }
+    .art-fig img { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #D0D9E8; }
+    .art-fig figcaption { font-size: 13px; color: #666; margin-top: 8px; line-height: 1.5; }
+    .art-fig figcaption a { color: #167567; }
+    .linkout-card { background: #EEF1F8; border: 1px solid #D0D9E8; border-left: 5px solid #1B8A7A; border-radius: 6px; padding: 14px 18px; margin: 14px 0; }
+    .linkout-card .lk-k { font-size: 11px; color: #167567; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .linkout-card .lk-t { font-size: 16px; color: #0E1C42; margin-bottom: 6px; }
+    .linkout-card p { margin: 0 0 8px 0; font-size: 15px; color: #1a2340; line-height: 1.6; }
+    .linkout-card a { color: #167567; font-size: 15px; }
+    .linkout-card .verify { font-size: 12px; color: #9a6f16; }
+    .artist-card { display: flex; gap: 16px; align-items: flex-start; padding: 16px; background: #f8f9fc; border: 1px solid #D0D9E8; border-radius: 8px; margin-bottom: 14px; }
+    .artist-avatar { width: 48px; height: 48px; border-radius: 50%; background: #0E1C42; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+    .artist-name { font-size: 17px; color: #0E1C42; }
+    .artist-dates { font-size: 13px; color: #6b7a99; margin-bottom: 4px; }
+    .artist-tag { display: inline-block; margin: 2px 0 8px; font-size: 11px; letter-spacing: 0.5px; padding: 3px 10px; border-radius: 99px; background: #E6F4F1; color: #167567; border: 1px solid #7CC3B8; }
+    .artist-card p { font-size: 15px; color: #1a2340; line-height: 1.6; margin: 0 0 6px 0; }
+    .daij-step { border-left: 3px solid #1B8A7A; padding: 4px 0 4px 16px; margin: 0 0 14px 0; }
+    .daij-step h4 { font-size: 16px; color: #0E1C42; margin: 0 0 4px 0; }
+    .daij-step h4 span { color: #1B8A7A; }
+    .daij-step p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0; }
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.now { background: #0E1C42; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q1 &middot; Studio 4 of 18</div>
+        <div style="font-size: 12px; color: #666;">Creating Space</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">2 of 6</div>
+        <div style="font-size: 12px; color: #666;">Investigate</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Masters of Space</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Method</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">Critique method</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 4 &middot; LESSON 2</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Masters of Space</div>
+        <div style="font-size: 16px; color: #666;">One artist used perspective to rebuild a real city with a ruler's precision. Another used the same rules to build a world that cannot exist. Then a tool for reading any of it. <span class="time-pill">~50 min</span></div>
+    </div>
+
+    <!-- Essential Question -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128214; ESSENTIAL QUESTION</div>
+        <div style="font-size: 20px; color: #0e1c42; font-style: italic; margin-bottom: 10px;">If perspective is a set of rules, what happens when an artist follows them perfectly, and what happens when an artist breaks them on purpose?</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">In Lesson 1 you learned that depth is built from cues. Now watch two masters use those cues for opposite ends, and learn the four-step critique method that reads any work of art. You will use that same method on your own environment in Lesson 6.</div>
+    </div>
+
+    <!-- PART 1 · LOOK FIRST -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128064; PART 1 &middot; LOOK FIRST</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Here Canaletto stands you in the middle of a Venetian square, or <em>campo</em>. Notice how the paving stones seem to spread out beneath your feet and run back toward the church. Follow one edge of the pavement with your finger; it heads straight toward the far center of the scene.</p>
+
+        <figure class="art-fig">
+            <img src="images/canaletto-campo-santa-maria-c1750.jpg" alt="Canaletto's painting of a wide open Venetian square: paved stones fan back from the foreground toward a domed church at the center, a tall bell tower with a clock rises at the right, tall buildings line the square on the left and right, and small figures are scattered across the plaza under a pale sky." />
+            <figcaption>Canaletto (Giovanni Antonio Canal, Italian, 1697&ndash;1768), <em>Campo Santa Maria Formosa, Venice</em>, c.1750. Oil on canvas. Public domain. Source: provided course archive (Studio Art 2 Images, Unit 4).</figcaption>
+        </figure>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Canaletto was a <em>vedutista</em>, a painter of <strong>vedute</strong> (detailed city views). He is thought to have used a drawing aid, a small viewing box with a lens and mirror, to trace the exact angles of the buildings before he painted. His spaces feel true because the perspective is measured, not guessed. The figures scattered across the square give you a scale to read the depth: the near people are large, the far ones are tiny, and that size difference alone tells your eye how far back the church stands.</p>
+    </div>
+
+    <!-- PART 2 · TWO ARTISTS -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 2 &middot; TWO ARTISTS, ONE SET OF RULES</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 14px 0;">Perspective is a tool, and a tool can be used to tell the truth or to lie beautifully. Compare an 18th-century Venetian who used it to record his city exactly with a 20th-century Dutch artist who used the very same rules to trap the eye in the impossible.</p>
+
+        <div class="artist-card">
+            <div class="artist-avatar">C</div>
+            <div>
+                <div class="artist-name">Canaletto</div>
+                <div class="artist-dates">Italian, 1697&ndash;1768</div>
+                <span class="artist-tag">THE MEASURED OBSERVER</span>
+                <p>Canaletto painted Venice for travelers who wanted an accurate souvenir of the city, likely using optical drawing aids to fix his perspective before painting the light, water, and crowds from close study. In his views, linear perspective, relative size, and atmospheric haze all agree, so the space reads as convincingly real: perspective obeyed completely.</p>
+            </div>
+        </div>
+
+        <div class="artist-card">
+            <div class="artist-avatar">E</div>
+            <div>
+                <div class="artist-name">M. C. Escher</div>
+                <div class="artist-dates">Dutch, 1898&ndash;1972</div>
+                <span class="artist-tag">THE RULE-BENDER</span>
+                <p>Escher learned perspective as precisely as any draftsman, then used it against itself. In prints like <em>Convex and Concave</em> and <em>Ascending and Descending</em>, each small area obeys perspective perfectly, yet the areas connect into a whole that could never be built: stairs climb forever and return to their start, a floor becomes a ceiling as your eye crosses it. The rules hold locally and break globally, on purpose.</p>
+            </div>
+        </div>
+
+        <div class="linkout-card">
+            <div class="lk-k">&#128279; VIEW THE WORK (opens an external site)</div>
+            <div class="lk-t">M. C. Escher, impossible spaces</div>
+            <p>Escher's prints are still under copyright, so we view them at the source rather than reproduce them here. Open each one and try to trace a single continuous path through the space. Watch how your eye keeps accepting each local room while the whole refuses to add up.</p>
+            <a href="https://www.nga.gov/collection/artist-info.1349.html" target="_blank" rel="noopener">M. C. Escher, <em>Convex and Concave</em> (1955), suggested at the National Gallery of Art</a> <span class="verify">[VERIFY URL at deploy]</span><br/>
+            <a href="https://www.mcescher.com/gallery/recognition-success/ascending-and-descending/" target="_blank" rel="noopener">M. C. Escher, <em>Ascending and Descending</em> (1960), suggested at the official M. C. Escher site</a> <span class="verify">[VERIFY URL at deploy]</span>
+        </div>
+
+        <div class="callout c-help">
+            <div class="ck">&#128161; HELPFUL TO KNOW</div>
+            <div class="cb">A <strong>veduta</strong> (plural <em>vedute</em>) is a highly detailed, large-scale view of a city or place, painted accurately enough that a viewer could recognize the real location. Canaletto was the most famous painter of vedute. The word simply means "view" in Italian.</div>
+        </div>
+    </div>
+
+    <!-- PART 3 · WATCH IT WORK (critique) -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128269; PART 3 &middot; WATCH IT WORK</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 12px 0;">Artists and critics read a work in a deliberate order so that judgment is earned, not blurted: describe, then analyze, then interpret, then judge. The rule is simple: you may not skip ahead. Here is that order applied to Canaletto's <em>Campo Santa Maria Formosa</em> above.</p>
+
+        <div class="daij-step">
+            <h4><span>D &middot; Describe</span> (just the facts)</h4>
+            <p>A wide paved square opens toward a domed church at the center. A tall bell tower with a clock rises on the right. Buildings line both sides. Small figures stand and walk across the pavement, larger in front and smaller toward the back.</p>
+        </div>
+        <div class="daij-step">
+            <h4><span>A &middot; Analyze</span> (how is it built?)</h4>
+            <p>The pavement lines act as <strong>orthogonals</strong>, angling back toward the distant center and pulling the eye deep into the space. <strong>Relative size</strong> in the figures measures the distance for us. The far buildings are slightly paler than the near ones, a touch of <strong>atmospheric perspective</strong> that pushes them back.</p>
+        </div>
+        <div class="daij-step">
+            <h4><span>I &middot; Interpret</span> (what is it saying?)</h4>
+            <p>This is a portrait of a place as much as of a moment. Canaletto wants you to feel the real scale and calm order of the square, as if you could cross it yourself. The precision is the point: it promises the viewer, this is exactly how Venice looks.</p>
+        </div>
+        <div class="daij-step">
+            <h4><span>J &middot; Judge</span> (does it succeed?)</h4>
+            <p>It succeeds. The depth is so convincing that the flat canvas nearly disappears. The measured perspective and the human-scale figures work together to make a space you believe you could walk into, which is exactly what a veduta sets out to do.</p>
+        </div>
+
+        <div class="optima-widget ow-select">
+            <div class="widget-kicker">&#9889; TRY IT &middot; WHICH CRITIQUE STEP?</div>
+            <div class="widget-question">Read each statement about a landscape or cityscape. Decide which step it belongs to, then check it.</div>
+            <div class="widget-row" data-correct="analyze" data-hint="This names a depth cue and how it is working. That is not a plain fact, a meaning, or a verdict. Try again.">
+                <div class="widget-row-prompt">"The road narrows toward a single point on the horizon, which drags the eye straight to the tiny house."</div>
+                <div class="widget-options">
+                    <button data-choice="describe">Describe</button>
+                    <button data-choice="analyze" data-fb="Correct. Naming a depth cue (linear perspective) and explaining how it moves the eye is Analyze.">Analyze</button>
+                    <button data-choice="interpret">Interpret</button>
+                    <button data-choice="judge">Judge</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="describe" data-hint="This adds no opinion and no technique. It only reports. Try again.">
+                <div class="widget-row-prompt">"There is a bell tower on the right and a domed building in the center of the square."</div>
+                <div class="widget-options">
+                    <button data-choice="interpret">Interpret</button>
+                    <button data-choice="describe" data-fb="Right. Pure fact, no opinion, no technique named. That is Describe, always the first step.">Describe</button>
+                    <button data-choice="judge">Judge</button>
+                    <button data-choice="analyze">Analyze</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="judge" data-hint="This is a verdict on how well the work does its job. It is not a fact, a technique, or a meaning. Try again.">
+                <div class="widget-row-prompt">"The endless staircase works completely; I gave up trying to find where it starts, which is the point."</div>
+                <div class="widget-options">
+                    <button data-choice="describe">Describe</button>
+                    <button data-choice="analyze">Analyze</button>
+                    <button data-choice="judge" data-fb="Yes. A verdict on whether the work succeeds, resting on what you noticed first, is Judge, the final step.">Judge</button>
+                    <button data-choice="interpret">Interpret</button>
+                </div>
+            </div>
+            <button class="widget-reset">Reset</button>
+        </div>
+
+        <details>
+            <summary>&#9654;&nbsp; In your notebook, write one Interpret sentence about Escher's endless staircase before you open this. Then compare.</summary>
+            <div class="ac-body">A strong Interpret sentence reaches for meaning, resting on what you described and analyzed. For example: "By making each stair obey perspective while the whole loop cannot exist, Escher seems to say that logic can feel airtight step by step and still lead nowhere." Your wording will differ; what matters is that your meaning grows out of the facts and the technique, not out of a first impression.</div>
+        </details>
+
+        <div class="callout c-help">
+            <div class="ck">&#9997;&#65039; NOW YOU TRY</div>
+            <div class="cb">Choose whichever work pulls your eye more: Canaletto's <em>Campo Santa Maria Formosa</em> above, or one of the Escher prints at the museum links. In your notebook, run the same four steps, describe, analyze, interpret, judge, on the one you picked.</div>
+        </div>
+    </div>
+
+    <!-- VOCABULARY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; VOCABULARY</div>
+        <div class="vocab-grid">
+            <div class="vocab-card"><strong>Critique</strong>A structured, four-step way of reading a work of art: describe, analyze, interpret, judge.</div>
+            <div class="vocab-card"><strong>Veduta</strong>A highly detailed, accurate view of a city or place.</div>
+            <div class="vocab-card"><strong>Linear perspective</strong>The rule that receding parallel lines appear to meet at a point on the horizon.</div>
+            <div class="vocab-card"><strong>Relative size</strong>The same kind of object drawn smaller reads as farther away.</div>
+            <div class="vocab-card"><strong>Impossible space</strong>A picture where each part obeys perspective but the whole could not be built.</div>
+        </div>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num learn">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 3: One-Point Perspective</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Build the ruler-and-pencil system Canaletto trusted. Your first hands-on perspective drawing.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">Canaletto obeyed perspective to rebuild a real city; Escher obeyed it locally to build a world that cannot exist. Same rules, opposite goals. Once you know the rules, you get to choose which one you are: the builder of the believable, or the bender of it. The critique order is how you slow down and read either one.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 1 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 4 &middot; Creating Space &middot; Lesson 2 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. Public-domain artwork shown with attribution; in-copyright work is linked to its source.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

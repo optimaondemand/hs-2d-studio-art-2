@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 4, Lesson 3: One-Point Perspective</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .persp-diagram { background: #f8f9fc; border: 1px solid #D0D9E8; border-radius: 8px; padding: 16px; margin: 16px 0; text-align: center; }
+    .persp-diagram figcaption { font-size: 13px; color: #6b7a99; margin-top: 8px; line-height: 1.5; }
+    .persp-legend { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-top: 10px; font-size: 13px; color: #1a2340; }
+    .persp-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .persp-legend i { width: 22px; height: 3px; border-radius: 2px; display: inline-block; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 12px 0; }
+    .steps li { position: relative; padding: 10px 0 10px 46px; border-bottom: 1px solid #EEF1F8; font-size: 16px; color: #1a2340; line-height: 1.6; }
+    .steps li:last-child { border-bottom: none; }
+    .steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 9px; width: 30px; height: 30px; background: #D9583B; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .skillbox { background: #FFFFFF; border: 2px solid #D9583B; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .skillbox .sk-k { font-size: 11px; color: #D9583B; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .skillbox h3 { margin: 0 0 8px 0; font-size: 19px; color: #0E1C42; }
+    .skillbox p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 8px 0; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q1 &middot; Studio 4 of 18</div>
+        <div style="font-size: 12px; color: #666;">Creating Space</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">3 of 6</div>
+        <div style="font-size: 12px; color: #666;">Skill Builder</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">One-Point Perspective</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">You Will Make</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">One-point room sketch</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 4 &middot; LESSON 3</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">One-Point Perspective</div>
+        <div style="font-size: 16px; color: #666;">The ruler-and-pencil system behind Canaletto's canal. Keep paper, a pencil, and a straightedge beside you. <span class="time-pill">~50 min</span></div>
+    </div>
+
+    <!-- Objective -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#127919; WHAT YOU WILL BE ABLE TO DO</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">Set a <strong>horizon line</strong>, place a <strong>vanishing point</strong>, and draw <strong>orthogonals</strong> so that a simple room or street recedes into believable depth. This is the exact geometry that lets a flat page hold a space you could walk into.</div>
+    </div>
+
+    <!-- PART 1 · THE SYSTEM -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 1 &middot; THREE PARTS, ONE RULE</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;"><strong>One-point perspective</strong> is the simplest form of linear perspective. You use it when the scene faces you head on, so that all its depth lines run straight back to a single point. It has only three moving parts, and once you set them, the geometry does the rest.</p>
+
+        <figure class="persp-diagram">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/1_point_perspective.svg" alt="A one-point perspective construction diagram: a rectangular form with receding edges drawn back to a single vanishing point, showing how the guide lines converge." style="max-width:100%; height:auto;" />
+            <figcaption>A one-point perspective construction: every receding edge is ruled back to one vanishing point. Braindrain0000, <em>1 point perspective</em>. <a href="https://commons.wikimedia.org/wiki/File:1_point_perspective.svg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 3.0.</figcaption>
+        </figure>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">Every one-point drawing has the same three parts:</p>
+        <ul style="font-size: 16px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0; padding-left: 20px;">
+            <li>The <strong>horizon line</strong> sits at the viewer's eye level. Set it high and you look down into the space; set it low and you look up.</li>
+            <li>The <strong>vanishing point</strong> is one point on the horizon. Every line that runs away from the viewer will head toward it.</li>
+            <li>The <strong>orthogonals</strong> are the receding edges. They connect the near corners of your objects to the vanishing point. Edges that face you straight on, top and side edges of a front wall, stay perfectly horizontal or vertical; they are not orthogonals.</li>
+        </ul>
+
+        <div class="callout c-help">
+            <div class="ck">&#128161; THE ONE RULE OF ONE-POINT</div>
+            <div class="cb">Anything running back into the space aims at the vanishing point. Anything facing you flat stays level (horizontals stay horizontal, verticals stay vertical). If a line is neither heading to the point nor staying level, it is almost certainly a mistake. That single test catches most beginner errors.</div>
+        </div>
+    </div>
+
+    <!-- PART 2 · GUIDED PRACTICE -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#9997;&#65039; PART 2 &middot; GUIDED PRACTICE (do this now)</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">Draw a simple one-point room. This is the same skeleton under a Canaletto street. Use a straightedge for every straight line.</p>
+
+        <ol class="steps">
+            <li><strong>Draw the horizon and the point.</strong> Rule one horizontal line across the middle of your page: that is your horizon. Mark one dot on it near the center: that is your vanishing point.</li>
+            <li><strong>Draw the back wall.</strong> Draw a small rectangle in front of the point (it can overlap it). This is the far wall of the room. Its edges stay level, top and bottom horizontal, sides vertical.</li>
+            <li><strong>Connect the corners.</strong> Draw a light line (an orthogonal) from each corner of the back wall out to the four corners of your page, passing through the vanishing point behind. These become the floor, ceiling, and side walls.</li>
+            <li><strong>Add a door or a window.</strong> On a side wall, draw the near vertical edge of a door. To find its far edge, run its top and bottom back toward the vanishing point, then drop a vertical between them. It will automatically be the right shorter height.</li>
+            <li><strong>Firm up the true edges, erase the guides.</strong> Darken the real edges. Keep verticals vertical and level lines level. Lighten or erase the orthogonal guide lines you no longer need.</li>
+        </ol>
+
+        <div class="optima-widget ow-select">
+            <div class="widget-kicker">&#9889; TRY IT &middot; ORTHOGONAL OR NOT?</div>
+            <div class="widget-question">In a one-point drawing of a hallway that faces you head on, decide whether each edge is an orthogonal (heads to the vanishing point) or stays level. Commit, then check.</div>
+            <div class="widget-row" data-correct="ortho" data-hint="Does this edge run away from you into the depth of the hall, or does it face you flat? Try again.">
+                <div class="widget-row-prompt">The line where the left wall meets the floor, running from the front of the hall to the back.</div>
+                <div class="widget-options">
+                    <button data-choice="level">Stays level</button>
+                    <button data-choice="ortho" data-fb="Yes. That floor-to-wall seam runs away from you into the depth, so it is an orthogonal and aims at the vanishing point.">Orthogonal</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="level" data-hint="Does this edge recede into the distance, or does it sit flat on the wall facing you? Try again.">
+                <div class="widget-row-prompt">The top edge of a picture frame hanging flat on the far wall that faces you.</div>
+                <div class="widget-options">
+                    <button data-choice="ortho">Orthogonal</button>
+                    <button data-choice="level" data-fb="Right. The far wall faces you straight on, so a frame on it keeps level edges. Only lines running back into the room become orthogonals.">Stays level</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="ortho" data-hint="Follow this edge in your mind: does it travel toward the back of the hall? Try again.">
+                <div class="widget-row-prompt">The row of ceiling lights running from just above your head toward the far end of the hall.</div>
+                <div class="widget-options">
+                    <button data-choice="level">Stays level</button>
+                    <button data-choice="ortho" data-fb="Correct. The line of the lights recedes into the distance, so it reads as an orthogonal converging on the vanishing point.">Orthogonal</button>
+                </div>
+            </div>
+            <button class="widget-reset">Reset</button>
+        </div>
+
+        <details>
+            <summary>&#9654;&nbsp; In your notebook, draw the room through step 3 before you open this. Then check your setup.</summary>
+            <div class="ac-body">Look for three things. First, is your back wall made only of level lines? If any of its edges tilt, redraw them straight. Second, do all four orthogonals actually pass through the single vanishing point? If they miss it, your walls will warp. Third, is the horizon a single straight line? A crooked horizon tilts the whole space. Fix those and the room will read correctly.</div>
+        </details>
+    </div>
+
+    <!-- SKILL BUILDER ASSIGNMENT POINTER -->
+    <div class="skillbox">
+        <div class="sk-k">&#128393;&#65039; SKILL BUILDER SKETCH (turn in this week)</div>
+        <h3>One-Point Room</h3>
+        <p>On one sheet, build a simple interior in one-point perspective: horizon line, one vanishing point, and a room with a floor, ceiling, two side walls, and at least one door or window found correctly with orthogonals. Label your horizon line, vanishing point, and one orthogonal. This is a completion-graded practice rung, not a finished artwork. Focus on correct construction, not decoration.</p>
+        <p style="margin:0;">Full directions and submission steps are in the Canvas assignment <em>Skill Builder 1: One-Point Room</em>. Photograph your page and upload it, then save a copy to your OneDrive portfolio folder.</p>
+    </div>
+
+    <!-- VOCABULARY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; VOCABULARY</div>
+        <div class="vocab-grid">
+            <div class="vocab-card"><strong>Linear perspective</strong>A system for drawing depth using lines that converge on the horizon.</div>
+            <div class="vocab-card"><strong>Horizon line</strong>A horizontal line at the viewer's eye level.</div>
+            <div class="vocab-card"><strong>Vanishing point</strong>The point on the horizon where receding parallel lines meet.</div>
+            <div class="vocab-card"><strong>Orthogonal</strong>A receding edge that runs back toward the vanishing point.</div>
+            <div class="vocab-card"><strong>One-point perspective</strong>Linear perspective with a single vanishing point, for scenes faced head on.</div>
+            <div class="vocab-card"><strong>Two-point perspective</strong>Linear perspective with two vanishing points, for scenes viewed at an angle (a building corner).</div>
+        </div>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num create">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Submit: Skill Builder 1 &middot; One-Point Room</strong> &middot; Week 1</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Your constructed one-point interior. Completion graded.</div></div></div>
+        <div class="next-item"><div class="num learn">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 4: Depth Without Lines</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Build depth where there are no straight edges at all: overlap, size, and atmosphere.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">One-point perspective is not talent; it is geometry. Set a horizon, place one point, aim every receding edge at it, and keep the rest level. That single system built the streets and canals of Canaletto's Venice, and it will build the space in your project too.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 1 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 4 &middot; Creating Space &middot; Lesson 3 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. The perspective diagram is Creative Commons licensed; see the caption for source and attribution.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

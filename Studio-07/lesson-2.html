@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 7, Lesson 2: Painting Power and Story</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components (teal/coral accents; green retired; red = AI only) ===== */
+    .linkout-card { background: #EEF1F8; border: 1px solid #D0D9E8; border-left: 5px solid #1B8A7A; border-radius: 6px; padding: 14px 18px; margin: 14px 0; }
+    .linkout-card .lk-k { font-size: 11px; color: #167567; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .linkout-card .lk-t { font-size: 16px; color: #0E1C42; margin-bottom: 6px; }
+    .linkout-card p { margin: 0 0 8px 0; font-size: 15px; color: #1a2340; line-height: 1.6; }
+    .linkout-card a { color: #167567; font-size: 15px; }
+    .verify-tag { display: inline-block; font-size: 11px; color: #9a6f16; background: #FBF1DC; border: 1px solid #E7D3A1; border-radius: 99px; padding: 2px 9px; margin-left: 6px; vertical-align: middle; }
+    .artist-card { display: flex; gap: 16px; align-items: flex-start; padding: 16px; background: #f8f9fc; border: 1px solid #D0D9E8; border-radius: 8px; margin-bottom: 14px; }
+    .artist-avatar { width: 48px; height: 48px; border-radius: 50%; background: #0E1C42; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+    .artist-name { font-size: 17px; color: #0E1C42; }
+    .artist-dates { font-size: 13px; color: #6b7a99; margin-bottom: 4px; }
+    .artist-tag { display: inline-block; margin: 2px 0 8px; font-size: 11px; letter-spacing: 0.5px; padding: 3px 10px; border-radius: 99px; background: #E6F4F1; color: #167567; border: 1px solid #7CC3B8; }
+    .artist-card p { font-size: 15px; color: #1a2340; line-height: 1.6; margin: 0 0 6px 0; }
+    .daij-step { border-left: 3px solid #1B8A7A; padding: 4px 0 4px 16px; margin: 0 0 14px 0; }
+    .daij-step h4 { font-size: 16px; color: #0E1C42; margin: 0 0 4px 0; }
+    .daij-step h4 span { color: #1B8A7A; }
+    .daij-step p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0; }
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.now { background: #0E1C42; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q2 &middot; Studio 7 of 18</div>
+        <div style="font-size: 12px; color: #666;">Identity</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">2 of 6</div>
+        <div style="font-size: 12px; color: #666;">Investigate</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Painting Power and Story</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Method</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">Critique method</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 7 &middot; LESSON 2</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Painting Power and Story</div>
+        <div style="font-size: 16px; color: #666;">Three artists, three sitters, three very different uses of symbol, pose, and setting. <span class="time-pill">~50 min</span></div>
+    </div>
+
+    <!-- Essential Question -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128214; ESSENTIAL QUESTION</div>
+        <div style="font-size: 20px; color: #0e1c42; font-style: italic; margin-bottom: 10px;">What does an artist decide about a sitter before a single brushstroke of the face is painted?</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">These three artists worked in different centuries and painted very different sitters, but each one used the same tools you learned to name in Lesson 1: symbol, setting, and pose. Because all three works are under copyright or held by living artists, you will view them at their museum sources rather than here.</div>
+    </div>
+
+    <!-- PART 1 · KAHLO -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128064; PART 1 &middot; FRIDA KAHLO'S OWN SYMBOLS</div>
+
+        <div class="artist-card">
+            <div class="artist-avatar">FK</div>
+            <div>
+                <div class="artist-name">Frida Kahlo</div>
+                <div class="artist-dates">Mexican, 1907&ndash;1954</div>
+                <span class="artist-tag">THE SELF AS SYMBOL SYSTEM</span>
+                <p>Kahlo painted herself more than 55 times across her career, and almost never as a simple likeness. She surrounded her own face with a private, recurring vocabulary of animals, plants, and objects, each one carrying pain, identity, or belief. Her self-portraits are read like a language once you learn the symbols she returns to again and again.</p>
+            </div>
+        </div>
+
+        <div class="linkout-card">
+            <div class="lk-k">&#128279; VIEW THE WORK (opens the museum site) <span class="verify-tag">VERIFY URL AT DEPLOY</span></div>
+            <div class="lk-t">Frida Kahlo, <em>Self-Portrait with Thorn Necklace and Hummingbird</em>, 1940</div>
+            <p>Kahlo's work is under copyright, so we view it at the source rather than reproduce it here. Study the necklace of thorns drawing blood at her throat, the dead hummingbird hanging from it, the black cat and monkey at her shoulders, and the flat leaf background. None of these are decorative. Look up what each one has been said to represent, then decide for yourself what the whole combination communicates.</p>
+            <a href="https://www.hrc.utexas.edu/press/frida-kahlo/" target="_blank" rel="noopener">Frida Kahlo, <em>Self-Portrait with Thorn Necklace and Hummingbird</em>, 1940, at the Harry Ransom Center, University of Texas at Austin</a>
+        </div>
+
+        <div class="callout c-help">
+            <div class="ck">&#128161; HELPFUL TO KNOW</div>
+            <div class="cb">Kahlo lived with chronic pain and injury after a serious accident in her youth, and much of her symbolism grew out of that lived experience, along with her Mexican heritage and her political convictions. Her portraits are personal reporting, not decoration. That is the standard your own Studio Project will be held to: every symbol you choose should be true to you, not just visually interesting.</div>
+        </div>
+    </div>
+
+    <!-- PART 2 · SHERALD -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 2 &middot; AMY SHERALD'S QUIET STAGING</div>
+
+        <div class="artist-card">
+            <div class="artist-avatar">AS</div>
+            <div>
+                <div class="artist-name">Amy Sherald</div>
+                <div class="artist-dates">American, b. 1973, living artist</div>
+                <span class="artist-tag">GRAYSCALE SKIN, FULL-COLOR STORY</span>
+                <p>Sherald paints Black sitters with their skin rendered in grayscale, a deliberate choice that removes the usual visual cue of race and asks a viewer to look instead at pose, gaze, and the carefully chosen clothing and background color. Her most widely seen portrait is her official 2018 painting of former First Lady Michelle Obama for the National Portrait Gallery's America's Presidents collection.</p>
+            </div>
+        </div>
+
+        <div class="linkout-card">
+            <div class="lk-k">&#128279; VIEW THE WORK (opens the museum site) <span class="verify-tag">VERIFY URL AT DEPLOY</span></div>
+            <div class="lk-t">Amy Sherald, <em>Michelle Obama</em>, 2018</div>
+            <p>Sherald's work is under copyright, so we view it at the source rather than reproduce it here. Notice the seated pose, the direct and calm gaze, the sculptural volume of the dress, and the flat, unpatterned pale blue background. Nothing here is accidental staging. Ask yourself: what does the plainness of the background let the pose and gaze say more loudly?</p>
+            <a href="https://npg.si.edu/portraits/first-ladies" target="_blank" rel="noopener">Amy Sherald, <em>Michelle Obama</em>, 2018, at the National Portrait Gallery, Smithsonian Institution</a>
+        </div>
+    </div>
+
+    <!-- PART 3 · WILEY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#127917; PART 3 &middot; KEHINDE WILEY'S REFRAMED POWER</div>
+
+        <div class="artist-card">
+            <div class="artist-avatar">KW</div>
+            <div>
+                <div class="artist-name">Kehinde Wiley</div>
+                <div class="artist-dates">American, b. 1977, living artist</div>
+                <span class="artist-tag">CLASSICAL POSE, NEW SITTER</span>
+                <p>Wiley borrows poses and formats directly from historical European portraits of aristocrats and rulers, then paints contemporary Black sitters into them, set against dense, ornamental, wallpaper-like patterned backgrounds. The strategy is not subtle, and it is not meant to be: he is asking who art history decided deserved to look powerful, and then deciding differently.</p>
+            </div>
+        </div>
+
+        <div class="linkout-card">
+            <div class="lk-k">&#128279; VIEW THE WORK (opens the artist site or a museum collection) <span class="verify-tag">VERIFY URL AT DEPLOY</span></div>
+            <div class="lk-t">Kehinde Wiley, <em>Mrs. Siddons</em>, 2012</div>
+            <p>Wiley's work is under copyright, so we view it at the source rather than reproduce it here. This painting reworks a famous 18th-century British portrait format. Look for the confident, theatrical pose borrowed from that older tradition, and the flat, busy floral pattern filling the entire background, pressing right up against the figure.</p>
+            <a href="https://kehindewiley.com/" target="_blank" rel="noopener">Kehinde Wiley, official artist site (search or browse for <em>Mrs. Siddons</em>, 2012)</a>
+        </div>
+
+        <div class="callout c-art">
+            <div class="ck">&#128172; WONDER FIRST</div>
+            <div class="cb">Kahlo used private, personal symbols. Sherald used restraint and quiet color. Wiley used pattern and borrowed power. Three completely different strategies, the same underlying question. Which strategy feels closest to how you would want to represent yourself?</div>
+        </div>
+    </div>
+
+    <!-- PART 4 · CRITIQUE WALKTHROUGH -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128269; PART 4 &middot; WATCH IT WORK &middot; CRITIQUE ON KAHLO</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 12px 0;">Remember the order from earlier Studios: describe, analyze, interpret, judge. You cannot skip ahead. Here is that order applied to <em>Self-Portrait with Thorn Necklace and Hummingbird</em>.</p>
+
+        <div class="daij-step">
+            <h4><span>D &middot; Describe</span> (just the facts)</h4>
+            <p>A woman faces the viewer directly against a flat background of large green leaves. A necklace of thorns encircles her neck, drawing small marks of blood. A dead hummingbird hangs from the necklace at her chest. A black cat sits at one shoulder, a monkey at the other.</p>
+        </div>
+        <div class="daij-step">
+            <h4><span>A &middot; Analyze</span> (how is it built?)</h4>
+            <p>The composition is symmetrical and confrontational, the flat background pushes every symbolic object forward with no distraction, and the direct, unsmiling gaze refuses to soften what the objects show.</p>
+        </div>
+        <div class="daij-step">
+            <h4><span>I &middot; Interpret</span> (what is it saying?)</h4>
+            <p>Multiple sources connect this combination of thorns, blood, and a dead hummingbird to pain, entrapment, and a defiant refusal to hide suffering behind a pleasant face. The animals have been read as companions or as symbols pulling in different directions around her.</p>
+        </div>
+        <div class="daij-step">
+            <h4><span>J &middot; Judge</span> (does it succeed?)</h4>
+            <p>It succeeds because the symbols and the expression agree with each other. Nothing here is decorative; every object earns its place by adding to one honest statement about the sitter's experience.</p>
+        </div>
+
+        <div class="optima-widget ow-select">
+            <div class="widget-kicker">&#9889; TRY IT &middot; WHICH CRITIQUE STEP?</div>
+            <div class="widget-question">Read each statement about a portrait. Decide which critique step it belongs to, then check it.</div>
+            <div class="widget-row" data-correct="analyze" data-hint="Is this a plain fact, a breakdown of how it is built, a meaning, or a verdict? Try again.">
+                <div class="widget-row-prompt">"The dense floral pattern presses right up against the figure, leaving no empty space for the eye to rest."</div>
+                <div class="widget-options">
+                    <button data-choice="describe">Describe</button>
+                    <button data-choice="analyze" data-fb="Correct. Naming a compositional choice (pattern, spacing) and explaining its effect is Analyze.">Analyze</button>
+                    <button data-choice="interpret">Interpret</button>
+                    <button data-choice="judge">Judge</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="describe" data-hint="This adds no opinion and no technique breakdown. It only reports what is visibly there. Try again.">
+                <div class="widget-row-prompt">"The sitter is seated, wearing a sculptural gray dress, against a plain pale blue background."</div>
+                <div class="widget-options">
+                    <button data-choice="analyze">Analyze</button>
+                    <button data-choice="interpret">Interpret</button>
+                    <button data-choice="describe" data-fb="Right. Pure fact, no opinion, no technique named yet. That is Describe, always the first step.">Describe</button>
+                    <button data-choice="judge">Judge</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="interpret" data-hint="Is this a plain fact, a technique breakdown, a claim about meaning, or a final verdict? Try again.">
+                <div class="widget-row-prompt">"By painting a contemporary Black sitter into a pose borrowed from an 18th-century portrait of nobility, the artist is questioning who has historically been shown as powerful."</div>
+                <div class="widget-options">
+                    <button data-choice="describe">Describe</button>
+                    <button data-choice="analyze">Analyze</button>
+                    <button data-choice="interpret" data-fb="Yes. A claim about meaning or message, resting on facts and technique already noticed, is Interpret.">Interpret</button>
+                    <button data-choice="judge">Judge</button>
+                </div>
+            </div>
+            <button class="widget-reset">Reset</button>
+        </div>
+
+        <details>
+            <summary>&#9654;&nbsp; In your notebook, write one Judge sentence about Sherald's portrait before you open this. Then compare.</summary>
+            <div class="ac-body">A strong Judge sentence points back to evidence. For example: "It succeeds because the grayscale skin and plain background force the viewer's attention onto the sitter's calm, direct gaze, which is exactly where the artist wants the sense of quiet authority to come from." Your wording will differ; what matters is that your verdict rests on what you described and analyzed.</div>
+        </details>
+
+        <div class="callout c-help">
+            <div class="ck">&#9997;&#65039; NOW YOU TRY</div>
+            <div class="cb">Choose whichever portrait pulls your eye more: Kahlo's self-portrait, Sherald's <em>Michelle Obama</em>, or Wiley's <em>Mrs. Siddons</em>. In your notebook, run the same four steps, describe, analyze, interpret, judge, on the one you picked.</div>
+        </div>
+    </div>
+
+    <!-- VOCABULARY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; VOCABULARY</div>
+        <div class="vocab-grid">
+            <div class="vocab-card"><strong>Pose</strong>The position and orientation of a sitter's body, chosen to convey mood, status, or character.</div>
+            <div class="vocab-card"><strong>Gaze</strong>The direction and quality of a subject's eyes; direct, averted, calm, or confrontational.</div>
+            <div class="vocab-card"><strong>Reframing</strong>Deliberately placing a subject into a format or tradition historically used for someone else.</div>
+        </div>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num now">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Canvas Quiz: Identity in Portraiture</strong> &middot; Week 2</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">A short auto-graded check on Lessons 1 and 2: symbolism vocabulary and the three featured artists.</div></div></div>
+        <div class="next-item"><div class="num learn">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 3: Facial Proportion</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Build the technical foundation every one of these portraits still rests on.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">Kahlo, Sherald, and Wiley solved the same problem three different ways: how do you make a viewer see more than a face? Symbol, restraint, and reframed power are three answers. Your Studio Project asks you to find your own.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 2 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 7 &middot; Identity &middot; Lesson 2 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. All featured works are in-copyright and linked to their museum or artist sources; none are reproduced here.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

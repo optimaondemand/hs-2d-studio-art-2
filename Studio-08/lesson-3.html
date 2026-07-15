@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 8, Lesson 3: Choosing What to Revise</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 12px 0; }
+    .steps li { position: relative; padding: 10px 0 10px 46px; border-bottom: 1px solid #EEF1F8; font-size: 16px; color: #1a2340; line-height: 1.6; }
+    .steps li:last-child { border-bottom: none; }
+    .steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 9px; width: 30px; height: 30px; background: #D9583B; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .skillbox { background: #FFFFFF; border: 2px solid #D9583B; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .skillbox .sk-k { font-size: 11px; color: #D9583B; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .skillbox h3 { margin: 0 0 8px 0; font-size: 19px; color: #0E1C42; }
+    .skillbox p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 8px 0; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+
+    /* ===== Studio 8 concept visual: revision before/after concept card ===== */
+    .revise-card { display: flex; gap: 0; margin: 18px 0; border-radius: 10px; overflow: hidden; border: 1px solid #D0D9E8; }
+    .revise-half { flex: 1; padding: 18px 20px; }
+    .revise-half.before { background: #FBEEE9; }
+    .revise-half.after { background: #E6F4F1; }
+    .revise-half h4 { font-size: 12px; letter-spacing: 0.6px; margin: 0 0 10px 0; }
+    .revise-half.before h4 { color: #A93B22; }
+    .revise-half.after h4 { color: #167567; }
+    .revise-swatch { height: 90px; border-radius: 6px; margin-bottom: 10px; }
+    .rs-before { background: linear-gradient(135deg,#e8ccc2,#f5e6df); }
+    .rs-after { background: linear-gradient(135deg,#1B8A7A 0%, #0E1C42 55%, #0a1330 100%); }
+    .revise-half p { font-size: 14px; color: #1a2340; line-height: 1.55; margin: 0; }
+    .revise-arrow { display: flex; align-items: center; justify-content: center; width: 44px; background: #0E1C42; color: #55C8E8; font-size: 20px; }
+    .not-redo { background: #FDF3E3; border: 1px solid #E7D3A1; border-radius: 8px; padding: 14px 18px; margin: 14px 0; }
+    .not-redo .nr-row { display: flex; gap: 14px; margin-top: 8px; }
+    .not-redo .nr-col { flex: 1; }
+    .not-redo .nr-col h5 { font-size: 12px; margin: 0 0 6px 0; letter-spacing: 0.4px; }
+    .not-redo .nr-col.no h5 { color: #A93B22; }
+    .not-redo .nr-col.yes h5 { color: #167567; }
+    .not-redo .nr-col p { font-size: 14px; color: #1a2340; line-height: 1.5; margin: 0; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q2 &middot; Studio 8 of 18</div>
+        <div style="font-size: 12px; color: #666;">Mid-Year Portfolio Review</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">3 of 6</div>
+        <div style="font-size: 12px; color: #666;">Skill Builder A</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Choosing what to revise</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">You Will Make</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">A written revision plan</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 8 &middot; LESSON 3</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Choosing What to Revise</div>
+        <div style="font-size: 16px; color: #666;">Not every piece needs revision. Learn to pick well, then plan the change. <span class="time-pill">~45 min</span></div>
+    </div>
+
+    <!-- Objective -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#127919; WHAT YOU WILL BE ABLE TO DO</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">Choose one or two pieces from Studios 1&ndash;7 worth revising, tell the difference between a genuine <strong>revision</strong> and a wasteful <strong>redo</strong>, and write a specific plan naming exactly what will change and why.</div>
+    </div>
+
+    <!-- PART 1 · REVISION VS. REDO -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 1 &middot; A REVISION IS NOT A REDO</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">It is tempting, after critiquing your own work, to throw a piece out and start completely over. Resist that: starting over teaches you almost nothing about revision, it just repeats the same process. A true <strong>revision</strong> keeps the piece and makes a targeted, deliberate change guided by exactly what your critique found.</p>
+
+        <div class="revise-card">
+            <div class="revise-half before">
+                <h4>BEFORE &middot; ORIGINAL PIECE</h4>
+                <div class="revise-swatch rs-before"></div>
+                <p>Composition and subject are already working. Value stays in a narrow middle range: no true darks, no true lights. The form reads as flat from across the room.</p>
+            </div>
+            <div class="revise-arrow">&#8594;</div>
+            <div class="revise-half after">
+                <h4>AFTER &middot; REVISED PIECE</h4>
+                <div class="revise-swatch rs-after"></div>
+                <p>Same composition, same subject, kept exactly as it was. The artist pushed the darkest shadows much darker and protected the brightest highlights. Nothing else changed. The form now reads as solid.</p>
+            </div>
+        </div>
+
+        <div class="not-redo">
+            <div style="font-size: 12px; color: #9a6f16; letter-spacing: 0.4px;">&#9878;&#65039; REVISION vs. REDO</div>
+            <div class="nr-row">
+                <div class="nr-col no">
+                    <h5>NOT A REVISION</h5>
+                    <p>Erasing the whole piece and starting a new drawing of the same subject from scratch. This avoids the hard part: improving what already exists.</p>
+                </div>
+                <div class="nr-col yes">
+                    <h5>A REAL REVISION</h5>
+                    <p>Keeping the composition and subject, then making one or two targeted changes (deepen value, fix one proportion, sharpen a focal point) guided by specific critique.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PART 2 · GUIDED PRACTICE -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#9997;&#65039; PART 2 &middot; GUIDED PRACTICE (do this now)</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">Use your Lesson 2 Judge step to choose your revision target. Work through these steps to turn it into a real plan.</p>
+
+        <ol class="steps">
+            <li><strong>Pick one or two pieces (not more).</strong> Choose from Studios 1&ndash;7 the piece, or two pieces, where your identified weakness is clearest and where a targeted fix is realistic in the time you have.</li>
+            <li><strong>Name the exact change.</strong> Write one sentence per piece: "In [Studio], I will [specific change] to fix [specific weakness]." Avoid vague goals like "make it better."</li>
+            <li><strong>Predict the result.</strong> In one sentence, say what the piece will do differently once revised (read as more solid, hold the eye longer, feel more intentional).</li>
+            <li><strong>Set a stopping point.</strong> Decide in advance how much time this revision gets. A revision that never ends is a redo in disguise.</li>
+        </ol>
+
+        <div class="optima-widget ow-select">
+            <div class="widget-kicker">&#9889; TRY IT &middot; REVISION OR REDO?</div>
+            <div class="widget-question">Read each plan. Decide whether it is a genuine revision or actually a redo, then check it.</div>
+            <div class="widget-row" data-correct="revision" data-hint="Does this keep the original piece and target one specific problem, or does it throw the piece away? Try again.">
+                <div class="widget-row-prompt">"I will keep my Studio 3 color piece exactly as composed, but repaint the shadow areas with a cooler, darker blue to create stronger contrast."</div>
+                <div class="widget-options">
+                    <button data-choice="revision" data-fb="Right. The composition and subject stay; one specific, targeted element (shadow color and value) changes for a clear reason.">Genuine revision</button>
+                    <button data-choice="redo">Actually a redo</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="redo" data-hint="Does this keep anything from the original, or start over completely? Try again.">
+                <div class="widget-row-prompt">"My Studio 5 print did not turn out how I wanted, so I am going to carve a brand new block with a different design."</div>
+                <div class="widget-options">
+                    <button data-choice="revision">Genuine revision</button>
+                    <button data-choice="redo" data-fb="Correct. A new block with a different design keeps nothing from the original. It is a fresh start, not a revision of what exists.">Actually a redo</button>
+                </div>
+            </div>
+            <button class="widget-reset">Reset</button>
+        </div>
+    </div>
+
+    <!-- SKILL BUILDER ASSIGNMENT POINTER -->
+    <div class="skillbox">
+        <div class="sk-k">&#128393;&#65039; PROCESS CHECK (turn in this week)</div>
+        <h3>Revision Plan</h3>
+        <p>Write a short revision plan naming the one or two pieces you will revise, the exact change you will make to each, and why (tie it back to your Lesson 2 Judge step). This is a completion-graded planning document, not the revised artwork itself.</p>
+        <p style="margin:0;">Full directions and submission steps are in the Canvas assignment <em>Portfolio Review Check-In</em>. You will act on this plan starting in Lesson 5.</p>
+    </div>
+
+    <!-- VOCABULARY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; VOCABULARY</div>
+        <div class="vocab-grid">
+            <div class="vocab-card"><strong>Revision</strong>A targeted, deliberate improvement to an existing piece, keeping most of it intact.</div>
+            <div class="vocab-card"><strong>Redo</strong>Starting over completely rather than improving what already exists.</div>
+            <div class="vocab-card"><strong>Targeted change</strong>One specific, named fix rather than a vague intention to "make it better."</div>
+            <div class="vocab-card"><strong>Revision plan</strong>A short written statement of exactly what will change in a piece, and why.</div>
+        </div>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num create">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Submit: Portfolio Review Check-In</strong> &middot; Week 1</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Your revision plan. Completion graded.</div></div></div>
+        <div class="next-item"><div class="num learn">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 4: Skill Builder B</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Now that you know what to revise, learn how to curate and photograph the whole set well.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">Revision is surgical, not a restart. The best revisions come from a specific critique finding, name one exact change, and know when to stop.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 2 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 8 &middot; Mid-Year Portfolio Review &middot; Lesson 3 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. All visuals on this page are original CSS/SVG; no third-party images used.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

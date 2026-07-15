@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 3, Lesson 4: Color &amp; Mood</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    /* value + intensity teaching visuals (intentional hues inside the demos only) */
+    .grad-scale { display: flex; height: 48px; border-radius: 6px; overflow: hidden; margin: 10px 0 4px; border: 1px solid #D0D9E8; }
+    .grad-scale div { flex: 1; }
+    .scale-caption { font-size: 14px; color: #6b7a99; margin: 0 0 12px 0; }
+    .mood-demo { display: flex; gap: 14px; flex-wrap: wrap; margin: 16px 0; }
+    .mood-panel { flex: 1; min-width: 200px; border-radius: 8px; overflow: hidden; border: 1px solid #D0D9E8; }
+    .mood-swatch { height: 84px; display: flex; }
+    .mood-swatch span { flex: 1; }
+    .mood-label { padding: 10px 14px; background: #fff; }
+    .mood-label strong { color: #0E1C42; display: block; font-size: 15px; margin-bottom: 2px; }
+    .mood-label em { color: #6b7a99; font-style: normal; font-size: 13px; line-height: 1.5; display: block; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 12px 0; }
+    .steps li { position: relative; padding: 10px 0 10px 46px; border-bottom: 1px solid #EEF1F8; font-size: 16px; color: #1a2340; line-height: 1.6; }
+    .steps li:last-child { border-bottom: none; }
+    .steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 9px; width: 30px; height: 30px; background: #D9583B; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .skillbox { background: #FFFFFF; border: 2px solid #D9583B; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .skillbox .sk-k { font-size: 11px; color: #D9583B; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .skillbox h3 { margin: 0 0 8px 0; font-size: 19px; color: #0E1C42; }
+    .skillbox p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 8px 0; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q1 &middot; Studio 3 of 18</div>
+        <div style="font-size: 12px; color: #666;">Color Speaks</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">4 of 6</div>
+        <div style="font-size: 12px; color: #666;">Skill Builder</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Color &amp; Mood</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">You Will Make</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">One subject, three moods</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 3 &middot; LESSON 4</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Color &amp; Mood</div>
+        <div style="font-size: 16px; color: #666;">The wheel tells you what colors relate. This lesson tells you what they feel like. <span class="time-pill">~55 min</span></div>
+    </div>
+
+    <!-- Objective -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#127919; WHAT YOU WILL BE ABLE TO DO</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">Change a color's <strong>value</strong> and <strong>intensity</strong> to shift its feeling, use <strong>temperature</strong> to set mood, and choose <strong>symbolic color</strong> thoughtfully. This is the lesson where color stops being labels and starts being expression.</div>
+    </div>
+
+    <!-- PART 1 · VALUE + INTENSITY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 1 &middot; VALUE AND INTENSITY CHANGE THE FEELING</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">A hue is only the beginning. The same red can be a soft blush or a heavy maroon depending on its <strong>value</strong>, and it can be a screaming fire-engine red or a dusty brick depending on its <strong>intensity</strong>. Those two dials do most of the mood-setting.</p>
+
+        <p style="font-size: 16px; color: #1a2340; line-height: 1.6; margin: 12px 0 4px 0;"><strong>Value</strong> is how light or dark a color is. High-value colors (tints) tend to feel light, airy, and gentle; low-value colors (shades) feel heavy, serious, or somber. Here is one hue moved across the value range:</p>
+        <div class="grad-scale" role="img" aria-label="A single blue hue shown from a very light tint to a very dark shade in even steps.">
+            <div style="background:#DCE7F2"></div><div style="background:#AFC6E0"></div><div style="background:#7C9FC9"></div><div style="background:#4E77A8"></div><div style="background:#2E5080"></div><div style="background:#1B3355"></div>
+        </div>
+        <p class="scale-caption">One hue, light tint to dark shade. Light values lift the mood; dark values weigh it down.</p>
+
+        <p style="font-size: 16px; color: #1a2340; line-height: 1.6; margin: 12px 0 4px 0;"><strong>Intensity</strong> (saturation) is how pure or dulled a color is. Pure high-intensity color feels bold, urgent, or festive; a dulled low-intensity color feels quiet, tired, or melancholy. Artists lower intensity by mixing in a little of the complement or a neutral. Here is one hue from full intensity down to nearly gray:</p>
+        <div class="grad-scale" role="img" aria-label="A single orange hue shown from full intensity down to a dull, nearly gray version in even steps.">
+            <div style="background:#F5941E"></div><div style="background:#DC9448"></div><div style="background:#C0946B"></div><div style="background:#A5948A"></div><div style="background:#93938E"></div><div style="background:#8A8A88"></div>
+        </div>
+        <p class="scale-caption">One hue, high intensity to low. Bright feels bold; dulled feels quiet.</p>
+
+        <div class="callout c-help">
+            <div class="ck">&#128161; THE FASTEST WAY TO KILL A MOOD BY ACCIDENT</div>
+            <div class="cb">A "cheerful" scene made only of dark, dull colors will not read as cheerful, no matter how warm the hues are. Decide your mood first, then set hue, value, and intensity to serve it.</div>
+        </div>
+    </div>
+
+    <!-- PART 2 · SAME SUBJECT, THREE MOODS + SYMBOLISM -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#127912; PART 2 &middot; ONE SUBJECT, THREE MOODS</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">Here is the exact move your Studio Project asks for. One subject, a single tree, shown three ways. The shapes stay the same. Only hue, value, intensity, and temperature change, and the feeling changes completely.</p>
+
+        <div class="mood-demo" role="img" aria-label="The same tree subject in three palettes: a warm joyful palette, a cool calm palette, and a dark somber palette.">
+            <div class="mood-panel">
+                <div class="mood-swatch"><span style="background:#F7C013"></span><span style="background:#F5941E"></span><span style="background:#E8621F"></span><span style="background:#9FC53D"></span></div>
+                <div class="mood-label"><strong>Joyful</strong><em>Warm, high-intensity, mid-to-light value. Reads as sunlit and alive.</em></div>
+            </div>
+            <div class="mood-panel">
+                <div class="mood-swatch"><span style="background:#AFC6E0"></span><span style="background:#7C9FC9"></span><span style="background:#5E8AA6"></span><span style="background:#8FB8B0"></span></div>
+                <div class="mood-label"><strong>Calm</strong><em>Cool, mid-intensity, light-to-mid value. Reads as quiet and still.</em></div>
+            </div>
+            <div class="mood-panel">
+                <div class="mood-swatch"><span style="background:#3B3630"></span><span style="background:#4A3F4E"></span><span style="background:#2E3550"></span><span style="background:#5E564B"></span></div>
+                <div class="mood-label"><strong>Mournful</strong><em>Dark, low-intensity, cool-leaning. Reads as heavy and somber.</em></div>
+            </div>
+        </div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 12px 0 6px 0;"><strong>Symbolic color</strong> can add another layer. In many contexts red suggests passion or danger, blue suggests calm or sadness, and green suggests growth. But these meanings are not universal: they shift across cultures and situations. Use symbolic color as a deliberate choice you can explain, not as a rule you obey. The most reliable mood tool is still the relationship between hue, value, intensity, and temperature.</p>
+
+        <div class="optima-widget ow-select">
+            <div class="widget-kicker">&#9889; TRY IT &middot; BUILD THE MOOD</div>
+            <div class="widget-question">Answer each from what you just learned. Commit, then check.</div>
+            <div class="widget-row" data-correct="intensity" data-hint="Which dial controls how pure or dulled a color is? Try again.">
+                <div class="widget-row-prompt">You want a scene to feel tired and melancholy without changing the hues. What do you lower?</div>
+                <div class="widget-options">
+                    <button data-choice="hue">The hue</button>
+                    <button data-choice="intensity" data-fb="Yes. Lowering intensity (dulling the colors toward gray) makes a scene read as quiet, tired, or melancholy while the hues stay the same.">The intensity</button>
+                    <button data-choice="contrast">The contour</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="cool" data-hint="Which temperature tends to recede and feel calm or distant? Try again.">
+                <div class="widget-row-prompt">To make a landscape feel calm and a little distant, you would lean the palette toward which temperature?</div>
+                <div class="widget-options">
+                    <button data-choice="cool" data-fb="Right. Cool hues (blues, greens, violets) recede and read as calm or distant, which is why they suit a quiet mood.">Cool</button>
+                    <button data-choice="warm">Warm</button>
+                    <button data-choice="neither">Temperature does not affect mood</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="value" data-hint="Which dial is the difference between a light tint and a dark shade of the same hue? Try again.">
+                <div class="widget-row-prompt">A soft pink and a heavy maroon are the same hue. What is different between them?</div>
+                <div class="widget-options">
+                    <button data-choice="hue">Their hue</button>
+                    <button data-choice="temperature">Their temperature</button>
+                    <button data-choice="value" data-fb="Correct. Pink is a high-value tint and maroon is a low-value shade of the same red hue. Value is the dial that changed.">Their value</button>
+                </div>
+            </div>
+            <button class="widget-reset">Reset</button>
+        </div>
+
+        <details>
+            <summary>&#9654;&nbsp; In your notebook, name your subject for the project and jot one word for each of the three moods you might build, before you open this.</summary>
+            <div class="ac-body">Strong mood words are specific and different from one another: for example "festive," "lonely," and "uneasy" pull in three clear directions, while "happy," "good," and "nice" barely differ. The bigger the emotional distance between your three moods, the more clearly your color choices will read. You will lock these in during Lesson 5.</div>
+        </details>
+    </div>
+
+    <!-- SKILL BUILDER ASSIGNMENT POINTER -->
+    <div class="skillbox">
+        <div class="sk-k">&#128393;&#65039; SKILL BUILDER SKETCH (turn in this week)</div>
+        <h3>Same Shape, Three Moods</h3>
+        <p>Draw one simple shape or object three times (three small boxes on one sheet). Color each version to express a different mood, changing hue, value, intensity, and temperature but keeping the shape identical. Under each, write the one mood word you were after.</p>
+        <p style="margin:0;">This is a completion-graded practice rung. Full directions and submission steps are in the Canvas assignment <em>Skill Builder 2: Same Shape, Three Moods</em>. Photograph your page, upload it, and save a copy to your OneDrive portfolio folder.</p>
+    </div>
+
+    <!-- VOCABULARY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; VOCABULARY</div>
+        <div class="vocab-grid">
+            <div class="vocab-card"><strong>Hue</strong>The name of a color: red, blue, yellow-green.</div>
+            <div class="vocab-card"><strong>Value</strong>How light or dark a color is.</div>
+            <div class="vocab-card"><strong>Tint</strong>A hue lightened, usually toward white.</div>
+            <div class="vocab-card"><strong>Shade</strong>A hue darkened, usually toward black.</div>
+            <div class="vocab-card"><strong>Intensity / saturation</strong>How pure or dulled a color is.</div>
+            <div class="vocab-card"><strong>Temperature</strong>Whether a color reads as warm or cool.</div>
+            <div class="vocab-card"><strong>Symbolic color</strong>Color used for its associated meaning, which can vary by culture.</div>
+            <div class="vocab-card"><strong>Mood</strong>The overall feeling a work gives the viewer.</div>
+        </div>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num create">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Submit: Skill Builder 2 &middot; Same Shape, Three Moods</strong> &middot; Week 1</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Your one shape in three moods. Completion graded.</div></div></div>
+        <div class="next-item"><div class="num now">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Complete: Canvas Quiz &middot; Color &amp; the Colorists</strong> &middot; Week 2</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">A short auto-graded check on Lessons 1 through 4.</div></div></div>
+        <div class="next-item"><div class="num learn">3</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 5: Plan &amp; Create</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Choose your subject, design three palettes, visit the VR gallery, and begin.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">Hue names the color; value and intensity give it its feeling. Decide the mood first, then set every dial to serve it. Do that on one subject three times, and you have proven that color, not the subject, is what speaks.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 1 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 3 &middot; Color Speaks &middot; Lesson 4 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. Diagrams are original HTML/CSS/SVG built with course design tokens.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

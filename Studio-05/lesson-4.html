@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 5, Lesson 4: Carve, Ink, Register</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .form-demo { display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; margin: 16px 0; }
+    .form-demo figure { margin: 0; text-align: center; max-width: 260px; }
+    .form-demo img { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #D0D9E8; }
+    .form-demo figcaption { font-size: 13px; color: #6b7a99; margin-top: 6px; line-height: 1.5; }
+    .form-demo figcaption a { color: #167567; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 12px 0; }
+    .steps li { position: relative; padding: 10px 0 10px 46px; border-bottom: 1px solid #EEF1F8; font-size: 16px; color: #1a2340; line-height: 1.6; }
+    .steps li:last-child { border-bottom: none; }
+    .steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 9px; width: 30px; height: 30px; background: #D9583B; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .skillbox { background: #FFFFFF; border: 2px solid #D9583B; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .skillbox .sk-k { font-size: 11px; color: #D9583B; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .skillbox h3 { margin: 0 0 8px 0; font-size: 19px; color: #0E1C42; }
+    .skillbox p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 8px 0; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q2 &middot; Studio 5 of 18</div>
+        <div style="font-size: 12px; color: #666;">Pattern, Print &amp; Design</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">4 of 6</div>
+        <div style="font-size: 12px; color: #666;">Skill Builder</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Carve, Ink, Register</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">You Will Make</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">A test print plate</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 5 &middot; LESSON 4</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Carve, Ink, Register</div>
+        <div style="font-size: 16px; color: #666;">The physical process behind every relief print, from Hokusai's workshop to your kitchen table. <span class="time-pill">~55 min</span></div>
+    </div>
+
+    <!-- Objective -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#127919; WHAT YOU WILL BE ABLE TO DO</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">Explain how carving creates a <strong>relief print</strong>, ink a plate correctly, use <strong>registration</strong> to line up a print the same way every time, and understand what an <strong>edition</strong> is. This is the process that will carry your motif from Lesson 3 into an actual print.</div>
+    </div>
+
+    <!-- PART 1 · THE RELIEF IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 1 &middot; WHAT MAKES A PRINT A "RELIEF"</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">A <strong>relief print</strong> works by removing material, not adding it. You carve away the parts of a plate you want to stay white (unprinted), and the parts you leave raised are what picks up ink and touches the paper. It is almost the reverse of drawing: instead of adding marks where you want ink, you cut away everywhere you do not.</p>
+
+        <div class="form-demo">
+            <figure>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Making_a_linocut.JPG" alt="A student's hands carving a design into a linoleum block with a carving tool, cutting away the areas that will stay bare and unprinted." />
+                <figcaption>Carving a linocut plate at Kose Art School: removing material so only the raised surface will hold ink.<br/>Ivo Kruusamägi, <em>Making a linocut</em>, 2006, <a href="https://commons.wikimedia.org/wiki/File:Making_a_linocut.JPG" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 2.5.</figcaption>
+            </figure>
+            <figure>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/90/Endi_Poskovic_inking_a_color_wood-relief_block.jpg" alt="A printmaker rolling ink across the raised surface of a carved wood relief block before pressing paper onto it to pull a print." />
+                <figcaption>Inking a carved wood relief block before a print is pulled. Only the raised, inked surface will touch the paper.<br/><em>Endi Poskovic inking a color wood-relief block</em>, 2012, <a href="https://commons.wikimedia.org/wiki/File:Endi_Poskovic_inking_a_color_wood-relief_block.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 3.0.</figcaption>
+            </figure>
+        </div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 6px 0 0 0;">This is exactly what Hokusai's carvers did to his wave design, and exactly what you will do to your own motif, whether you carve a purchased foam printing plate, press lines into a foam tray with a dull pencil, or cut a stamp from an eraser or a potato. The tool changes; the logic (raised prints, carved-away does not) stays the same.</p>
+    </div>
+
+    <!-- PART 2 · THE FULL PROCESS -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128295; PART 2 &middot; CARVE, INK, REGISTER, REPEAT</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">Four steps take a plate from blank to a finished edition. Skip any one of them and the whole print series suffers.</p>
+
+        <ol class="steps">
+            <li><strong>Carve.</strong> Transfer your motif to the plate (trace or press it in), then remove or press down everywhere you want to stay unprinted. On foam, a dull pencil or stylus presses grooves in rather than cutting through; on a stamp, you cut away the negative space.</li>
+            <li><strong>Ink.</strong> Roll a thin, even layer of ink (or thick tempera/acrylic with a touch of dish soap) across the raised surface with a brayer or the back of a spoon. Too much ink fills your carved lines and blurs the motif; too little skips and looks patchy.</li>
+            <li><strong>Register.</strong> Line the paper up against the plate the exact same way every single time, using a fixed edge, a taped guide, or matching corner marks. Registration is what keeps a whole pattern or edition consistent instead of drifting print to print.</li>
+            <li><strong>Pull and repeat.</strong> Press evenly, lift carefully, and set the print aside to dry. Re-ink and register again for the next print. Every print pulled from this one plate belongs to the same <strong>edition</strong>.</li>
+        </ol>
+
+        <div class="callout c-help">
+            <div class="ck">&#128161; WHY REGISTRATION MATTERS FOR PATTERN</div>
+            <div class="cb">If you are printing the same motif across a page to build a pattern, poor registration is the single most common way a promising design falls apart: motifs drift crooked, overlap unevenly, or leave gaps that were not planned. A simple taped corner guide or a consistent grid mark solves most of it.</div>
+        </div>
+    </div>
+
+    <!-- PART 3 · EDITIONS -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128257; PART 3 &middot; WHAT IS AN "EDITION," EXACTLY</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Printmakers number their prints to record their place in an edition, written as a fraction like <strong>3/10</strong>: this is the third print pulled, out of a planned total of ten. The number does not rank quality; a plate begins to wear down after many pulls, so early and late prints in a large edition can look slightly different, but each one is still considered a genuine, complete work, not a copy of some "original."</p>
+
+        <div class="optima-widget ow-select">
+            <div class="widget-kicker">&#9889; TRY IT &middot; PROCESS CHECK</div>
+            <div class="widget-question">Answer each from what you just learned. Commit, then check.</div>
+            <div class="widget-row" data-correct="raised" data-hint="Which part of the plate physically touches the inked surface and then the paper? Try again.">
+                <div class="widget-row-prompt">On a carved relief plate, which part actually picks up ink and prints?</div>
+                <div class="widget-options">
+                    <button data-choice="carved">The carved-away grooves</button>
+                    <button data-choice="raised" data-fb="Yes. The raised, uncarved surface sits highest, so it is the part that meets the ink roller and then the paper.">The raised surface</button>
+                    <button data-choice="paper">The paper itself</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="registration" data-hint="Which term names lining the paper up against the plate the same way every time? Try again.">
+                <div class="widget-row-prompt">A student's repeated motif prints crooked and drifts a little more with each pull. What process would fix this?</div>
+                <div class="widget-options">
+                    <button data-choice="carving">More careful carving</button>
+                    <button data-choice="inking">A thicker layer of ink</button>
+                    <button data-choice="registration" data-fb="Correct. Drifting prints almost always mean the paper is not lining up against the plate the same way each time. That is a registration problem.">Consistent registration</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="edition" data-hint="Which term names the full numbered set of prints pulled from one plate? Try again.">
+                <div class="widget-row-prompt">A print is marked "5/12" in the bottom corner. What does that number describe?</div>
+                <div class="widget-options">
+                    <button data-choice="registration">Registration marks</button>
+                    <button data-choice="edition" data-fb="Right. The fraction records this print's place in the edition, the fifth pull out of a planned run of twelve.">Its place in the edition</button>
+                    <button data-choice="motif">The motif count</button>
+                </div>
+            </div>
+            <button class="widget-reset">Reset</button>
+        </div>
+
+        <details>
+            <summary>&#9654;&nbsp; Before you open this, guess: why might a printmaker deliberately keep an edition small instead of printing as many as possible?</summary>
+            <div class="ac-body">A few real reasons: plates wear down and later prints can lose crispness, a smaller edition can make each print feel more considered, and for many printmakers the point is control, knowing exactly how many exist and in what condition, rather than maximizing output. There is no single correct edition size; it is a decision the printmaker makes on purpose, the same way you will decide how many prints your own series needs.</div>
+        </details>
+    </div>
+
+    <!-- SKILL BUILDER ASSIGNMENT POINTER -->
+    <div class="skillbox">
+        <div class="sk-k">&#128393;&#65039; SKILL BUILDER SKETCH (turn in this week)</div>
+        <h3>Print Test Plate</h3>
+        <p>Carve or cut a simple test plate using your Lesson 3 motif (foam plate, foam tray, eraser, or potato stamp), ink it, and pull three test prints using consistent registration. Label which is 1/3, 2/3, and 3/3. This is a completion-graded practice rung, focused on process, not a finished pattern.</p>
+        <p style="margin:0;">Full directions and submission steps are in the Canvas assignment <em>Skill Builder 2: Print Test Plate</em>. Photograph your three test prints and upload them, then save a copy to your OneDrive portfolio folder.</p>
+    </div>
+
+    <!-- VOCABULARY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; VOCABULARY</div>
+        <div class="vocab-grid">
+            <div class="vocab-card"><strong>Relief print</strong>A print made by carving away material so only the raised surface picks up ink.</div>
+            <div class="vocab-card"><strong>Block (plate)</strong>The carved surface, wood, foam, linoleum, or another material, used to print an image.</div>
+            <div class="vocab-card"><strong>Registration</strong>Lining up the paper against the plate the same way every time.</div>
+            <div class="vocab-card"><strong>Edition</strong>The full numbered set of prints pulled from one block.</div>
+            <div class="vocab-card"><strong>Brayer</strong>A roller used to spread an even layer of ink across a plate.</div>
+        </div>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num create">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Submit: Skill Builder 2 &middot; Print Test Plate</strong> &middot; Week 1</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Your three labeled test prints. Completion graded.</div></div></div>
+        <div class="next-item"><div class="num learn">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 5: Plan &amp; Create</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Choose your natural form, build the Pattern Wall in VR, and begin the Studio Project.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">Carving decides the design, but inking and registration decide whether that design survives being repeated. Together with the motif work from Lesson 3, you now hold every tool the Studio Project needs. Next you choose your subject and put the whole process to work.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 2 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 5 &middot; Pattern, Print &amp; Design &middot; Lesson 4 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. Process photographs are Creative Commons licensed; see each caption for source and attribution.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 2, Lesson 5: Plan &amp; Create</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .c-warn { background: #FDECEC; border-left: 5px solid #C0392B; border-top: 3px solid #E74C3C; }
+    .c-warn .ck { color: #8A1F16; }
+    .mood-grid { display: flex; gap: 14px; flex-wrap: wrap; margin: 16px 0; }
+    .mood-grid figure { margin: 0; flex: 1; min-width: 200px; text-align: center; }
+    .mood-frame { border: 1px solid #D0D9E8; border-radius: 6px; background: #f8f9fc; overflow: hidden; }
+    .mood-grid figcaption { font-size: 13px; color: #6b7a99; margin-top: 6px; line-height: 1.5; }
+    .mood-grid figcaption strong { color: #167567; display: block; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 12px 0; }
+    .steps li { position: relative; padding: 10px 0 10px 46px; border-bottom: 1px solid #EEF1F8; font-size: 16px; color: #1a2340; line-height: 1.6; }
+    .steps li:last-child { border-bottom: none; }
+    .steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 9px; width: 30px; height: 30px; background: #D9583B; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .vr-card { background: linear-gradient(135deg, #0E1C42 60%, #223a63); color: #fff; border-radius: 8px; padding: 20px 24px; margin: 18px 0; }
+    .vr-card h3 { font-size: 19px; margin: 0 0 6px 0; }
+    .vr-card p { color: #c8d4e8; font-size: 15px; margin: 0 0 8px 0; line-height: 1.6; }
+    .vr-steps { list-style: none; padding: 0; margin: 10px 0 0; }
+    .vr-steps li { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; color: #d7e0f0; margin-bottom: 9px; line-height: 1.55; }
+    .vr-steps .vn { min-width: 22px; height: 22px; background: rgba(85,200,232,0.22); color: #a9e4f5; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; margin-top: 2px; }
+    .vr-steps strong { color: #fff; }
+    .skillbox { background: #FFFFFF; border: 2px solid #D9583B; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .skillbox .sk-k { font-size: 11px; color: #D9583B; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .skillbox h3 { margin: 0 0 8px 0; font-size: 19px; color: #0E1C42; }
+    .skillbox p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 8px 0; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q1 &middot; Studio 2 of 18</div>
+        <div style="font-size: 12px; color: #666;">Organizing the Image</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">5 of 6</div>
+        <div style="font-size: 12px; color: #666;">Plan &amp; Create</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Begin the artwork</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Studio Project</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">Three Arrangements</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 2 &middot; LESSON 5 &middot; WEEK 2 BEGINS</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Plan &amp; Create</div>
+        <div style="font-size: 16px; color: #666;">You have the tools. Now choose your objects, plan three arrangements, and begin. <span class="time-pill">~60 min + studio time</span></div>
+    </div>
+
+    <!-- PART 1 · CHOOSE YOUR SUBJECT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128204; PART 1 &middot; CHOOSE ONE SET OF OBJECTS</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Your Studio Project is <strong>Three Arrangements</strong>: three drawings of the <em>same</em> small group of objects, where the only thing that changes between them is the composition. Each version should communicate a different feeling. The suggested three are <strong>calm</strong>, <strong>tension</strong>, and <strong>isolation</strong>. Because the objects stay the same, every difference the viewer sees will come from your arrangement.</p>
+
+        <div class="c-art callout">
+            <div class="ck">&#127991;&#65039; GOOD OBJECT SETS SHARE THREE TRAITS</div>
+            <div class="cb">Pick <strong>two or three simple objects</strong> (a mug, a spoon, a folded cloth; or a book, glasses, and a key). They should be <strong>easy to rearrange</strong> and <strong>varied in size or shape</strong> so you have something to balance. Keep them plain: this project is about arrangement, not rendering a complicated surface.</div>
+        </div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 8px 0;">Here is how the same objects can carry three different moods through arrangement alone.</p>
+
+        <div class="mood-grid">
+            <figure>
+                <div class="mood-frame">
+                    <svg width="100%" viewBox="0 0 200 130" aria-hidden="true"><rect width="200" height="130" fill="#f8f9fc"/><line x1="0" y1="96" x2="200" y2="96" stroke="#c3ccdb" stroke-width="1"/><rect x="70" y="66" width="30" height="30" fill="#1B8A7A"/><ellipse cx="120" cy="90" rx="20" ry="7" fill="#c3ccdb"/><rect x="112" y="80" width="16" height="12" fill="#0E1C42"/></svg>
+                </div>
+                <figcaption><strong>Calm</strong>Grouped low and level, gentle spacing, a steady horizontal. Nothing tips.</figcaption>
+            </figure>
+            <figure>
+                <div class="mood-frame">
+                    <svg width="100%" viewBox="0 0 200 130" aria-hidden="true"><rect width="200" height="130" fill="#f8f9fc"/><line x1="0" y1="112" x2="200" y2="70" stroke="#c3ccdb" stroke-width="1"/><rect x="120" y="30" width="28" height="28" fill="#1B8A7A" transform="rotate(18 134 44)"/><rect x="150" y="60" width="20" height="20" fill="#0E1C42" transform="rotate(-14 160 70)"/><polygon points="60,96 78,64 44,64" fill="#C7922C"/></svg>
+                </div>
+                <figcaption><strong>Tension</strong>Tilted objects, crowded to one edge, a diagonal ground. Feels about to slide.</figcaption>
+            </figure>
+            <figure>
+                <div class="mood-frame">
+                    <svg width="100%" viewBox="0 0 200 130" aria-hidden="true"><rect width="200" height="130" fill="#f8f9fc"/><line x1="0" y1="98" x2="200" y2="98" stroke="#c3ccdb" stroke-width="1"/><rect x="150" y="74" width="20" height="22" fill="#0E1C42"/></svg>
+                </div>
+                <figcaption><strong>Isolation</strong>One object alone, small, far to one side, surrounded by empty space.</figcaption>
+            </figure>
+        </div>
+
+        <div class="optima-widget ow-reflect">
+            <div class="widget-kicker">&#128173; PLANNING CHECK-IN &middot; NO WRONG ANSWER</div>
+            <div class="widget-question">Which mood are you most drawn to build first?</div>
+            <div class="widget-options">
+                <button data-response="A good starting point. Calm usually comes from level horizontals, gentle spacing, and grouping objects near the center or bottom so nothing feels like it is about to move.">Calm</button>
+                <button data-response="Strong choice. Tension usually comes from diagonals, tilted objects, crowding toward one edge, and leaving unstable gaps. It is the arrangement that feels like it is about to shift.">Tension</button>
+                <button data-response="A powerful one. Isolation usually comes from placing a single object small and far to one side, surrounded by a large area of empty space, so it feels alone in the frame.">Isolation</button>
+            </div>
+            <div class="widget-feedback"></div>
+            <button class="widget-reset">Reset</button>
+        </div>
+    </div>
+
+    <!-- PART 2 · PLAN THE DRAWING -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128396;&#65039; PART 2 &middot; PLAN BEFORE YOU COMMIT</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">Composers plan on paper first. You will thumbnail each arrangement before committing it to a finished drawing, so you solve the arrangement while it is still cheap to change.</p>
+
+        <ol class="steps">
+            <li><strong>Set your objects and light.</strong> Place your two or three objects on a plain surface under one steady light. Keep the same objects for all three drawings.</li>
+            <li><strong>Thumbnail each mood (about 12 min).</strong> Make small, fast thumbnails for calm, tension, and isolation. Do not detail them. For each, mark the focal point and sketch the eye path. Use the rule of thirds, balance, and leading lines from Lessons 3 and 4.</li>
+            <li><strong>Choose and enlarge.</strong> Pick your strongest thumbnail for each mood and lightly block the arrangement onto three sheets (or three areas of one sheet).</li>
+            <li><strong>Draw all three.</strong> Render each arrangement carefully in graphite, charcoal, or mixed media, using the observation skills from Studio 1. The rendering can be similar across all three; the arrangement is what must differ.</li>
+        </ol>
+
+        <div class="callout c-help">
+            <div class="ck">&#128161; CHANGE ARRANGEMENT, NOT OBJECTS</div>
+            <div class="cb">The whole point is proving that composition alone changes meaning. Do not swap objects, add new ones, or change the lighting between versions. Keep everything the same except placement, size in the frame, spacing, and the eye path. That discipline is what makes the project work.</div>
+        </div>
+    </div>
+
+    <!-- VR SESSION -->
+    <div class="vr-card">
+        <h3>&#129405; VR Session &middot; The Composition Table</h3>
+        <p>Week 2 &middot; about 25 minutes &middot; Works for a solo student; a live class runs it unchanged. This is a completion-graded activity; full submission steps are in the Canvas assignment <em>VR Session: The Composition Table</em>.</p>
+        <ul class="vr-steps">
+            <li><span class="vn">1</span><span><strong>Before you enter:</strong> have your composition vocabulary and the four critique steps ready. Enter your VR space and load the Studio 2 gallery snapshot from Canvas. You may choose any gallery Location you like.</span></li>
+            <li><span class="vn">2</span><span><strong>Arrange (about 10 min):</strong> gather three virtual objects on a table or surface. Compose them <strong>three ways</strong>: calm, then tension, then isolation. Capture each arrangement. Change only placement, not the objects.</span></li>
+            <li><span class="vn">3</span><span><strong>Critique (about 8 min):</strong> move close to one gallery work and place short notes running describe, analyze, interpret, judge on its composition. Which arrangement tools (focal point, balance, movement) did the artist use?</span></li>
+            <li><span class="vn">4</span><span><strong>Reflect:</strong> answer aloud or in writing: "Which of your three arrangements changed the feeling the most, and why?" In a live session, share and respond to one classmate.</span></li>
+            <li><span class="vn">5</span><span><strong>Exit:</strong> capture screenshots of your three arrangements and upload them. No screenshot tool? Write two or three sentences describing what you arranged and why.</span></li>
+        </ul>
+    </div>
+
+    <!-- AI AWARENESS (factual, red = AI only) -->
+    <div class="callout c-warn">
+        <div class="ck">&#9888;&#65039; WORTH KNOWING &middot; AI AND COMPOSITION</div>
+        <div class="cb">An AI image generator can produce a well-composed picture on request, and it will often default to common rules like the rule of thirds. What it cannot do is make the specific compositional decisions this project asks of you: arranging your objects, choosing your focal point, and controlling the eye path to communicate calm, tension, or isolation on purpose. The skill being graded here is your ability to decide where things go and why. Those arrangement choices, and the drawings, must be yours.</div>
+    </div>
+
+    <!-- STUDIO PROJECT POINTER -->
+    <div class="skillbox">
+        <div class="sk-k">&#127912; STUDIO PROJECT (the graded artwork for this Studio)</div>
+        <h3>Three Arrangements</h3>
+        <p>Three drawings of the same small set of objects, each arranged to communicate a different feeling (calm, tension, isolation) using focal point, balance, and movement. Graphite, charcoal, or mixed media. This is the one teacher-graded assessment of Studio 2, submitted with a short artist statement.</p>
+        <p style="margin:0;">Start it now and develop it across the week. Full directions, the rubric, and submission steps are in the Canvas assignment <em>Studio Project: Three Arrangements</em>. You will finish, refine, and reflect in Lesson 6.</p>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num now">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Complete: VR Session &middot; The Composition Table</strong> &middot; Week 2</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Completion graded.</div></div></div>
+        <div class="next-item"><div class="num create">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Begin: Studio Project &middot; Three Arrangements</strong> &middot; Week 2</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Thumbnail all three moods, then start rendering. You will finish them in Lesson 6.</div></div></div>
+        <div class="next-item"><div class="num learn">3</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 6: Refine, Reflect &amp; Present</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Finish strong, critique your own compositions, and write your artist statement.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">Three drawings, one set of objects, three feelings. Thumbnail first so the arrangement is solved before you commit, hold everything but placement constant, and let composition prove that where things go is a decision with real power.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 1 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 2 &middot; Organizing the Image &middot; Lesson 5 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. VR activities are platform-agnostic.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

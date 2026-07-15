@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 2, Lesson 3: Focal Point &amp; the Rule of Thirds</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .art-fig { margin: 14px 0; text-align: center; }
+    .art-fig img { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #D0D9E8; }
+    .art-fig figcaption { font-size: 13px; color: #666; margin-top: 8px; line-height: 1.5; }
+    .art-fig figcaption a { color: #167567; }
+    .thirds-demo { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; margin: 16px 0; }
+    .thirds-demo figure { margin: 0; text-align: center; flex: 1; min-width: 240px; }
+    .thirds-demo figcaption { font-size: 13px; color: #6b7a99; margin-top: 6px; line-height: 1.5; }
+    .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 16px 0; }
+    .tech-card { border: 1px solid #D0D9E8; border-radius: 8px; overflow: hidden; background: #fff; }
+    .tech-demo { height: 140px; display: flex; align-items: center; justify-content: center; background: #f8f9fc; border-bottom: 1px solid #EEF1F8; overflow: hidden; }
+    .tech-demo img { width: 100%; height: 100%; object-fit: cover; }
+    .tech-body { padding: 12px 15px; }
+    .tech-body strong { color: #167567; display: block; margin-bottom: 4px; font-size: 16px; }
+    .tech-body span { font-size: 14px; color: #1a2340; line-height: 1.55; }
+    .tech-credit { font-size: 11px; color: #6b7a99; padding: 0 15px 12px; line-height: 1.5; }
+    .tech-credit a { color: #167567; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 12px 0; }
+    .steps li { position: relative; padding: 10px 0 10px 46px; border-bottom: 1px solid #EEF1F8; font-size: 16px; color: #1a2340; line-height: 1.6; }
+    .steps li:last-child { border-bottom: none; }
+    .steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 9px; width: 30px; height: 30px; background: #D9583B; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .skillbox { background: #FFFFFF; border: 2px solid #D9583B; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .skillbox .sk-k { font-size: 11px; color: #D9583B; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .skillbox h3 { margin: 0 0 8px 0; font-size: 19px; color: #0E1C42; }
+    .skillbox p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 8px 0; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q1 &middot; Studio 2 of 18</div>
+        <div style="font-size: 12px; color: #666;">Organizing the Image</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">3 of 6</div>
+        <div style="font-size: 12px; color: #666;">Skill Builder</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Focal Point &amp; Thirds</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">You Will Make</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">Thumbnail focal-point studies</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 2 &middot; LESSON 3</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Focal Point &amp; the Rule of Thirds</div>
+        <div style="font-size: 16px; color: #666;">Your first hands-on tool for deciding where the viewer's eye enters. Keep a pencil and paper beside you. <span class="time-pill">~50 min</span></div>
+    </div>
+
+    <!-- Objective -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#127919; WHAT YOU WILL BE ABLE TO DO</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">Choose a clear <strong>focal point</strong>, place it using the <strong>rule of thirds</strong> instead of dead center, and use <strong>contrast, isolation, and lines</strong> to make the eye go there first. This is the decision that starts every strong composition.</div>
+    </div>
+
+    <!-- PART 1 · THE FOCAL POINT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 1 &middot; WHERE THE EYE ENTERS</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">A <strong>focal point</strong> is the place you want the viewer to look first. Every strong composition has one. Without it, the eye wanders and gives up. The good news: a handful of reliable tools pull the eye to a chosen spot.</p>
+
+        <div class="tech-grid">
+            <div class="tech-card">
+                <div class="tech-demo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Georges_de_La_Tour_-_The_Magdalen_with_the_Smoking_Flame_-_Google_Art_Project.jpg" alt="Georges de La Tour's candlelit painting of Mary Magdalene: her face and hands, lit by a single flame, glow brightly against a nearly black background, pulling the eye straight to them." />
+                </div>
+                <div class="tech-body"><strong>Contrast</strong><span>The eye jumps to whatever stands out most: the darkest dark, the sharpest detail, or the brightest highlight against its surroundings. Here, one small candle flame against deep shadow does all the work.</span></div>
+                <div class="tech-credit">Georges de La Tour, <em>The Magdalen with the Smoking Flame</em>, c.1640. <a href="https://commons.wikimedia.org/wiki/File:Georges_de_La_Tour_-_The_Magdalen_with_the_Smoking_Flame_-_Google_Art_Project.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, public domain.</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-demo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/Negative_space_-_Flickr_-_fred_v.jpg" alt="A photograph of flowers in a vase, framed with a large area of plain empty wall around the small arrangement, so the flowers read as the clear subject." />
+                </div>
+                <div class="tech-body"><strong>Isolation</strong><span>One object set apart from a cluster reads as important. Space around a subject makes it the focus, the way this bouquet is surrounded by plain, uncluttered wall.</span></div>
+                <div class="tech-credit">Fr&eacute;d&eacute;rique Voisin-Demery, <em>Negative space</em>. <a href="https://commons.wikimedia.org/wiki/File:Negative_space_-_Flickr_-_fred_v.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY 2.0.</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-demo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/00/Leading_lines_composition_in_Photography_by_Shagil_Muzhappilangad.jpeg" alt="A photograph in which strong converging lines run from the lower corners of the frame toward a single point, demonstrating leading lines in composition." />
+                </div>
+                <div class="tech-body"><strong>Leading lines</strong><span>Edges, roads, and diagonals that converge on a point send the eye straight to it.</span></div>
+                <div class="tech-credit">Shagil Muzhappilangad, <em>Leading lines composition in Photography</em>. <a href="https://commons.wikimedia.org/wiki/File:Leading_lines_composition_in_Photography_by_Shagil_Muzhappilangad.jpeg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 4.0.</div>
+            </div>
+        </div>
+
+        <div class="callout c-help">
+            <div class="ck">&#128161; ONE FOCAL POINT, NOT FIVE</div>
+            <div class="cb">If everything shouts, nothing is heard. Choose one clear focal point and let the rest of the arrangement support it. A common beginner mistake is making three or four things equally loud, which leaves the eye with nowhere to settle.</div>
+        </div>
+    </div>
+
+    <!-- PART 2 · RULE OF THIRDS -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128207; PART 2 &middot; THE RULE OF THIRDS</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">Where should the focal point sit? Dead center is usually the weakest choice; it feels stiff and stops the eye. The <strong>rule of thirds</strong> is a simple guide: divide the frame into thirds with two lines each way, making a grid of nine boxes. Place your focal point on or near one of the four points where the lines cross. Those crossings are the most dynamic spots in the frame.</p>
+
+        <figure class="art-fig">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/61/Rule_of_thirds_applied_on_M%C3%A4dchen_am_Strand.jpg" alt="A painting of a girl on a beach with a rule-of-thirds grid overlaid: two vertical and two horizontal lines divide the canvas into nine boxes, and the girl's face sits on one of the four crossing points instead of dead center." />
+            <figcaption>Max Nonnenbruch (German, 1857&ndash;1922), <em>M&auml;dchen am Strand</em>, with a rule-of-thirds grid overlaid to show the effect: the girl sits on a crossing point, not dead center. <a href="https://commons.wikimedia.org/wiki/File:Rule_of_thirds_applied_on_M%C3%A4dchen_am_Strand.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, public domain.</figcaption>
+        </figure>
+        <p style="font-size: 15px; color: #6b7a99; margin: 6px 0 0 0;">Compare that to a focal point placed dead center: stable but static, and the eye simply stops instead of settling into a livelier balance.</p>
+
+        <div class="optima-widget ow-select">
+            <div class="widget-kicker">&#9889; TRY IT &middot; BUILD THE FOCAL POINT</div>
+            <div class="widget-question">For each situation, choose the tool that best solves it. Commit, then check.</div>
+            <div class="widget-row" data-correct="thirds" data-hint="Which guide keeps the subject off dead center and on a strong crossing? Try again.">
+                <div class="widget-row-prompt">Your still life feels stiff and frozen. The main object sits right in the middle of the page.</div>
+                <div class="widget-options">
+                    <button data-choice="thirds" data-fb="Yes. Shifting the main object onto a rule-of-thirds crossing, off center, usually loosens a stiff, centered composition immediately.">Move it to a thirds crossing</button>
+                    <button data-choice="contrast">Add more objects</button>
+                    <button data-choice="lines">Make it smaller</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="lines" data-hint="Which tool actively points the eye toward the focal point? Try again.">
+                <div class="widget-row-prompt">You want the eye to travel from the front edge of the table straight back to a single cup.</div>
+                <div class="widget-options">
+                    <button data-choice="thirds">Rule of thirds</button>
+                    <button data-choice="lines" data-fb="Right. Arrange the table edge or other objects into leading lines that converge on the cup, and the eye follows them to it.">Leading lines</button>
+                    <button data-choice="contrast">Even spacing</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="contrast" data-hint="Which tool makes one object stand out from a similar group? Try again.">
+                <div class="widget-row-prompt">Five gray objects sit together and none reads as the main one.</div>
+                <div class="widget-options">
+                    <button data-choice="lines">Add more gray objects</button>
+                    <button data-choice="thirds">Center them all</button>
+                    <button data-choice="contrast" data-fb="Correct. Give one object strong contrast (much darker, brighter, or sharper than the rest) and it becomes the clear focal point.">Give one strong contrast</button>
+                </div>
+            </div>
+            <button class="widget-reset">Reset</button>
+        </div>
+    </div>
+
+    <!-- PART 3 · GUIDED PRACTICE -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#9997;&#65039; PART 3 &middot; GUIDED PRACTICE (do this now)</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">Grab three small objects and one sheet. You are not making finished drawings, only small, fast <strong>thumbnails</strong> to test placement.</p>
+
+        <ol class="steps">
+            <li><strong>Draw the grid (1 min).</strong> On a small box, lightly draw the two vertical and two horizontal thirds lines. Mark the four crossing points.</li>
+            <li><strong>Center version (2 min).</strong> Sketch your three objects grouped in the dead center. Notice how still it feels.</li>
+            <li><strong>Thirds version (3 min).</strong> Redraw them so your most interesting object sits on a crossing, off center, and the others support it. Notice the difference at once.</li>
+            <li><strong>Push it (2 min).</strong> Add one leading line (a table edge, a cast shadow) that points at your focal object, or give that object more contrast than the rest.</li>
+        </ol>
+    </div>
+
+    <!-- SKILL BUILDER ASSIGNMENT POINTER -->
+    <div class="skillbox">
+        <div class="sk-k">&#128393;&#65039; SKILL BUILDER SKETCH (turn in this week)</div>
+        <h3>Focal-Point Thumbnails</h3>
+        <p>On one sheet, make three small thumbnails of the same three objects: one centered, one placed on the rule of thirds, and one that adds a leading line or strong contrast to strengthen the focal point. Label each. This is a completion-graded practice rung, not a finished artwork. Focus on clear focal points and honest placement decisions.</p>
+        <p style="margin:0;">Full directions and submission steps are in the Canvas assignment <em>Skill Builder 1: Focal-Point Thumbnails</em>. Photograph your page and upload it, then save a copy to your OneDrive portfolio folder.</p>
+    </div>
+
+    <!-- VOCABULARY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; VOCABULARY</div>
+        <div class="vocab-grid">
+            <div class="vocab-card"><strong>Focal point</strong>The spot the artist wants the viewer to look at first.</div>
+            <div class="vocab-card"><strong>Rule of thirds</strong>Dividing the frame into thirds and placing the focal point on a crossing line.</div>
+            <div class="vocab-card"><strong>Leading lines</strong>Real or implied lines that direct the eye toward the focal point.</div>
+            <div class="vocab-card"><strong>Contrast</strong>Strong difference in value, size, or detail that pulls the eye.</div>
+            <div class="vocab-card"><strong>Cropping</strong>Choosing how much of a scene the frame includes, and what it cuts off.</div>
+        </div>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num create">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Submit: Skill Builder 1 &middot; Focal-Point Thumbnails</strong> &middot; Week 1</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Your three placement thumbnails. Completion graded.</div></div></div>
+        <div class="next-item"><div class="num learn">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 4: Balance &amp; Movement</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Distribute weight across the frame and build a path for the eye.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">Decide where the eye enters before you draw anything. Pick one focal point, keep it off dead center with the rule of thirds, and use contrast, isolation, or leading lines to point at it. That single decision organizes the whole image.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 1 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 2 &middot; Organizing the Image &middot; Lesson 3 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. Technique reference images are public domain or Creative Commons licensed; see each caption for source and attribution.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 4, Lesson 1: The Illusion of Depth</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components (teal/coral accents; green retired; red = AI only) ===== */
+    .art-fig { margin: 14px 0; text-align: center; }
+    .art-fig img { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #D0D9E8; }
+    .art-fig figcaption { font-size: 13px; color: #666; margin-top: 8px; line-height: 1.5; }
+    .art-fig figcaption a { color: #167567; }
+    .compare-wrap { display: flex; gap: 14px; flex-wrap: wrap; margin: 16px 0; }
+    .compare-box { flex: 1; min-width: 220px; border-radius: 8px; padding: 14px 18px; border: 1.5px solid; }
+    .compare-box.memory  { background: #FBEEE9; border-color: #E0A695; }
+    .compare-box.observe { background: #E6F4F1; border-color: #7CC3B8; }
+    .compare-box h4 { font-size: 13px; letter-spacing: 0.5px; margin: 0 0 8px 0; }
+    .compare-box.memory  h4 { color: #A93B22; }
+    .compare-box.observe h4 { color: #167567; }
+    .compare-box ul { margin: 0; padding-left: 18px; font-size: 15px; color: #1a2340; line-height: 1.6; }
+    .concept-card { background: #0E1C42; border-radius: 10px; padding: 26px 28px; margin: 20px 0; text-align: center; border-top: 5px solid #1B8A7A; }
+    .concept-card .cc-k { font-size: 11px; color: #55C8E8; letter-spacing: 1px; margin-bottom: 10px; }
+    .concept-card .cc-main { font-size: 26px; color: #ffffff; line-height: 1.35; }
+    .concept-card .cc-main em { color: #F0B39E; font-style: normal; }
+    .concept-card .cc-main strong { color: #7FD4C6; }
+    .concept-card .cc-sub { font-size: 15px; color: #c8d4e8; margin-top: 12px; line-height: 1.6; }
+    .depth-diagram { background: #f8f9fc; border: 1px solid #D0D9E8; border-radius: 8px; padding: 16px; margin: 16px 0; text-align: center; }
+    .depth-diagram figcaption { font-size: 13px; color: #6b7a99; margin-top: 8px; line-height: 1.5; }
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    .roadmap { list-style: none; margin: 10px 0 0; padding: 0; }
+    .roadmap li { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border: 1px solid #D0D9E8; border-radius: 6px; margin-bottom: 8px; font-size: 15px; color: #1a2340; }
+    .roadmap li.current { background: #E6F4F1; border-color: #1B8A7A; color: #0E1C42; }
+    .roadmap li .rn { min-width: 24px; height: 24px; border-radius: 50%; background: #EEF1F8; color: #0E1C42; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .roadmap li.current .rn { background: #1B8A7A; color: #fff; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q1 &middot; Studio 4 of 18</div>
+        <div style="font-size: 12px; color: #666;">Creating Space</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">1 of 6</div>
+        <div style="font-size: 12px; color: #666;">Observe</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">The Illusion of Depth</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Studio Project</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">Step Into This Place</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 4 &middot; LESSON 1</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">The Illusion of Depth</div>
+        <div style="font-size: 16px; color: #666;">A sheet of paper is flat. So how does an artist make a whole world open up inside it? This Studio is about that trick, and it is a trick you can learn. <span class="time-pill">~45 min</span></div>
+    </div>
+
+    <!-- Essential Question -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128214; ESSENTIAL QUESTION</div>
+        <div style="font-size: 20px; color: #0e1c42; font-style: italic; margin-bottom: 10px;">How do artists build a world you feel you could step into on a flat sheet of paper?</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">In Studio 1 you learned to see; in Studios 2 and 3 you arranged and colored what you saw. Now the surface itself will seem to open. Depth on a flat page is not magic or talent, just a small set of rules you will learn and use to design a place a viewer wants to walk into.</div>
+    </div>
+
+    <!-- PART 1 · LOOK FIRST -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128064; PART 1 &middot; LOOK FIRST</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Before we name anything, look. Spend a full minute with the painting below. Do not read the caption yet. Let your eye travel from the near boats, back along the water, all the way to the bridge and the far buildings.</p>
+
+        <figure class="art-fig">
+            <img src="images/canaletto-rialto-bridge-1735.jpg" alt="Canaletto's painting of the Grand Canal in Venice: the arched Rialto Bridge crosses the canal at the left, tall buildings recede in rows along both banks, and gondolas with standing boatmen fill the calm reflective water in the foreground under a wide pale sky." />
+            <figcaption>Canaletto (Giovanni Antonio Canal, Italian, 1697&ndash;1768), <em>The Grand Canal and the Rialto Bridge, Venice</em>, c.1735&ndash;1740. Oil on canvas. Public domain. Source: provided course archive (Studio Art 2 Images, Unit 4).</figcaption>
+        </figure>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">This is a flat canvas, yet you feel the canal stretch away for a quarter mile. Canaletto built that feeling with rules you can name: the buildings get smaller as they go back, their roof lines and water edges tilt toward a single distant point, the near boats overlap the far ones, and the far buildings turn slightly hazy and pale. Each is a deliberate, teachable depth cue.</p>
+
+        <div class="callout c-art">
+            <div class="ck">&#128172; WONDER FIRST</div>
+            <div class="cb">Cover the front boats with your hand for a second, then uncover them. Notice how much closer they suddenly feel, and how much farther back the bridge seems. Why would one small overlap change your whole sense of distance? Hold that question. By the end of this Studio you will be placing overlaps on purpose to control exactly how deep your own scene feels.</div>
+        </div>
+
+        <div class="optima-widget ow-reflect">
+            <div class="widget-kicker">&#128173; QUICK CHECK-IN &middot; NO WRONG ANSWER</div>
+            <div class="widget-question">As your eye traveled into the painting, what pulled it back toward the bridge the most?</div>
+            <div class="widget-options">
+                <button data-response="A sharp eye. The rows of buildings shrinking as they recede is one of the strongest depth cues there is. You just named relative size and linear perspective working together, which are exactly the tools of Skill Builders A and B.">The buildings getting smaller</button>
+                <button data-response="Good noticing. The water leads the eye like a road, its edges narrowing toward the distance. That narrowing is linear perspective, the first technique you will build in Lesson 3.">The water leading back to the bridge</button>
+                <button data-response="Nice observation. The far buildings are paler and softer than the sharp near ones. That softening is atmospheric perspective, one of the depth-without-lines cues you will practice in Lesson 4.">The far buildings looking hazy</button>
+            </div>
+            <div class="widget-feedback"></div>
+            <button class="widget-reset">Reset</button>
+        </div>
+    </div>
+
+    <!-- PART 2 · NAME WHAT YOU SEE -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 2 &middot; NAME WHAT YOU SEE</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Your eyes see the real world in three dimensions because you have two of them, set apart, feeding your brain two slightly different views. A drawing has no such trick. It is one flat plane. So artists learned to fake depth by copying the visual clues the eye already trusts. Painters call these clues <strong>depth cues</strong>, and a scene reads as deep when several of them agree.</p>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">The most exact of these cues is <strong>linear perspective</strong>: the rule that parallel lines heading away from you appear to draw together and meet at a single point in the distance. Stand on a straight road or hallway and you have seen it. The two edges are truly parallel, yet they seem to pinch toward each other far away. Here is that idea stripped to its bones.</p>
+
+        <figure class="art-fig">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/One_point_perspective.jpg" alt="A photograph looking straight down a covered walkway at Tennoji Park in Osaka, Japan, its repeating arches and supports growing smaller and meeting the eye at a single point in the distance." />
+            <figcaption>One-point perspective in a real photograph: the repeating arches shrink and align toward a single vanishing point straight ahead. Laitche, <em>One point perspective</em>, Tennoji Park, Osaka, 2007. <a href="https://commons.wikimedia.org/wiki/File:One_point_perspective.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, public domain.</figcaption>
+        </figure>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Not every depth cue needs lines, though. In Lesson 4 you will use three that work even in a landscape with no straight edges at all: <strong>overlap</strong> (a nearer thing blocks part of a farther thing), <strong>relative size</strong> (the same kind of object drawn smaller reads as farther away), and <strong>atmospheric perspective</strong> (distant things go paler, bluer, and less detailed as the air between you and them thickens). Together, lines and no-line cues give you full control of space.</p>
+
+        <div class="concept-card">
+            <div class="cc-k">THE ONE IDEA OF THIS STUDIO</div>
+            <div class="cc-main">Depth is <strong>built</strong>,<br/>not <em>found</em>.</div>
+            <div class="cc-sub">Every technique in the next five lessons is a rule for turning a flat surface into a space a viewer feels they could enter.</div>
+        </div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Meet the core terms by name now. You will use every one of them in the lessons that follow.</p>
+
+        <div class="vocab-grid" style="margin-top: 6px;">
+            <div class="vocab-card"><strong>Horizon line</strong>An imaginary horizontal line at the viewer's eye level, where the ground appears to meet the sky.</div>
+            <div class="vocab-card"><strong>Vanishing point</strong>The single point on the horizon where receding parallel lines appear to meet.</div>
+            <div class="vocab-card"><strong>Orthogonal</strong>A guide line that runs from an edge of an object back to the vanishing point.</div>
+            <div class="vocab-card"><strong>Atmospheric perspective</strong>Distant objects appear paler, cooler, and less detailed than near ones.</div>
+        </div>
+    </div>
+
+    <!-- PART 3 · WHY IT MATTERS -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128269; PART 3 &middot; WHY THIS COMES NOW</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Space is one of the biggest decisions an artist controls. A flat, shallow picture and a deep, immersive one can show the exact same objects; what differs is whether the artist built the illusion of depth. Master it and you can place a viewer anywhere: pressed against a subject, or gazing across miles.</p>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Your project for these two weeks is called <strong>Step Into This Place</strong>. You will design one original environment, an interior or an exterior, real or imagined, and use linear perspective plus the no-line depth cues to make it feel genuinely deep. The test of your work is simple: does a viewer feel they could walk into it?</p>
+
+        <details>
+            <summary>&#9654;&nbsp; In your notebook, name one real place you know so well you could walk it with your eyes closed. Then open this.</summary>
+            <div class="ac-body">Almost everyone can name one instantly, and that place is a strong candidate for your project. A space you know from many angles is far easier to build convincingly than one you invent from nothing, because you already carry its depth cues in your memory. Keep it in mind as a possible subject.</div>
+        </details>
+    </div>
+
+    <!-- WHAT'S NEXT IN THIS STUDIO -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#128506;&#65039; YOUR PATH THROUGH STUDIO 4</div>
+        <ul class="roadmap">
+            <li class="current"><span class="rn">1</span> <div><strong>The Illusion of Depth</strong> &middot; you are here. Why depth is built, and the cues that build it.</div></li>
+            <li><span class="rn">2</span> <div><strong>Masters of Space</strong> &middot; how Canaletto built real Venice and Escher broke it (critique modeled).</div></li>
+            <li><span class="rn">3</span> <div><strong>One-Point Perspective</strong> &middot; skill builder: horizon line, vanishing point, orthogonals.</div></li>
+            <li><span class="rn">4</span> <div><strong>Depth Without Lines</strong> &middot; skill builder: overlap, relative size, atmospheric perspective.</div></li>
+            <li><span class="rn">5</span> <div><strong>Plan &amp; Create</strong> &middot; design your space, VR walk, AI awareness, begin the artwork.</div></li>
+            <li><span class="rn">6</span> <div><strong>Refine, Reflect &amp; Present</strong> &middot; finish, self-critique, artist statement, portfolio.</div></li>
+        </ul>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT (IN CANVAS) -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num now">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Warm-up: The Depth Hunt</strong> &middot; Week 1</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Right now, look up from your screen and find the deepest view around you (a hallway, a street, a room). In your notebook, list every depth cue you can spot: what overlaps what, what is smaller because it is farther, where lines seem to head. Keep this list. It is the raw material for your project.</div></div></div>
+        <div class="next-item"><div class="num learn">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 2: Masters of Space</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Two artists who bent perspective to opposite ends: one to rebuild a real city, one to build a world that cannot exist.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">The page is flat; the space is a decision. Canaletto did not find that quarter mile of canal, he constructed it, cue by cue. For the next two weeks you will learn those cues and build a place of your own that a viewer feels they could step right into.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 1 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 4 &middot; Creating Space &middot; Lesson 1 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. Artwork shown is in the public domain; see caption for source.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

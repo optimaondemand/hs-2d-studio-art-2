@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 5, Lesson 2: What Repetition Says</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components (teal/coral accents; green retired; red = AI only) ===== */
+    .art-fig { margin: 14px 0; text-align: center; }
+    .art-fig img { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #D0D9E8; }
+    .art-fig figcaption { font-size: 13px; color: #666; margin-top: 8px; line-height: 1.5; }
+    .art-fig figcaption a { color: #167567; }
+    .linkout-card { background: #EEF1F8; border: 1px solid #D0D9E8; border-left: 5px solid #1B8A7A; border-radius: 6px; padding: 14px 18px; margin: 14px 0; }
+    .linkout-card .lk-k { font-size: 11px; color: #167567; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .linkout-card .lk-t { font-size: 16px; color: #0E1C42; margin-bottom: 6px; }
+    .linkout-card p { margin: 0 0 8px 0; font-size: 15px; color: #1a2340; line-height: 1.6; }
+    .linkout-card a { color: #167567; font-size: 15px; }
+    .artist-card { display: flex; gap: 16px; align-items: flex-start; padding: 16px; background: #f8f9fc; border: 1px solid #D0D9E8; border-radius: 8px; margin-bottom: 14px; }
+    .artist-avatar { width: 48px; height: 48px; border-radius: 50%; background: #0E1C42; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+    .artist-name { font-size: 17px; color: #0E1C42; }
+    .artist-dates { font-size: 13px; color: #6b7a99; margin-bottom: 4px; }
+    .artist-tag { display: inline-block; margin: 2px 0 8px; font-size: 11px; letter-spacing: 0.5px; padding: 3px 10px; border-radius: 99px; background: #E6F4F1; color: #167567; border: 1px solid #7CC3B8; }
+    .artist-card p { font-size: 15px; color: #1a2340; line-height: 1.6; margin: 0 0 6px 0; }
+    .daij-step { border-left: 3px solid #1B8A7A; padding: 4px 0 4px 16px; margin: 0 0 14px 0; }
+    .daij-step h4 { font-size: 16px; color: #0E1C42; margin: 0 0 4px 0; }
+    .daij-step h4 span { color: #1B8A7A; }
+    .daij-step p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0; }
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.now { background: #0E1C42; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q2 &middot; Studio 5 of 18</div>
+        <div style="font-size: 12px; color: #666;">Pattern, Print &amp; Design</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">2 of 6</div>
+        <div style="font-size: 12px; color: #666;">Investigate</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">What Repetition Says</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Method</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">DAIJ criticism</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 5 &middot; LESSON 2</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">What Repetition Says</div>
+        <div style="font-size: 16px; color: #666;">Two very different artists who made the multiple itself the point. Then a close read of Hokusai's wave. <span class="time-pill">~50 min</span></div>
+    </div>
+
+    <!-- Essential Question -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128214; ESSENTIAL QUESTION</div>
+        <div style="font-size: 20px; color: #0e1c42; font-style: italic; margin-bottom: 10px;">Why would an artist choose to repeat an image instead of making something new each time?</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">In Lesson 1 you met the difference between the unique and the multiple. Now look at two artists who built careers on repetition, then practice DAIJ criticism, the four-step method, on the print that opened this Studio.</div>
+    </div>
+
+    <!-- PART 1 · TWO ARTISTS, ONE STRATEGY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 1 &middot; TWO ARTISTS, ONE STRATEGY</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 14px 0;">Repetition is not just a printing shortcut. In the right hands it becomes the artwork's whole argument. Compare two twentieth-century artists who used repeated images to say something they could not have said with just one image.</p>
+
+        <div class="artist-card">
+            <div class="artist-avatar">AW</div>
+            <div>
+                <div class="artist-name">Andy Warhol</div>
+                <div class="artist-dates">American, 1928&ndash;1987</div>
+                <span class="artist-tag">THE FACTORY OF IMAGES</span>
+                <p>Warhol ran his New York studio, which he literally called "The Factory," like a print shop for pop culture. Using <strong>silkscreen</strong>, a process that forces ink through a stencil onto a surface, he repeated a single photograph of a soup can or a movie star dozens of times on one canvas, often shifting the color from panel to panel. The repetition itself was the comment: on advertising, on celebrity, on how many times an image can flash past us before it stops meaning anything.</p>
+            </div>
+        </div>
+
+        <div class="linkout-card">
+            <div class="lk-k">&#128279; VIEW THE WORK (opens the museum site) &middot; [VERIFY URL at deploy]</div>
+            <div class="lk-t">Andy Warhol, Campbell's Soup Cans and Marilyn Diptych</div>
+            <p>Warhol's work is under copyright, so we view it at the source rather than reproduce it here. In <em>Large Campbell's Soup Can</em> (1964) one product label repeats as if pulled straight off a factory line. In <em>Marilyn Diptych</em> (1962), fifty identical silkscreened faces of Marilyn Monroe fade from bright color into ghostly black and white across the canvas, repeating a single photograph until it starts to dissolve.</p>
+            <a href="https://www.moma.org/collection/works/79809" target="_blank" rel="noopener">Andy Warhol, <em>Campbell's Soup Cans</em>, at the Museum of Modern Art [VERIFY URL at deploy]</a><br/>
+            <a href="https://www.tate.org.uk/art/artworks/warhol-marilyn-diptych-t03093" target="_blank" rel="noopener">Andy Warhol, <em>Marilyn Diptych</em>, 1962, at Tate [VERIFY URL at deploy]</a>
+        </div>
+
+        <div class="artist-card">
+            <div class="artist-avatar">EC</div>
+            <div>
+                <div class="artist-name">Elizabeth Catlett</div>
+                <div class="artist-dates">American/Mexican, 1915&ndash;2012</div>
+                <span class="artist-tag">THE MULTIPLE AS ACCESS</span>
+                <p>Catlett trained in printmaking partly because prints could reach far more people than a single sculpture or painting ever could. Her linocut <em>Sharecropper</em> (1952, printed 1970) shows a Black woman farmworker's face, dignified and weathered, carved in bold black lines. Because the block could be printed again and again, that image could travel into classrooms, homes, and movements far beyond a single gallery wall.</p>
+            </div>
+        </div>
+
+        <div class="linkout-card">
+            <div class="lk-k">&#128279; VIEW THE WORK (opens the museum site) &middot; [VERIFY URL at deploy]</div>
+            <div class="lk-t">Elizabeth Catlett, Sharecropper</div>
+            <p>Catlett's work is under copyright, so we view it at the source rather than reproduce it here. Look for how few lines she needs: the face is built from confident, economical carved marks, proof that a relief print does not need fine detail to carry real weight.</p>
+            <a href="https://www.si.edu/object/sharecropper%3Asaam_1992.94.1" target="_blank" rel="noopener">Elizabeth Catlett, <em>Sharecropper</em>, 1952 (printed 1970), at the Smithsonian American Art Museum [VERIFY URL at deploy]</a>
+        </div>
+
+        <div class="callout c-help">
+            <div class="ck">&#128161; HELPFUL TO KNOW</div>
+            <div class="cb"><strong>Silkscreen</strong> pushes ink through a stencil on fine mesh, a different process from the carved <strong>relief print</strong> you will practice this Studio, but it shares the same core idea: one master (a screen or a block) produces many identical prints. Warhol used silkscreen; Catlett and Hokusai both used relief methods (linocut and woodblock).</div>
+        </div>
+    </div>
+
+    <!-- PART 2 · WATCH IT WORK (DAIJ) -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128269; PART 2 &middot; WATCH IT WORK</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 12px 0;">Because Hokusai's wave is in the public domain, we can analyze the full image in detail here. The four DAIJ steps, Describe, Analyze, Interpret, Judge, must go in order: describe before you analyze, analyze before you interpret, interpret before you judge.</p>
+
+        <div class="daij-step">
+            <h4><span>D &middot; Describe</span> (just the facts)</h4>
+            <p>A huge wave curls over three low boats in the foreground. Its crest breaks into many small hooked claws of foam. A snow-capped mountain sits small in the distance. The image is printed in blue, white, and pale tones from a carved woodblock.</p>
+        </div>
+        <div class="daij-step">
+            <h4><span>A &middot; Analyze</span> (how is it built?)</h4>
+            <p>Hokusai builds the wave from <strong>repetition</strong>: the same clawed foam shape recurs dozens of times along the crest, creating a fast, chaotic <strong>rhythm</strong>. That rhythm is balanced against the one thing in the image that does not repeat: the still, single triangle of Mount Fuji, small and calm.</p>
+        </div>
+        <div class="daij-step">
+            <h4><span>I &middot; Interpret</span> (what is it saying?)</h4>
+            <p>The repeated foam claws make the wave feel alive and overwhelming, almost like a hundred small hands reaching for the boats, while the unmoving, unrepeated mountain suggests something permanent standing behind all that chaos. Repetition here creates the feeling of danger; the single still shape creates the feeling of endurance.</p>
+        </div>
+        <div class="daij-step">
+            <h4><span>J &middot; Judge</span> (does it succeed?)</h4>
+            <p>It succeeds completely, and its success depended on being a print. Because Hokusai carved this design once and printed it thousands of times, an image built entirely around the power of repetition became one of the most repeated images in art history.</p>
+        </div>
+
+        <div class="optima-widget ow-select">
+            <div class="widget-kicker">&#9889; TRY IT &middot; WHICH DAIJ STEP?</div>
+            <div class="widget-question">Read each statement about a print. Decide which DAIJ step it belongs to, then check it.</div>
+            <div class="widget-row" data-correct="analyze" data-hint="Is this a plain fact, a breakdown of how the piece is built, a meaning, or a verdict? Try again.">
+                <div class="widget-row-prompt">"The same triangular motif repeats in a straight line across the top border of the print."</div>
+                <div class="widget-options">
+                    <button data-choice="describe">Describe</button>
+                    <button data-choice="analyze" data-fb="Correct. Naming a technique (repetition of a motif in a straight-line arrangement) and how it organizes the work is Analyze.">Analyze</button>
+                    <button data-choice="interpret">Interpret</button>
+                    <button data-choice="judge">Judge</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="judge" data-hint="Which step delivers a verdict about success, backed by evidence from the earlier steps? Try again.">
+                <div class="widget-row-prompt">"The pattern succeeds because its exact repetition is what makes the surface feel calm and orderly rather than random."</div>
+                <div class="widget-options">
+                    <button data-choice="describe">Describe</button>
+                    <button data-choice="analyze">Analyze</button>
+                    <button data-choice="interpret">Interpret</button>
+                    <button data-choice="judge" data-fb="Yes. A verdict on whether the work succeeds, resting on evidence, is Judge, always the last step.">Judge</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="describe" data-hint="This one adds no technique and no opinion. It only reports what is there. Try again.">
+                <div class="widget-row-prompt">"There are six rows of a repeated leaf shape printed in dark green ink."</div>
+                <div class="widget-options">
+                    <button data-choice="analyze">Analyze</button>
+                    <button data-choice="interpret">Interpret</button>
+                    <button data-choice="describe" data-fb="Right. Pure fact, no technique named and no opinion given. That is Describe, always the first step.">Describe</button>
+                    <button data-choice="judge">Judge</button>
+                </div>
+            </div>
+            <button class="widget-reset">Reset</button>
+        </div>
+
+        <details>
+            <summary>&#9654;&nbsp; In your notebook, write one Interpret sentence about Hokusai's wave before you open this. Then compare.</summary>
+            <div class="ac-body">A strong Interpret sentence connects the technique to a feeling or idea. For example: "The repeated clawed foam makes the wave feel alive and multiplying, almost too fast to survive, while the single unrepeated mountain feels like the one thing that will still be there after the wave passes." Your wording will differ; what matters is that your interpretation is built on what you already described and analyzed.</div>
+        </details>
+
+        <div class="callout c-help">
+            <div class="ck">&#9997;&#65039; NOW YOU TRY</div>
+            <div class="cb">Choose whichever work pulls your eye more: Andy Warhol's <em>Campbell's Soup Cans</em> or <em>Marilyn Diptych</em>, or Elizabeth Catlett's <em>Sharecropper</em> (both linked above). In your notebook, run the same four steps, describe, analyze, interpret, judge, on the one you picked.</div>
+        </div>
+    </div>
+
+    <!-- VOCABULARY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; VOCABULARY</div>
+        <div class="vocab-grid">
+            <div class="vocab-card"><strong>DAIJ</strong>The four-step critique order: Describe, Analyze, Interpret, Judge.</div>
+            <div class="vocab-card"><strong>Silkscreen</strong>A print process that forces ink through a stencil on fine mesh to make repeatable images.</div>
+            <div class="vocab-card"><strong>Edition</strong>The full set of prints pulled from one block or screen, often numbered.</div>
+            <div class="vocab-card"><strong>Linocut</strong>A relief print made by carving a design into a sheet of linoleum.</div>
+            <div class="vocab-card"><strong>Woodblock print</strong>A relief print made by carving a design into a block of wood.</div>
+        </div>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num now">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Canvas Quiz: The Multiple</strong> &middot; Week 2</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">A short auto-graded check on Lessons 1 and 2: the multiple versus the unique, repetition, and the two artists.</div></div></div>
+        <div class="next-item"><div class="num learn">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 3: Motif, Pattern &amp; Negative Space</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Design the single unit that will carry your whole pattern.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">Warhol repeated a soup can to comment on mass culture. Catlett repeated a portrait so it could reach more people. Hokusai repeated foam to make a wave feel alive. Three very different reasons, one shared tool: repetition is never neutral. It always says something.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 2 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 5 &middot; Pattern, Print &amp; Design &middot; Lesson 2 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. Public-domain artwork shown with attribution; in-copyright work is linked to its museum source.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

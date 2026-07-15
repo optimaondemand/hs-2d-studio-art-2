@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 5, Lesson 6: Refine, Reflect &amp; Present</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .daij-check { border-left: 3px solid #1B8A7A; padding: 4px 0 4px 16px; margin: 0 0 12px 0; }
+    .daij-check h4 { font-size: 16px; color: #0E1C42; margin: 0 0 3px 0; }
+    .daij-check h4 span { color: #1B8A7A; }
+    .daij-check p { font-size: 15px; color: #1a2340; line-height: 1.6; margin: 0; }
+    .statement-box { background: #EEF1F8; border-radius: 8px; padding: 16px 20px; margin: 14px 0; }
+    .statement-box p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 8px 0; }
+    .statement-box ul { margin: 6px 0 0; padding-left: 20px; }
+    .statement-box li { font-size: 16px; color: #1a2340; line-height: 1.6; margin-bottom: 5px; }
+    .rubric-table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+    .rubric-table th { background: #0E1C42; color: #fff; padding: 8px 10px; text-align: left; font-size: 12px; letter-spacing: 0.4px; }
+    .rubric-table td { padding: 8px 10px; border: 1px solid #E1E7F0; vertical-align: top; color: #1a2340; line-height: 1.5; }
+    .rubric-table td:first-child { font-weight: 600; color: #0E1C42; background: #f8f9fc; }
+    .checklist { list-style: none; padding: 0; margin: 12px 0; }
+    .checklist li { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; border: 1px solid #D0D9E8; border-radius: 6px; margin-bottom: 8px; font-size: 16px; color: #1a2340; line-height: 1.55; background: #fff; }
+    .checklist li .cbx { min-width: 22px; height: 22px; border: 2px solid #1B8A7A; border-radius: 5px; flex-shrink: 0; margin-top: 2px; }
+    .submit-card { background: #E6F4F1; border: 2px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .submit-card .sc-k { font-size: 11px; color: #167567; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .submit-card h3 { margin: 0 0 8px 0; font-size: 19px; color: #0E1C42; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q2 &middot; Studio 5 of 18</div>
+        <div style="font-size: 12px; color: #666;">Pattern, Print &amp; Design</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">6 of 6</div>
+        <div style="font-size: 12px; color: #666;">Refine, Reflect &amp; Present</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Finish &amp; submit</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Due</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">End of Week 2</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 5 &middot; LESSON 6</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Refine, Reflect &amp; Present</div>
+        <div style="font-size: 16px; color: #666;">A strong edition is finished, not just pulled. Critique your series, refine it, and present it well. <span class="time-pill">~55 min + studio time</span></div>
+    </div>
+
+    <!-- PART 1 · LOOK AT THE WHOLE SERIES -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128260; PART 1 &middot; STEP BACK FROM THE SERIES</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Lay out every print you pulled from your plate, including your early test prints from Lesson 5. This is the moment to judge the work as a whole series, not just as individual prints.</p>
+
+        <div class="callout c-art">
+            <div class="ck">&#128064; LOOK AT ALL THE PRINTS TOGETHER</div>
+            <div class="cb">Where does the rhythm feel strongest? Where does registration slip, or ink coverage go patchy? Almost every print series has one or two clear standouts and one or two that reveal a technical lesson. Both are useful; the standouts show what worked, and the weaker ones show exactly what to fix next time.</div>
+        </div>
+    </div>
+
+    <!-- PART 2 · SELF-CRITIQUE -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128269; PART 2 &middot; CRITIQUE YOUR OWN WORK</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 12px 0;">Before you call the series done, critique it using the same four-step order you used on Hokusai's wave in Lesson 2: describe, analyze, interpret, judge. Be your own first critic.</p>
+
+        <div class="daij-check">
+            <h4><span>D &middot; Describe</span></h4>
+            <p>Lay your best prints side by side. What does the motif actually look like once repeated? Is the pattern regular or progressive?</p>
+        </div>
+        <div class="daij-check">
+            <h4><span>A &middot; Analyze</span></h4>
+            <p>Check your tools. Does the motif repeat with a clear, intentional rhythm? Is the negative space between motifs as considered as the motif itself? Is registration consistent across your best prints?</p>
+        </div>
+        <div class="daij-check">
+            <h4><span>I &middot; Interpret</span></h4>
+            <p>What does your finished pattern feel like: calm and orderly, busy and alive, something else? Does that feeling match the natural form that inspired it?</p>
+        </div>
+        <div class="daij-check">
+            <h4><span>J &middot; Judge</span></h4>
+            <p>Which print in your series is the strongest, and why? What one change (tighter registration, thinner ink, a cleaner carved edge) would most improve your next pull?</p>
+        </div>
+
+        <div class="optima-widget ow-reflect">
+            <div class="widget-kicker">&#128173; REVISION CHECK-IN &middot; NO WRONG ANSWER</div>
+            <div class="widget-question">You lay out your prints and the pattern looks uneven, some motifs crisp, others smeared or crooked. What is the most likely fix?</div>
+            <div class="widget-options">
+                <button data-response="Detail rarely fixes an uneven pattern and can make carving harder to control. An uneven print series is almost always about process, not about adding more to the motif itself.">Add more detail to the motif</button>
+                <button data-response="Very likely the right call. Smeared ink usually means too much ink or an uneven roll; crooked motifs usually mean the paper was not lined up against the plate the same way each time. Registration and ink control fix most uneven series.">Check my inking and registration process</button>
+                <button data-response="A brand new motif will not fix a process problem. If the same plate produced some crisp prints and some messy ones, the plate and motif are working; the printing steps around them need attention first.">Design a completely new motif</button>
+            </div>
+            <div class="widget-feedback"></div>
+            <button class="widget-reset">Reset</button>
+        </div>
+    </div>
+
+    <!-- PART 3 · ARTIST STATEMENT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; PART 3 &middot; WRITE YOUR ARTIST STATEMENT</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">Your artist statement travels with the print series. It is two or three focused sentences, in your own voice, that show you made deliberate choices. Type it into the submission text box with your prints.</p>
+
+        <div class="statement-box">
+            <p>A strong statement answers three things:</p>
+            <ul>
+                <li>What natural form inspired your motif, and why did you choose it?</li>
+                <li>Which printmaking and pattern tools did you use on purpose, and where? (Name at least two: carving, registration, rhythm, negative space.)</li>
+                <li>What surprised you about repeating your own design, or what would you do differently next time?</li>
+            </ul>
+        </div>
+
+        <details>
+            <summary>&#9654;&nbsp; Draft your three sentences in your notebook first, then open this for a sample of the register (do not copy it).</summary>
+            <div class="ac-body">"I based my motif on the curl of a fern before it unrolls, because I liked how one small spiral already suggests repeating growth. I carved a foam plate and used a taped corner guide for registration so the spiral would line up the same way across all six prints, and I built a half-drop rhythm so the pattern felt like it was spreading rather than just repeating. I was surprised how much a single crooked print in my test round taught me about how carefully the paper has to be placed every single time." Your statement should be this specific, but about your own motif and choices.</div>
+        </details>
+    </div>
+
+    <!-- PART 4 · RUBRIC PREVIEW -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128203; PART 4 &middot; HOW YOU WILL BE GRADED</div>
+        <p style="font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 6px 0;">Your Studio Project is scored on this rubric (4 points per row, 20 total). Read it before you submit and make sure each row is as strong as you can make it.</p>
+        <table class="rubric-table">
+            <thead><tr><th style="width:20%">Criteria</th><th>Excellent (4)</th><th>Proficient (3)</th><th>Developing (2)</th><th>Beginning (1)</th></tr></thead>
+            <tbody>
+                <tr><td>Pattern &amp; Repetition</td><td>Motif is clear, deliberately repeated, and creates real rhythm</td><td>Motif repeats clearly, minor inconsistencies in rhythm</td><td>Motif attempted but repetition is uneven or unclear</td><td>Little intentional pattern or repetition</td></tr>
+                <tr><td>Print Technique / Craftsmanship</td><td>Exceptional care in carving, inking, and registration across the series</td><td>Competent carving and printing, minor issues</td><td>Uneven carving or inking; registration inconsistent</td><td>Little care in carving or printing evident</td></tr>
+                <tr><td>Positive &amp; Negative Space</td><td>Both carved-away and inked areas are used with clear intention</td><td>Negative space considered, minor missed opportunities</td><td>Negative space present but not clearly intentional</td><td>Little distinction made between positive and negative space</td></tr>
+                <tr><td>Artist Statement</td><td>Specific; names tools used; owns choices</td><td>Clear and personal</td><td>Vague or general</td><td>Minimal or missing</td></tr>
+                <tr><td>Completion &amp; Signature</td><td>Complete, all requirements met, signed</td><td>Mostly complete, signed</td><td>Partially complete</td><td>Incomplete or unsigned</td></tr>
+            </tbody>
+        </table>
+        <div class="callout c-help">
+            <div class="ck">&#9997;&#65039; DO NOT FORGET</div>
+            <div class="cb">Every finished print carries its printmaker's name and its place in the edition. Sign and number your strongest prints (for example, 1/6). That mark is how you say: this is mine, I made it, I stand behind every copy.</div>
+        </div>
+    </div>
+
+    <!-- SUBMISSION CHECKLIST -->
+    <div class="submit-card">
+        <div class="sc-k">&#9989; CONFIRM YOUR SUBMISSIONS &middot; STUDIO 5</div>
+        <h3>Before you close Studio 5, check all six</h3>
+        <ul class="checklist">
+            <li><span class="cbx"></span> <div><strong>Skill Builder 1: Motif &amp; Repeat</strong> submitted (Week 1).</div></li>
+            <li><span class="cbx"></span> <div><strong>Skill Builder 2: Print Test Plate</strong> submitted (Week 1).</div></li>
+            <li><span class="cbx"></span> <div><strong>Quiz: The Multiple</strong> completed (Week 2).</div></li>
+            <li><span class="cbx"></span> <div><strong>VR Session: The Pattern Wall</strong> completed (Week 2).</div></li>
+            <li><span class="cbx"></span> <div><strong>Studio Project: Multiplied</strong> uploaded, <em>signed and numbered</em>, with your artist statement typed in the text box (Week 2).</div></li>
+            <li><span class="cbx"></span> <div>All files saved to your <strong>OneDrive art portfolio folder</strong> with consistent naming (for example <em>SA2_S05_Multiplied_LastName</em>).</div></li>
+        </ul>
+    </div>
+
+    <!-- WHAT'S NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; LOOKING AHEAD</div>
+        <div class="next-item"><div class="num create">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Submit the Studio Project</strong> &middot; End of Week 2</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Your one graded print series for Studio 5, with artist statement, signature, and numbering.</div></div></div>
+        <div class="next-item"><div class="num now">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Studio 6: Layers of Meaning</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">You can multiply one image now. Next you learn to combine many different images and materials into one, through collage and mixed media.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">You began Studio 5 asking what changes when an image repeats. Two weeks of carving, inking, and pulling prints gave you a real answer: repetition is not automatic and it is not free. It has to be planned, carved, and aligned on purpose, print after print, the same discipline Hokusai's workshop relied on centuries before you.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 2 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 5 &middot; Pattern, Print &amp; Design &middot; Lesson 6 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 2, Lesson 1: The Arrangement Decides</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components (teal/coral accents; green retired; red = AI only) ===== */
+    .art-fig { margin: 14px 0; text-align: center; }
+    .art-fig img { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #D0D9E8; }
+    .art-fig figcaption { font-size: 13px; color: #666; margin-top: 8px; line-height: 1.5; }
+    .art-fig figcaption a { color: #167567; }
+    .linkout { display: inline-block; margin: 6px 0 2px; font-size: 15px; color: #167567; }
+    .linkout-card { background: #EEF1F8; border: 1px solid #D0D9E8; border-left: 5px solid #1B8A7A; border-radius: 6px; padding: 14px 18px; margin: 14px 0; }
+    .linkout-card .lk-k { font-size: 11px; color: #167567; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .linkout-card .lk-t { font-size: 16px; color: #0E1C42; margin-bottom: 6px; }
+    .linkout-card p { margin: 0 0 8px 0; font-size: 15px; color: #1a2340; line-height: 1.6; }
+    .linkout-card a { color: #167567; font-size: 15px; }
+    .compare-wrap { display: flex; gap: 14px; flex-wrap: wrap; margin: 16px 0; }
+    .compare-box { flex: 1; min-width: 220px; border-radius: 8px; padding: 14px 18px; border: 1.5px solid; }
+    .compare-box.memory  { background: #FBEEE9; border-color: #E0A695; }
+    .compare-box.observe { background: #E6F4F1; border-color: #7CC3B8; }
+    .compare-box h4 { font-size: 13px; letter-spacing: 0.5px; margin: 0 0 8px 0; }
+    .compare-box.memory  h4 { color: #A93B22; }
+    .compare-box.observe h4 { color: #167567; }
+    .compare-box ul { margin: 0; padding-left: 18px; font-size: 15px; color: #1a2340; line-height: 1.6; }
+    .concept-card { background: #0E1C42; border-radius: 10px; padding: 26px 28px; margin: 20px 0; text-align: center; border-top: 5px solid #1B8A7A; }
+    .concept-card .cc-k { font-size: 11px; color: #55C8E8; letter-spacing: 1px; margin-bottom: 10px; }
+    .concept-card .cc-main { font-size: 26px; color: #ffffff; line-height: 1.35; }
+    .concept-card .cc-main em { color: #F0B39E; font-style: normal; }
+    .concept-card .cc-main strong { color: #7FD4C6; }
+    .concept-card .cc-sub { font-size: 15px; color: #c8d4e8; margin-top: 12px; line-height: 1.6; }
+    /* ===== Composition demo (original CSS/SVG) ===== */
+    .comp-demo { display: flex; gap: 16px; flex-wrap: wrap; margin: 16px 0; justify-content: center; }
+    .comp-demo figure { margin: 0; flex: 1; min-width: 230px; text-align: center; }
+    .comp-frame { border: 1px solid #D0D9E8; border-radius: 6px; background: #f8f9fc; overflow: hidden; }
+    .comp-demo figcaption { font-size: 13px; color: #6b7a99; margin-top: 6px; line-height: 1.5; }
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    .roadmap { list-style: none; margin: 10px 0 0; padding: 0; }
+    .roadmap li { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border: 1px solid #D0D9E8; border-radius: 6px; margin-bottom: 8px; font-size: 15px; color: #1a2340; }
+    .roadmap li.current { background: #E6F4F1; border-color: #1B8A7A; color: #0E1C42; }
+    .roadmap li .rn { min-width: 24px; height: 24px; border-radius: 50%; background: #EEF1F8; color: #0E1C42; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .roadmap li.current .rn { background: #1B8A7A; color: #fff; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q1 &middot; Studio 2 of 18</div>
+        <div style="font-size: 12px; color: #666;">Organizing the Image</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">1 of 6</div>
+        <div style="font-size: 12px; color: #666;">Observe</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">The Arrangement Decides</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Studio Project</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">Three Arrangements</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 2 &middot; LESSON 1</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">The Arrangement Decides</div>
+        <div style="font-size: 16px; color: #666;">In Studio 1 you learned to see accurately. Now the next decision: where to put what you see, so the viewer's eye goes where you want. <span class="time-pill">~45 min</span></div>
+    </div>
+
+    <!-- Essential Question -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128214; ESSENTIAL QUESTION</div>
+        <div style="font-size: 20px; color: #0e1c42; font-style: italic; margin-bottom: 10px;">Two artists draw the same objects. Why does one arrangement hold your eye and the other lose it?</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">Accurate drawing was Studio 1. This Studio is about <em>arrangement</em>. The same cup, book, and cloth can make a picture that feels calm, or tense, or empty, depending only on where each thing sits and how your eye is invited to travel. That set of choices has a name: <strong>composition</strong>.</div>
+    </div>
+
+    <!-- PART 1 · LOOK FIRST -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128064; PART 1 &middot; LOOK FIRST</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Spend a full minute with the print below before you read the caption. Notice where your eye lands first, then where it goes next. Do not force it. Just watch it move.</p>
+
+        <figure class="art-fig">
+            <img src="images/hokusai-still-life-c1804.jpg" alt="A Japanese woodblock print of an arranged still life: a long patterned cylindrical case lies at a diagonal across the lower half, a bundle of fresh fish tied with cord rests against it, cherry blossom branches spread to the right, and a small ink box and shell sit at the lower left, with columns of handwritten poetry filling the empty upper space." />
+            <figcaption>Katsushika Hokusai (Japanese, 1760&ndash;1849), still-life <em>surimono</em> print with fish, blossoms, and a patterned case, c.1804. Woodblock print. Public domain. Source: provided course archive (Studio Art 2 Images, Unit 2).</figcaption>
+        </figure>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Nothing here is centered. The case cuts a strong diagonal, the fish point one way, the blossoms open the other, and the poetry sits quietly in the upper space instead of crowding the objects. Your eye probably entered near the fish, slid along the case, and then drifted up into the words. That path was not an accident. Hokusai arranged every object to lead you.</p>
+
+        <div class="callout c-art">
+            <div class="ck">&#128172; WONDER FIRST</div>
+            <div class="cb">Imagine the exact same objects lined up in a neat row across the middle of the page, evenly spaced, all the same size. Would your eye still travel, or would it just stop? Hold that thought. By the end of this Studio you will be arranging objects on purpose to control exactly that.</div>
+        </div>
+
+        <div class="optima-widget ow-reflect">
+            <div class="widget-kicker">&#128173; QUICK CHECK-IN &middot; NO WRONG ANSWER</div>
+            <div class="widget-question">When you looked at the print, where did your eye land first?</div>
+            <div class="widget-options">
+                <button data-response="That is the focal point at work. The fish are detailed, high in contrast, and sit near a strong crossing of lines, so the eye is pulled there first. You will learn to build that pull on purpose in Lesson 3.">On the fish</button>
+                <button data-response="Interesting. The diagonal case is a leading line: it carries the eye across the picture. Even if you did not land there first, you almost certainly traveled along it. That is movement, the subject of Lesson 4.">On the long patterned case</button>
+                <button data-response="Many viewers do drift to the writing, because it fills the open space at the top and gives the eye somewhere to rest after the busy objects below. Notice that it is arranged to balance the weight of the objects.">On the poetry at the top</button>
+            </div>
+            <div class="widget-feedback"></div>
+            <button class="widget-reset">Reset</button>
+        </div>
+    </div>
+
+    <!-- PART 2 · NAME WHAT YOU SEE -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 2 &middot; NAME WHAT YOU SEE</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;"><strong>Composition</strong> is the arrangement of the parts of an artwork within its frame. It is the artist's biggest decision after "what will I draw," because it controls the viewer's experience: what they notice first, how their eye travels, and how the whole thing feels. A drawing can be perfectly accurate and still fall flat if the composition is weak.</p>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Watch it happen. Below are the same three shapes placed two ways. The objects are identical. Only the arrangement changes, and with it, everything you feel.</p>
+
+        <div class="comp-demo">
+            <figure>
+                <div class="comp-frame">
+                    <svg width="100%" viewBox="0 0 240 170" aria-hidden="true"><rect width="240" height="170" fill="#f8f9fc"/><rect x="35" y="70" width="34" height="34" fill="#1B8A7A"/><circle cx="120" cy="87" r="18" fill="#C7922C"/><polygon points="185,105 205,71 165,71" fill="#0E1C42"/></svg>
+                </div>
+                <figcaption>Centered, evenly spaced, all the same weight. Static. The eye has no reason to move and nowhere in particular to look.</figcaption>
+            </figure>
+            <figure>
+                <div class="comp-frame">
+                    <svg width="100%" viewBox="0 0 240 170" aria-hidden="true"><rect width="240" height="170" fill="#f8f9fc"/><circle cx="86" cy="96" r="26" fill="#C7922C"/><rect x="120" y="78" width="30" height="30" fill="#1B8A7A"/><polygon points="176,74 190,50 162,50" fill="#0E1C42"/><line x1="40" y1="130" x2="200" y2="60" stroke="#D9583B" stroke-width="2" stroke-dasharray="5 5"/></svg>
+                </div>
+                <figcaption>Grouped, varied in size, set on a diagonal. The large gold circle grabs you first, then the dashed path carries your eye up and to the right. Alive.</figcaption>
+            </figure>
+        </div>
+
+        <div class="concept-card">
+            <div class="cc-k">THE ONE IDEA OF THIS STUDIO</div>
+            <div class="cc-main">Composition is how an artist controls<br/>where your eye <strong>goes</strong>, and in what <em>order</em>.</div>
+            <div class="cc-sub">Every tool in the next five lessons, focal point, balance, and movement, is just a way to direct that path on purpose.</div>
+        </div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Three ideas do most of the work of composition, and you will practice each one this Studio. Meet them by name now; you will use them in every lesson that follows.</p>
+
+        <div class="vocab-grid" style="margin-top: 6px;">
+            <div class="vocab-card"><strong>Focal point</strong>The spot the artist wants you to look at first; where the eye enters the image.</div>
+            <div class="vocab-card"><strong>Balance</strong>How visual weight is distributed across the frame; it can be symmetrical or asymmetrical.</div>
+            <div class="vocab-card"><strong>Movement</strong>The path the artist builds for your eye to follow through the work.</div>
+            <div class="vocab-card"><strong>Leading lines</strong>Real or implied lines that guide the eye toward the focal point.</div>
+        </div>
+    </div>
+
+    <!-- PART 3 · WHY IT MATTERS -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128269; PART 3 &middot; WHY THIS COMES SECOND</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Studio 1 gave you an accurate eye, but accuracy alone does not make a picture worth looking at. Once you can record what is in front of you, the real decision begins: how to arrange it. Composition is where you stop copying reality and start shaping the viewer's experience of it.</p>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Your project for these two weeks is called <strong>Three Arrangements</strong>. You will choose one small set of objects and draw them three times, changing nothing but their arrangement, so that each version communicates a different feeling: calm, tension, and isolation. Same objects, three compositions, three moods. The arrangement does all the talking.</p>
+
+        <details>
+            <summary>&#9654;&nbsp; Before you read on, look around the room and pick three small objects you could arrange in different ways. Then open this.</summary>
+            <div class="ac-body">A mug, a spoon, and a folded cloth. A book, a pen, and a pair of glasses. Almost any small group works. The point is that the objects barely matter; what will change your three drawings is entirely where you place them and how you point the viewer's eye. Keep your three objects in mind; they may become your project subject.</div>
+        </details>
+    </div>
+
+    <!-- WHAT'S NEXT IN THIS STUDIO -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#128506;&#65039; YOUR PATH THROUGH STUDIO 2</div>
+        <ul class="roadmap">
+            <li class="current"><span class="rn">1</span> <div><strong>The Arrangement Decides</strong> &middot; you are here. Why composition controls the viewer's eye.</div></li>
+            <li><span class="rn">2</span> <div><strong>The Composer's Eye</strong> &middot; how Hopper and Cartier-Bresson arranged the frame (critique).</div></li>
+            <li><span class="rn">3</span> <div><strong>Focal Point &amp; the Rule of Thirds</strong> &middot; skill builder: where the eye enters and how to place it.</div></li>
+            <li><span class="rn">4</span> <div><strong>Balance &amp; Movement</strong> &middot; skill builder: symmetrical vs. asymmetrical, leading lines, the eye path.</div></li>
+            <li><span class="rn">5</span> <div><strong>Plan &amp; Create</strong> &middot; choose your objects, plan three arrangements, VR gallery, begin the artwork.</div></li>
+            <li><span class="rn">6</span> <div><strong>Refine, Reflect &amp; Present</strong> &middot; finish, self-critique, artist statement, portfolio.</div></li>
+        </ul>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT (IN CANVAS) -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num now">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Warm-up: The Careless Arrangement</strong> &middot; Week 1</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Right now, before you learn any composition tool, gather three objects and quickly sketch them with no plan at all: just drop them on the page. Keep this sketch. In Lesson 6 you will compare it with your finished arrangements. This is your before picture.</div></div></div>
+        <div class="next-item"><div class="num learn">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 2: The Composer's Eye</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">See how two artists made arrangement the whole point of the picture.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">The same objects can make a hundred different pictures. What separates them is arrangement. For the next two weeks you will treat placement as the decision it really is, and you will be surprised how much feeling you can change without changing a single object.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 1 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 2 &middot; Organizing the Image &middot; Lesson 1 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. Artwork shown is in the public domain; see caption for source.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

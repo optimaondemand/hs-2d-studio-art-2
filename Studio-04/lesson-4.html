@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 4, Lesson 4: Depth Without Lines</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .cue-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 16px 0; }
+    .cue-card { border: 1px solid #D0D9E8; border-radius: 8px; overflow: hidden; background: #fff; }
+    .cue-demo { height: 140px; display: flex; align-items: center; justify-content: center; background: #f8f9fc; border-bottom: 1px solid #EEF1F8; }
+    .cue-body { padding: 12px 15px; }
+    .cue-body strong { color: #167567; display: block; margin-bottom: 4px; font-size: 16px; }
+    .cue-body span { font-size: 14px; color: #1a2340; line-height: 1.55; }
+    .scene-demo { background: #f8f9fc; border: 1px solid #D0D9E8; border-radius: 8px; padding: 16px; margin: 16px 0; text-align: center; }
+    .scene-demo figcaption { font-size: 13px; color: #6b7a99; margin-top: 8px; line-height: 1.5; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 12px 0; }
+    .steps li { position: relative; padding: 10px 0 10px 46px; border-bottom: 1px solid #EEF1F8; font-size: 16px; color: #1a2340; line-height: 1.6; }
+    .steps li:last-child { border-bottom: none; }
+    .steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 9px; width: 30px; height: 30px; background: #D9583B; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .skillbox { background: #FFFFFF; border: 2px solid #D9583B; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .skillbox .sk-k { font-size: 11px; color: #D9583B; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .skillbox h3 { margin: 0 0 8px 0; font-size: 19px; color: #0E1C42; }
+    .skillbox p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 8px 0; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q1 &middot; Studio 4 of 18</div>
+        <div style="font-size: 12px; color: #666;">Creating Space</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">4 of 6</div>
+        <div style="font-size: 12px; color: #666;">Skill Builder</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Depth Without Lines</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">You Will Make</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">Three-cue depth study</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 4 &middot; LESSON 4</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Depth Without Lines</div>
+        <div style="font-size: 16px; color: #666;">A forest, a beach, a range of hills: none have straight edges, yet they read as deep. Here is how. <span class="time-pill">~55 min</span></div>
+    </div>
+
+    <!-- Objective -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#127919; WHAT YOU WILL BE ABLE TO DO</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">Create convincing depth with no perspective lines at all, using three cues: <strong>overlap</strong>, <strong>relative size</strong>, and <strong>atmospheric perspective</strong>. Linear perspective handles built spaces; these three handle everything else, and they stack on top of linear perspective to make any scene deeper.</div>
+    </div>
+
+    <!-- PART 1 · THE THREE CUES -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 1 &middot; THREE CUES THAT NEED NO RULER</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">These cues work because your eye already trusts them from real life. You do not have to construct them with a straightedge; you just have to place them on purpose.</p>
+
+        <div class="cue-grid">
+            <div class="cue-card">
+                <div class="cue-demo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/Overlapping_Mountains.jpg" alt="Photograph of overlapping mountain ridges at Sugarloaf Ridge State Park, a nearer ridge covering part of the ridges behind it." style="width:100%; height:100%; object-fit:cover;" />
+                </div>
+                <div class="cue-body"><strong>Overlap</strong><span>A nearer object covers part of a farther one. The one in front reads as closer, instantly and without any measuring.</span></div>
+                <div class="tech-credit" style="font-size:11px; color:#6b7a99; padding:0 15px 12px;">Lisa Williams, <em>Overlapping Mountains</em>. <a href="https://commons.wikimedia.org/wiki/File:Overlapping_Mountains.jpg" target="_blank" rel="noopener" style="color:#167567;">Wikimedia Commons</a>, CC BY 2.0.</div>
+            </div>
+            <div class="cue-card">
+                <div class="cue-demo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/54/Meindert_Hobbema_-_The_Alley_at_Middelharnis_-_WGA11427.jpg" alt="Hobbema's painting The Alley at Middelharnis: a row of identical tall trees lining a straight path, each tree smaller than the last as the row recedes toward a distant village." style="width:100%; height:100%; object-fit:cover;" />
+                </div>
+                <div class="cue-body"><strong>Relative size</strong><span>Draw the same kind of object smaller and it reads as farther away. Here a row of identical trees, each smaller than the last, builds the recession.</span></div>
+                <div class="tech-credit" style="font-size:11px; color:#6b7a99; padding:0 15px 12px;">Meindert Hobbema, <em>The Alley at Middelharnis</em>, 1689. Public domain. <a href="https://commons.wikimedia.org/wiki/File:Meindert_Hobbema_-_The_Alley_at_Middelharnis_-_WGA11427.jpg" target="_blank" rel="noopener" style="color:#167567;">Wikimedia Commons</a>.</div>
+            </div>
+            <div class="cue-card">
+                <div class="cue-demo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/Aerial_perspective_1.JPG" alt="Photograph of the Serra da Estrela mountains in Portugal, with near ridges dark and sharp and successive rows of distant ridges growing paler, hazier, and bluer toward the horizon." style="width:100%; height:100%; object-fit:cover;" />
+                </div>
+                <div class="cue-body"><strong>Atmospheric perspective</strong><span>Distant forms go paler, cooler, and less detailed as air builds up between you and them. Near ridges are dark and sharp; far ones fade toward the sky.</span></div>
+                <div class="tech-credit" style="font-size:11px; color:#6b7a99; padding:0 15px 12px;">Joaquim Alves Gaspar, <em>Aerial perspective 1</em>. <a href="https://commons.wikimedia.org/wiki/File:Aerial_perspective_1.JPG" target="_blank" rel="noopener" style="color:#167567;">Wikimedia Commons</a>, CC BY-SA 2.5.</div>
+            </div>
+        </div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 6px 0 10px 0;">Look back at Canaletto's canal from Lesson 1 and you will find all three quietly at work: the near gondolas overlap the far ones, the buildings shrink as they recede, and the farthest structures are a touch paler and hazier than the sharp ones up front. He used the ruler for the architecture and these three cues for everything else.</p>
+
+        <figure class="scene-demo">
+            <svg width="480" height="240" viewBox="0 0 480 240" role="img" aria-label="A landscape built only from non-line cues: pale hazy hills far back, a mid-tone tree line, and dark sharp trees in front that overlap each other and grow larger toward the viewer." style="max-width:100%; height:auto;">
+                <!-- sky -->
+                <rect x="0" y="0" width="480" height="150" fill="#EEF1F8"/>
+                <!-- far hills, palest / coolest -->
+                <path d="M0 150 Q120 96 240 128 Q360 100 480 138 L480 150 Z" fill="#c5cfe0"/>
+                <!-- mid hills -->
+                <path d="M0 156 Q140 120 280 150 Q400 128 480 154 L480 165 Z" fill="#8f9cb6"/>
+                <!-- ground -->
+                <rect x="0" y="150" width="480" height="90" fill="#F6FBFA"/>
+                <!-- distant small trees (pale) -->
+                <g fill="#a7b2c6"><path d="M120 150 L132 122 L144 150 Z"/><path d="M150 150 L160 128 L170 150 Z"/></g>
+                <!-- mid trees -->
+                <g fill="#5b6a86"><path d="M250 168 L268 120 L286 168 Z"/><path d="M300 168 L314 132 L328 168 Z"/></g>
+                <!-- near trees, dark + sharp + overlapping + larger -->
+                <g fill="#1a2340" stroke="#0E1C42" stroke-width="1.5"><path d="M40 230 L78 118 L116 230 Z"/><path d="M92 230 L124 140 L156 230 Z"/></g>
+            </svg>
+            <figcaption>A landscape with no perspective lines. Depth comes entirely from overlap, relative size, and atmospheric fade. Original diagram built with course design tokens.</figcaption>
+        </figure>
+
+        <div class="callout c-help">
+            <div class="ck">&#128161; ATMOSPHERIC PERSPECTIVE, IN THREE MOVES</div>
+            <div class="cb">To push something back with atmosphere, do three things at once: lower its <strong>contrast</strong> (bring its darks up toward gray), cool and lighten its <strong>color</strong> (shift it toward the pale blue of the sky), and drop its <strong>detail</strong> (soften the edges, lose the small marks). The farther back, the more of each. This is why distant mountains read as flat pale silhouettes.</div>
+        </div>
+    </div>
+
+    <!-- PART 2 · GUIDED PRACTICE -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#9997;&#65039; PART 2 &middot; GUIDED PRACTICE (do this now)</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">Draw one shape three times to build a receding row using every cue at once. A tree, a rock, or a simple house all work.</p>
+
+        <ol class="steps">
+            <li><strong>Set a horizon.</strong> Rule a light horizontal line for the ground-to-sky meeting. It gives your objects a floor to sit on.</li>
+            <li><strong>Draw the near one large, dark, and detailed.</strong> Place your first shape low and big, with your darkest values and sharpest edges. This is the front of the space.</li>
+            <li><strong>Draw the mid one smaller and higher, overlapping the first.</strong> Make it clearly smaller, sit it slightly higher toward the horizon, and let the near shape overlap a corner of it so the order is unmistakable.</li>
+            <li><strong>Draw the far one smallest, palest, and softest.</strong> Small, close to the horizon, light gray with soft edges and almost no detail. It should look like it is dissolving into the distance.</li>
+            <li><strong>Check the stack.</strong> All four cues (overlap, size, placement toward the horizon, and atmospheric fade) should point the same direction. When they agree, the depth locks in.</li>
+        </ol>
+
+        <div class="optima-widget ow-select">
+            <div class="widget-kicker">&#9889; TRY IT &middot; PICK THE CUE</div>
+            <div class="widget-question">For each situation, decide which depth cue does the most work. Commit, then check.</div>
+            <div class="widget-row" data-correct="atmos" data-hint="Which cue changes an object's contrast, color, and detail as it goes back? Try again.">
+                <div class="widget-row-prompt">You want the far mountains in a landscape to sit clearly behind the near ones, but they are all the same size and none overlap.</div>
+                <div class="widget-options">
+                    <button data-choice="overlap">Overlap</button>
+                    <button data-choice="atmos" data-fb="Yes. With no overlap and no size change to help, atmospheric perspective does the work: make the far mountains paler, cooler, and softer and they drop back.">Atmospheric perspective</button>
+                    <button data-choice="size">Relative size</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="overlap" data-hint="Which cue instantly tells the eye which object is in front? Try again.">
+                <div class="widget-row-prompt">Two people are drawn the same size, same sharpness. You need to make it obvious which one is standing closer.</div>
+                <div class="widget-options">
+                    <button data-choice="overlap" data-fb="Right. Let the nearer figure cover part of the farther one. Overlap decides front-and-back order faster than any other cue.">Overlap</button>
+                    <button data-choice="atmos">Atmospheric perspective</button>
+                    <button data-choice="size">Relative size</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="size" data-hint="Which cue works by drawing the same kind of object at different scales? Try again.">
+                <div class="widget-row-prompt">You are drawing a straight row of identical streetlamps and want them to march off into the distance, but there is nothing for them to overlap.</div>
+                <div class="widget-options">
+                    <button data-choice="atmos">Atmospheric perspective</button>
+                    <button data-choice="size" data-fb="Correct. Draw each lamp smaller than the last and step them toward the horizon. Relative size alone builds a convincing recession.">Relative size</button>
+                    <button data-choice="overlap">Overlap</button>
+                </div>
+            </div>
+            <button class="widget-reset">Reset</button>
+        </div>
+
+        <details>
+            <summary>&#9654;&nbsp; In your notebook, draw the three-object row before you open this. Then check your cues.</summary>
+            <div class="ac-body">Squint at your row. Ask four questions. Does the near object clearly overlap the mid one? Is each object noticeably smaller than the one in front? Do they step up toward the horizon rather than sitting in a flat line? Is the far object paler and softer than the near one? If any answer is no, strengthen that one cue. Depth reads best when all of them agree.</div>
+        </details>
+    </div>
+
+    <!-- SKILL BUILDER ASSIGNMENT POINTER -->
+    <div class="skillbox">
+        <div class="sk-k">&#128393;&#65039; SKILL BUILDER SKETCH (turn in this week)</div>
+        <h3>Three-Cue Depth Study</h3>
+        <p>On one sheet, draw a simple landscape or scene that uses all three no-line cues: at least one clear overlap, the same kind of object shown at two or three sizes, and atmospheric perspective (a near element dark and sharp, a far element pale and soft). Label where you used each cue. This is a completion-graded practice rung, not a finished artwork.</p>
+        <p style="margin:0;">Full directions and submission steps are in the Canvas assignment <em>Skill Builder 2: Three-Cue Depth Study</em>. Photograph your page, upload it, and save a copy to your OneDrive portfolio folder.</p>
+    </div>
+
+    <!-- VOCABULARY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; VOCABULARY</div>
+        <div class="vocab-grid">
+            <div class="vocab-card"><strong>Overlap</strong>A nearer object covering part of a farther one to show which is in front.</div>
+            <div class="vocab-card"><strong>Relative size</strong>The same kind of object drawn smaller to read as farther away.</div>
+            <div class="vocab-card"><strong>Atmospheric perspective</strong>Distant objects appearing paler, cooler, and less detailed than near ones.</div>
+            <div class="vocab-card"><strong>Foreground</strong>The part of a scene nearest the viewer.</div>
+            <div class="vocab-card"><strong>Middle ground</strong>The zone between the foreground and the background.</div>
+            <div class="vocab-card"><strong>Background</strong>The part of a scene farthest from the viewer.</div>
+        </div>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num create">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Submit: Skill Builder 2 &middot; Three-Cue Depth Study</strong> &middot; Week 1</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Your labeled overlap, size, and atmosphere study. Completion graded.</div></div></div>
+        <div class="next-item"><div class="num now">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Take the Canvas Quiz: Space &amp; the Masters</strong> &middot; Week 2</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">A short auto-graded check on the depth cues, perspective parts, the critique order, and the two artists.</div></div></div>
+        <div class="next-item"><div class="num learn">3</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 5: Plan &amp; Create</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Design your environment, walk a space in VR, and begin the Studio Project.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">Linear perspective builds spaces made of straight edges; overlap, size, and atmosphere build everything else. The strongest scenes use both, and they use them so the cues all agree. You now hold every tool the Studio Project needs. Next you put them to work on a space of your own.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 1 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 4 &middot; Creating Space &middot; Lesson 4 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. The three cue photographs are Creative Commons or public domain licensed; see each caption for source and attribution. The landscape diagram below is original HTML/CSS/SVG built with course design tokens.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

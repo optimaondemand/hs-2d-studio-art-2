@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 8, Lesson 2: Self-Critique Across Your Work</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .daij-step { border-left: 3px solid #1B8A7A; padding: 4px 0 4px 16px; margin: 0 0 14px 0; }
+    .daij-step h4 { font-size: 16px; color: #0E1C42; margin: 0 0 4px 0; }
+    .daij-step h4 span { color: #1B8A7A; }
+    .daij-step p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+
+    /* ===== Studio 8 concept visual: mini portfolio wall row for critique demo ===== */
+    .mini-wall { display: flex; gap: 12px; margin: 16px 0; flex-wrap: wrap; }
+    .mini-frame { flex: 1; min-width: 140px; background: #ffffff; border: 1px solid #D0D9E8; border-radius: 6px; padding: 8px; text-align: center; box-shadow: 0 2px 5px rgba(14,28,66,0.07); }
+    .mini-frame .sw { height: 60px; border-radius: 4px; margin-bottom: 6px; }
+    .mini-frame .lbl { font-size: 11px; color: #0E1C42; }
+    .mw-a { background: linear-gradient(135deg,#c9d3e6,#eef1f8); }
+    .mw-b { background: linear-gradient(135deg,#D0D9E8,#f8f9fc 40%, #F0B39E 40%, #f8f9fc); }
+    .mini-frame.focus { border: 2px solid #D9583B; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q2 &middot; Studio 8 of 18</div>
+        <div style="font-size: 12px; color: #666;">Mid-Year Portfolio Review</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">2 of 6</div>
+        <div style="font-size: 12px; color: #666;">Self-Critique</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Critique on your own work</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Method</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">Critique method, self-applied</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 8 &middot; LESSON 2</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Self-Critique Across Your Work</div>
+        <div style="font-size: 16px; color: #666;">You already know the critique method. Today you turn it on yourself, across seven pieces at once. <span class="time-pill">~50 min</span></div>
+    </div>
+
+    <!-- Essential Question -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128214; ESSENTIAL QUESTION</div>
+        <div style="font-size: 20px; color: #0e1c42; font-style: italic; margin-bottom: 10px;">Can you critique your own work as honestly as you critique someone else's?</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">In Studio 1 you learned a four-step critique method, describe, analyze, interpret, judge, to read a master's drawing, then turned it on one piece of your own. Today you run it across your <em>whole</em> body of work: seven pieces, one method, looking for patterns you cannot see when you only look at one piece at a time.</div>
+    </div>
+
+    <!-- PART 1 · WHY MULTIPLE WORKS CHANGE THE CRITIQUE -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 1 &middot; ONE PIECE VS. SEVEN PIECES</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Critiquing one drawing tells you about that drawing. Critiquing seven drawings made over four months tells you about <em>you</em>: which skills you reach for automatically, which ones you avoid, and where the same weakness keeps showing up under a different subject. A pattern that appears once might be an accident; a pattern that appears three times is a habit, and habits are exactly what revision should target.</p>
+
+        <div class="mini-wall">
+            <div class="mini-frame"><div class="sw mw-a"></div><div class="lbl">Studio 1 &middot; value is flat</div></div>
+            <div class="mini-frame focus"><div class="sw mw-b"></div><div class="lbl">Studio 6 &middot; value is flat again</div></div>
+        </div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Notice something in the pair above: two very different Studios (observation drawing, then a mixed-media collage) share the same weak spot, thin value range. Seen alone, each piece might read as "pretty good." Seen together, a clear target for revision appears. That is the power of reviewing a body of work instead of a single piece.</p>
+    </div>
+
+    <!-- PART 2 · CRITIQUE ACROSS A BODY OF WORK -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128269; PART 2 &middot; RUN THE CRITIQUE ACROSS ALL SEVEN</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 12px 0;">Same four steps you already know. The only change is scope: instead of describing one piece, you describe the set, with your own Studios 1 through 7 open in front of you.</p>
+
+        <div class="daij-step">
+            <h4><span>D &middot; Describe</span> (just the facts, across all seven)</h4>
+            <p>Lay out your seven pieces (physically or as photos on one screen). What media did you use most? Which Studios are drawing, which are painted, collaged, or mixed? Just list what is there, no opinions yet.</p>
+        </div>
+        <div class="daij-step">
+            <h4><span>A &middot; Analyze</span> (how is the set built?)</h4>
+            <p>Which elements or techniques show up strong in more than one piece (a confident line, a bold color choice, a strong composition)? Which ones show up weak in more than one piece? Look specifically for repeats, not one-time issues.</p>
+        </div>
+        <div class="daij-step">
+            <h4><span>I &middot; Interpret</span> (what does the set say about you as an artist?)</h4>
+            <p>What kind of subject matter keeps appearing? What mood or approach shows up more than once? What do these seven pieces, together, say you care about or are drawn to?</p>
+        </div>
+        <div class="daij-step">
+            <h4><span>J &middot; Judge</span> (what is the one thing worth fixing?)</h4>
+            <p>Of everything you noticed in Analyze, which single weakness would most improve your work if you fixed it in one or two pieces right now? That answer becomes your revision plan in Lesson 3.</p>
+        </div>
+
+        <div class="optima-widget ow-select">
+            <div class="widget-kicker">&#9889; TRY IT &middot; WHICH CRITIQUE STEP?</div>
+            <div class="widget-question">Read each statement about a body of work. Decide which critique step it belongs to, then check it.</div>
+            <div class="widget-row" data-correct="analyze" data-hint="Is this a plain list of facts, a pattern across pieces, a meaning, or a verdict? Try again.">
+                <div class="widget-row-prompt">"My value range is strong in Studio 4 and Studio 7, but flat in Studio 1, Studio 3, and Studio 6."</div>
+                <div class="widget-options">
+                    <button data-choice="describe">Describe</button>
+                    <button data-choice="analyze" data-fb="Right. Naming a pattern across specific pieces, where a skill is strong and where it is weak, is Analyze. It sets up the Judge step that follows.">Analyze</button>
+                    <button data-choice="interpret">Interpret</button>
+                    <button data-choice="judge">Judge</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="judge" data-hint="This one commits to a single decision about what to fix. That is not a fact list, a pattern, or a meaning statement. Try again.">
+                <div class="widget-row-prompt">"The one change that would help my portfolio most is pushing value darker in my two weakest pieces before I submit."</div>
+                <div class="widget-options">
+                    <button data-choice="describe">Describe</button>
+                    <button data-choice="analyze">Analyze</button>
+                    <button data-choice="interpret">Interpret</button>
+                    <button data-choice="judge" data-fb="Correct. A specific, committed decision about what to revise is Judge, the step that turns critique into action.">Judge</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="interpret" data-hint="This one goes beyond a list of facts and beyond naming a pattern; it draws a conclusion about you as an artist. Try again.">
+                <div class="widget-row-prompt">"Across all seven Studios, I keep choosing quiet, close-up subjects. I think I am drawn to intimacy over drama."</div>
+                <div class="widget-options">
+                    <button data-choice="describe">Describe</button>
+                    <button data-choice="analyze">Analyze</button>
+                    <button data-choice="interpret" data-fb="Yes. Drawing a conclusion about what the whole set reveals about the artist's interests or tendencies is Interpret.">Interpret</button>
+                    <button data-choice="judge">Judge</button>
+                </div>
+            </div>
+            <button class="widget-reset">Reset</button>
+        </div>
+
+        <details>
+            <summary>&#9654;&nbsp; In your notebook, write your own Describe, Analyze, Interpret, and Judge for your seven Studios before you open this.</summary>
+            <div class="ac-body">There is no single correct answer here, this is about your own work, but a strong Judge sentence always names one specific, doable action ("I will darken the shadows in Studio 3" rather than "I should get better at value"). If your Judge step is vague, go back to Analyze and find a more specific pattern to point at.</div>
+        </details>
+    </div>
+
+    <!-- VOCABULARY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; VOCABULARY</div>
+        <div class="vocab-grid">
+            <div class="vocab-card"><strong>Self-critique</strong>Applying the critique method honestly to your own work, not just someone else's.</div>
+            <div class="vocab-card"><strong>Pattern</strong>A strength or weakness that repeats across more than one piece, rather than appearing once.</div>
+            <div class="vocab-card"><strong>Revision</strong>A genuine improvement to a finished piece, guided by specific critique.</div>
+            <div class="vocab-card"><strong>Habit</strong>A tendency, good or bad, that shows up automatically across an artist's work.</div>
+        </div>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num now">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Complete: Portfolio Review Check-In</strong> &middot; Week 1</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">A short process check confirming you have gathered your Studios 1&ndash;7 and run critique across the set.</div></div></div>
+        <div class="next-item"><div class="num learn">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 3: Skill Builder A</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Turn your Judge step into an actual plan: choosing what to revise, and how.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">One critique tells you about one piece. Seven critiques, read together, tell you about yourself. The critique method scales from a single artwork to a whole body of work without changing its steps, only its scope.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 2 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 8 &middot; Mid-Year Portfolio Review &middot; Lesson 2 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. All visuals on this page are original CSS/SVG; no third-party images used.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

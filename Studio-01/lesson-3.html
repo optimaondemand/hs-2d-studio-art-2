@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 1, Lesson 3: Line &amp; Contour</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 16px 0; }
+    .tech-card { border: 1px solid #D0D9E8; border-radius: 8px; overflow: hidden; background: #fff; }
+    .tech-demo { height: 130px; display: flex; align-items: center; justify-content: center; background: #f8f9fc; border-bottom: 1px solid #EEF1F8; overflow: hidden; }
+    .tech-demo img { max-width: 100%; max-height: 130px; object-fit: contain; }
+    .tech-body { padding: 12px 15px; }
+    .tech-body strong { color: #167567; display: block; margin-bottom: 4px; font-size: 16px; }
+    .tech-body span { font-size: 14px; color: #1a2340; line-height: 1.55; }
+    .tech-credit { font-size: 11px; color: #6b7a99; padding: 0 15px 12px; line-height: 1.5; }
+    .tech-credit a { color: #167567; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 12px 0; }
+    .steps li { position: relative; padding: 10px 0 10px 46px; border-bottom: 1px solid #EEF1F8; font-size: 16px; color: #1a2340; line-height: 1.6; }
+    .steps li:last-child { border-bottom: none; }
+    .steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 9px; width: 30px; height: 30px; background: #D9583B; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .skillbox { background: #FFFFFF; border: 2px solid #D9583B; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .skillbox .sk-k { font-size: 11px; color: #D9583B; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .skillbox h3 { margin: 0 0 8px 0; font-size: 19px; color: #0E1C42; }
+    .skillbox p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 8px 0; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q1 &middot; Studio 1 of 18</div>
+        <div style="font-size: 12px; color: #666;">Learning to See</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">3 of 6</div>
+        <div style="font-size: 12px; color: #666;">Skill Builder</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Line &amp; Contour</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">You Will Make</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">Contour warm-up sketch</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 1 &middot; LESSON 3</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Line &amp; Contour</div>
+        <div style="font-size: 16px; color: #666;">Your first hands-on tools for recording what you see. Keep a pencil and paper beside you. <span class="time-pill">~50 min</span></div>
+    </div>
+
+    <!-- Objective -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#127919; WHAT YOU WILL BE ABLE TO DO</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">Draw the true edges of an object using <strong>contour line</strong>, train pure observation with <strong>blind contour</strong>, and use <strong>negative space</strong> to check your accuracy. These three tools all serve one goal: getting your hand to record your eye, not your memory.</div>
+    </div>
+
+    <!-- PART 1 · THE THREE TOOLS -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 1 &middot; THREE WAYS TO USE LINE</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">A <strong>contour</strong> is not an outline you invent; it is the real edge where a form turns away from you, or where one surface meets another. Line is the most honest tool in drawing, because it shows exactly where your eye actually went.</p>
+
+        <div class="tech-grid">
+            <div class="tech-card">
+                <div class="tech-demo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Line_Contour_Drawing.png" alt="A continuous contour-line drawing of a man's head, rendered as one flowing line with minimal shading." />
+                </div>
+                <div class="tech-body"><strong>Contour Line</strong><span>One steady, continuous line that follows every outer and inner edge of the object. Move your eye and your pencil at the same slow speed.</span></div>
+                <div class="tech-credit">Samuel Harper Muldoon, <em>Line Contour Drawing</em>. <a href="https://commons.wikimedia.org/wiki/File:Line_Contour_Drawing.png" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 4.0.</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-demo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Blind_Contour_Drawing_of_a_Young_Man%27s_Face_by_J.D._Cabe.jpg" alt="A genuine blind contour drawing of a young man's face, showing the characteristic wobbly, imperfect line quality of drawing without looking at the paper." />
+                </div>
+                <div class="tech-body"><strong>Blind Contour</strong><span>The same slow line, but you never look at your paper. The result looks wobbly and wrong, and that is the point: it forces your eye onto the object.</span></div>
+                <div class="tech-credit">Jolene Davis Cabe, <em>Blind Contour Drawing of a Young Man's Face</em>. <a href="https://commons.wikimedia.org/wiki/File:Blind_Contour_Drawing_of_a_Young_Man%27s_Face_by_J.D._Cabe.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, public domain (CC0).</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-demo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Rubin_vase.png" alt="Rubin's Vase: a black silhouette that reads as either a vase or two facing profiles, the classic figure-ground illustration of positive and negative space." />
+                </div>
+                <div class="tech-body"><strong>Negative Space</strong><span>Instead of the object, draw the shapes of the empty space around it. This classic figure/ground illusion shows the same shape reading as a vase or as two faces; those gaps are easier to see truly, and they check your proportions.</span></div>
+                <div class="tech-credit">PaoloGonzalez, <em>Rubin vase</em>. <a href="https://commons.wikimedia.org/wiki/File:Rubin_vase.png" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY 4.0.</div>
+            </div>
+        </div>
+
+        <div class="callout c-help">
+            <div class="ck">&#128161; WHY BLIND CONTOUR LOOKS "BAD" ON PURPOSE</div>
+            <div class="cb">A blind contour drawing is never meant to be accurate or pretty. It is an eye-training exercise. When you cannot check the paper, your brain stops drawing the symbol and starts following the real edge. Every artist keeps this drill in their toolkit, no matter how advanced.</div>
+        </div>
+    </div>
+
+    <!-- PART 2 · GUIDED PRACTICE -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#9997;&#65039; PART 2 &middot; GUIDED PRACTICE (do this now)</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">Grab your non-dominant hand as your model. It is free, it holds still, and it is genuinely hard to draw from memory. Work through all three warm-ups on one page.</p>
+
+        <ol class="steps">
+            <li><strong>Blind contour (2 min).</strong> Look only at your hand. Place your pencil down and, without lifting it or looking at the paper, trace every edge slowly. Move your eye and pencil together. Do not peek.</li>
+            <li><strong>Modified contour (3 min).</strong> Now you may glance at the paper occasionally to reposition, but spend most of your time looking at the hand. Draw the outer edge and the big interior creases as one connected line.</li>
+            <li><strong>Negative space check (3 min).</strong> Find one clear gap, for example the space between two fingers, and draw just that empty shape. Ask: is it a tall thin triangle or a short wide one? Drawing the gap accurately fixes the fingers around it.</li>
+        </ol>
+
+        <div class="optima-widget ow-select">
+            <div class="widget-kicker">&#9889; TRY IT &middot; PICK THE RIGHT TOOL</div>
+            <div class="widget-question">For each situation, decide which observation tool solves it best. Commit, then check.</div>
+            <div class="widget-row" data-correct="negative" data-hint="Which tool checks the gaps and spaces to fix proportion? Try again.">
+                <div class="widget-row-prompt">Your drawing of a chair looks off, but you cannot tell why. The parts seem right individually.</div>
+                <div class="widget-options">
+                    <button data-choice="blind">Blind contour</button>
+                    <button data-choice="negative" data-fb="Yes. Drawing the negative spaces (the gaps between the rungs and legs) exposes proportion errors your eye slides past when you focus on the object itself.">Negative space</button>
+                    <button data-choice="contour">Continuous contour</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="blind" data-hint="Which tool is designed to force your eye off the paper and onto the object? Try again.">
+                <div class="widget-row-prompt">You keep drawing the "idea" of an eye instead of the real one in front of you.</div>
+                <div class="widget-options">
+                    <button data-choice="blind" data-fb="Right. Blind contour is the cure for symbol-drawing. With the paper hidden, you have no choice but to follow the actual edges.">Blind contour</button>
+                    <button data-choice="negative">Negative space</button>
+                    <button data-choice="contour">Continuous contour</button>
+                </div>
+            </div>
+            <button class="widget-reset">Reset</button>
+        </div>
+    </div>
+
+    <!-- SKILL BUILDER ASSIGNMENT POINTER -->
+    <div class="skillbox">
+        <div class="sk-k">&#128393;&#65039; SKILL BUILDER SKETCH (turn in this week)</div>
+        <h3>Three-Part Contour Warm-Up</h3>
+        <p>On one sheet, complete a blind contour, a modified contour, and one negative-space study of a single object of your choice (your hand, a shoe, a pair of scissors). Label each part. This is a completion-graded practice rung, not a finished artwork. Focus on effort and honest looking.</p>
+        <p style="margin:0;">Full directions and submission steps are in the Canvas assignment <em>Skill Builder 1: Contour Warm-Up</em>. Photograph your page and upload it, then save a copy to your OneDrive portfolio folder.</p>
+    </div>
+
+    <!-- VOCABULARY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; VOCABULARY</div>
+        <div class="vocab-grid">
+            <div class="vocab-card"><strong>Contour line</strong>A line that follows the real outer and inner edges of a form, without shading.</div>
+            <div class="vocab-card"><strong>Blind contour</strong>Drawing an edge while looking only at the object, never at the paper.</div>
+            <div class="vocab-card"><strong>Negative space</strong>The shape of the empty area around and between objects.</div>
+            <div class="vocab-card"><strong>Positive space</strong>The area the object itself occupies.</div>
+            <div class="vocab-card"><strong>Continuous line</strong>A single unbroken line drawn without lifting the pencil.</div>
+        </div>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num create">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Submit: Skill Builder 1 &middot; Contour Warm-Up</strong> &middot; Week 1</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Your three-part contour page. Completion graded.</div></div></div>
+        <div class="next-item"><div class="num learn">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 4: Proportion &amp; Value</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Get sizes right, then turn flat line into believable form.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">Line records exactly where your eye went. Blind contour trains the eye, continuous contour follows the real edge, and negative space checks your accuracy. None of them require talent. They require slowing down and trusting what is actually there.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 1 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 1 &middot; Learning to See &middot; Lesson 3 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. Technique images are Creative Commons licensed; see each caption for source and attribution.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 3, Lesson 6: Refine, Reflect &amp; Present</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .daij-check { border-left: 3px solid #1B8A7A; padding: 4px 0 4px 16px; margin: 0 0 12px 0; }
+    .daij-check h4 { font-size: 16px; color: #0E1C42; margin: 0 0 3px 0; }
+    .daij-check h4 span { color: #1B8A7A; }
+    .daij-check p { font-size: 15px; color: #1a2340; line-height: 1.6; margin: 0; }
+    .statement-box { background: #EEF1F8; border-radius: 8px; padding: 16px 20px; margin: 14px 0; }
+    .statement-box p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 8px 0; }
+    .statement-box ul { margin: 6px 0 0; padding-left: 20px; }
+    .statement-box li { font-size: 16px; color: #1a2340; line-height: 1.6; margin-bottom: 5px; }
+    .rubric-table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+    .rubric-table th { background: #0E1C42; color: #fff; padding: 8px 10px; text-align: left; font-size: 12px; letter-spacing: 0.4px; }
+    .rubric-table td { padding: 8px 10px; border: 1px solid #E1E7F0; vertical-align: top; color: #1a2340; line-height: 1.5; }
+    .rubric-table td:first-child { font-weight: 600; color: #0E1C42; background: #f8f9fc; }
+    .checklist { list-style: none; padding: 0; margin: 12px 0; }
+    .checklist li { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; border: 1px solid #D0D9E8; border-radius: 6px; margin-bottom: 8px; font-size: 16px; color: #1a2340; line-height: 1.55; background: #fff; }
+    .checklist li .cbx { min-width: 22px; height: 22px; border: 2px solid #1B8A7A; border-radius: 5px; flex-shrink: 0; margin-top: 2px; }
+    .submit-card { background: #E6F4F1; border: 2px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .submit-card .sc-k { font-size: 11px; color: #167567; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .submit-card h3 { margin: 0 0 8px 0; font-size: 19px; color: #0E1C42; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q1 &middot; Studio 3 of 18</div>
+        <div style="font-size: 12px; color: #666;">Color Speaks</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">6 of 6</div>
+        <div style="font-size: 12px; color: #666;">Refine, Reflect &amp; Present</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Finish &amp; submit</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Due</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">End of Week 2</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 3 &middot; LESSON 6</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Refine, Reflect &amp; Present</div>
+        <div style="font-size: 16px; color: #666;">Three versions, one clear difference: color. Critique your own choices, refine them, and present the set well. <span class="time-pill">~55 min + studio time</span></div>
+    </div>
+
+    <!-- PART 1 · SEE THE THREE TOGETHER -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128260; PART 1 &middot; SEE THE THREE SIDE BY SIDE</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Lay your three versions out together. This side-by-side is the whole argument of your project: same subject, same drawing, three different feelings, built from color alone.</p>
+
+        <div class="callout c-art">
+            <div class="ck">&#128064; THE TEST OF THE SET</div>
+            <div class="cb">Show the three to someone (or imagine a stranger seeing them) and ask which feels most joyful, which most calm or somber. If they can sort them without your help, your color is working. If two feel the same, that pair needs a bigger difference in temperature, value, or intensity, not a bigger difference in drawing.</div>
+        </div>
+    </div>
+
+    <!-- PART 2 · SELF-CRITIQUE -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128269; PART 2 &middot; CRITIQUE YOUR OWN WORK</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 12px 0;">Before you call it done, critique your own set using the same four-step order you used on Van Gogh in Lesson 2: describe, analyze, interpret, judge. Be your own first critic.</p>
+
+        <div class="daij-check">
+            <h4><span>D &middot; Describe</span></h4>
+            <p>What palette does each version actually use? Name the hues, and whether each is warm or cool, bright or dulled, light or dark.</p>
+        </div>
+        <div class="daij-check">
+            <h4><span>A &middot; Analyze</span></h4>
+            <p>Check your color tools. Does each version use a clear harmony (complementary, analogous, monochromatic)? Are value and intensity set to match the intended mood, or do they fight it?</p>
+        </div>
+        <div class="daij-check">
+            <h4><span>I &middot; Interpret</span></h4>
+            <p>Does each version actually communicate its mood? Would a viewer feel the difference between them without being told?</p>
+        </div>
+        <div class="daij-check">
+            <h4><span>J &middot; Judge</span></h4>
+            <p>Which version reads its mood least clearly? What one color change (push the darks darker, dull the intensity, shift the temperature) would fix it? Make that change before you submit.</p>
+        </div>
+
+        <div class="optima-widget ow-reflect">
+            <div class="widget-kicker">&#128173; REVISION CHECK-IN &middot; NO WRONG ANSWER</div>
+            <div class="widget-question">Two of your three versions feel almost the same. What is the most likely fix?</div>
+            <div class="widget-options">
+                <button data-response="Very likely the right call. When two versions feel alike, the usual cause is that they share temperature, value, or intensity. Pushing one clearly warmer or darker or duller creates the contrast the set needs.">Shift one further in temperature, value, or intensity</button>
+                <button data-response="Possible, but be careful. Changing the drawing or composition breaks the experiment, because then the difference is not color alone. Try changing color first and keep the subject identical.">Redraw one of them differently</button>
+                <button data-response="Rarely the fix. Adding detail does not separate two moods that share a palette. A drawing reads its mood from its overall color relationships, so adjust hue, value, and intensity before adding marks.">Add more detail to one</button>
+            </div>
+            <div class="widget-feedback"></div>
+            <button class="widget-reset">Reset</button>
+        </div>
+    </div>
+
+    <!-- PART 3 · ARTIST STATEMENT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; PART 3 &middot; WRITE YOUR ARTIST STATEMENT</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">Your artist statement travels with the artwork. It is three or four focused sentences, in your own voice, that show you made deliberate color choices. Type it into the submission text box with your three versions.</p>
+
+        <div class="statement-box">
+            <p>A strong statement answers three things:</p>
+            <ul>
+                <li>What subject did you choose, and what three moods did you build?</li>
+                <li>Which color tools created each mood, and where? (Name at least two: hue, value, intensity, temperature, or a harmony such as complementary or analogous.)</li>
+                <li>What surprised you about how color changed the feeling, or what would you do differently next time?</li>
+            </ul>
+        </div>
+
+        <details>
+            <summary>&#9654;&nbsp; Draft your sentences in your notebook first, then open this for a sample of the register (do not copy it).</summary>
+            <div class="ac-body">"I drew the same chair three times and aimed for joyful, calm, and lonely. For joyful I used a warm analogous palette of high-intensity yellows and oranges; for lonely I dulled the intensity and shifted to a dark, cool blue-violet. I was surprised that just lowering the intensity, without changing the hue much, was enough to make the calm version feel closer to lonely than I intended." Your statement should be this specific, but about your subject and your color choices.</div>
+        </details>
+    </div>
+
+    <!-- PART 4 · RUBRIC PREVIEW -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128203; PART 4 &middot; HOW YOU WILL BE GRADED</div>
+        <p style="font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 6px 0;">Your Studio Project is scored on this rubric (4 points per row, 20 total). Read it before you submit and make sure each row is as strong as you can make it.</p>
+        <table class="rubric-table">
+            <thead><tr><th style="width:20%">Criteria</th><th>Excellent (4)</th><th>Proficient (3)</th><th>Developing (2)</th><th>Beginning (1)</th></tr></thead>
+            <tbody>
+                <tr><td>Mood &amp; Color Expression</td><td>Three clearly distinct moods; color alone communicates each</td><td>Three moods read, differences mostly clear</td><td>Moods overlap; differences unclear</td><td>Little mood difference between versions</td></tr>
+                <tr><td>Color Theory Applied</td><td>Deliberate harmony, temperature, value, and intensity in each version</td><td>Clear use of color relationships, minor gaps</td><td>Some color control, inconsistent</td><td>Little evidence of color theory</td></tr>
+                <tr><td>Consistent Subject</td><td>Same subject and composition across all three; only color changes</td><td>Mostly consistent, slight drawing changes</td><td>Subject shifts noticeably between versions</td><td>Versions are effectively different subjects</td></tr>
+                <tr><td>Artist Statement</td><td>Specific; names color tools and moods; owns choices</td><td>Clear and personal</td><td>Vague or general</td><td>Minimal or missing</td></tr>
+                <tr><td>Completion &amp; Craftsmanship</td><td>All three complete, cared-for, and signed</td><td>Mostly complete, signed</td><td>Partially complete</td><td>Incomplete or unsigned</td></tr>
+            </tbody>
+        </table>
+        <div class="callout c-help">
+            <div class="ck">&#9997;&#65039; DO NOT FORGET</div>
+            <div class="cb">Sign your work. A signature is how you say: this is mine, I made it, I stand behind these choices.</div>
+        </div>
+    </div>
+
+    <!-- SUBMISSION CHECKLIST -->
+    <div class="submit-card">
+        <div class="sc-k">&#9989; CONFIRM YOUR SUBMISSIONS &middot; STUDIO 3</div>
+        <h3>Before you close Studio 3, check all five</h3>
+        <ul class="checklist">
+            <li><span class="cbx"></span> <div><strong>Skill Builder 1: Color Wheel &amp; Harmonies</strong> submitted (Week 1).</div></li>
+            <li><span class="cbx"></span> <div><strong>Skill Builder 2: Same Shape, Three Moods</strong> submitted (Week 1).</div></li>
+            <li><span class="cbx"></span> <div><strong>Quiz: Color &amp; the Colorists</strong> completed (Week 2).</div></li>
+            <li><span class="cbx"></span> <div><strong>VR Session: Repaint the Room</strong> completed (Week 2).</div></li>
+            <li><span class="cbx"></span> <div><strong>Studio Project: Three Moods, One Subject</strong> uploaded (all three versions), <em>signed</em>, with your artist statement typed in the text box (Week 2). Saved to your <strong>OneDrive art portfolio folder</strong> with consistent naming (for example <em>SA2_S03_ThreeMoods_LastName</em>).</div></li>
+        </ul>
+    </div>
+
+    <!-- WHAT'S NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; LOOKING AHEAD</div>
+        <div class="next-item"><div class="num create">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Submit the Studio Project</strong> &middot; End of Week 2</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Your three versions, signed, with the artist statement. The one graded artwork for Studio 3.</div></div></div>
+        <div class="next-item"><div class="num now">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Studio 4: Creating Space</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">You can control color now. Next you build depth: perspective, overlap, and atmosphere that let a viewer step into a flat page.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">You began this Studio feeling that color does something but not knowing how to steer it. Now you have made one subject speak three different moods on purpose. Color is no longer a copy of what things are; it is a choice about what you want the viewer to feel.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 1 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 3 &middot; Color Speaks &middot; Lesson 6 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

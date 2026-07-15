@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 6, Lesson 1: Scraps That Speak</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components (teal/coral accents; green retired; red = AI only) ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .compare-wrap { display: flex; gap: 14px; flex-wrap: wrap; margin: 16px 0; }
+    .compare-box { flex: 1; min-width: 220px; border-radius: 8px; padding: 14px 18px; border: 1.5px solid; }
+    .compare-box.memory  { background: #FBEEE9; border-color: #E0A695; }
+    .compare-box.observe { background: #E6F4F1; border-color: #7CC3B8; }
+    .compare-box h4 { font-size: 13px; letter-spacing: 0.5px; margin: 0 0 8px 0; }
+    .compare-box.memory  h4 { color: #A93B22; }
+    .compare-box.observe h4 { color: #167567; }
+    .compare-box ul { margin: 0; padding-left: 18px; font-size: 15px; color: #1a2340; line-height: 1.6; }
+    .concept-card { background: #0E1C42; border-radius: 10px; padding: 26px 28px; margin: 20px 0; text-align: center; border-top: 5px solid #1B8A7A; }
+    .concept-card .cc-k { font-size: 11px; color: #55C8E8; letter-spacing: 1px; margin-bottom: 10px; }
+    .concept-card .cc-main { font-size: 26px; color: #ffffff; line-height: 1.35; }
+    .concept-card .cc-main em { color: #F0B39E; font-style: normal; }
+    .concept-card .cc-main strong { color: #7FD4C6; }
+    .concept-card .cc-sub { font-size: 15px; color: #c8d4e8; margin-top: 12px; line-height: 1.6; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    .roadmap { list-style: none; margin: 10px 0 0; padding: 0; }
+    .roadmap li { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border: 1px solid #D0D9E8; border-radius: 6px; margin-bottom: 8px; font-size: 15px; color: #1a2340; }
+    .roadmap li.current { background: #E6F4F1; border-color: #1B8A7A; color: #0E1C42; }
+    .roadmap li .rn { min-width: 24px; height: 24px; border-radius: 50%; background: #EEF1F8; color: #0E1C42; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .roadmap li.current .rn { background: #1B8A7A; color: #fff; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+
+    /* ===== Studio 6 lead visual: original CSS collage-concept mockup (no PD embed exists) ===== */
+    .collage-stage { position: relative; background: #EEF1F8; border: 1px solid #D0D9E8; border-radius: 10px; padding: 30px 20px; margin: 16px 0; min-height: 260px; overflow: hidden; }
+    .collage-scrap { position: absolute; border-radius: 3px; box-shadow: 0 3px 7px rgba(14,28,66,0.18); font-family: Georgia, serif; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.3; }
+    .scrap-1 { top: 18px; left: 6%; width: 150px; height: 95px; background: #FBF1DC; color: #9a6f16; font-size: 13px; padding: 8px; transform: rotate(-7deg); border: 1px solid #E7D3A1; }
+    .scrap-2 { top: 40px; left: 30%; width: 120px; height: 150px; background: #0E1C42; color: #a9e4f5; font-size: 34px; transform: rotate(4deg); }
+    .scrap-3 { top: 10px; left: 52%; width: 130px; height: 80px; background: #FBEEE9; color: #A93B22; font-size: 12px; padding: 8px; transform: rotate(9deg); border: 1px solid #E0A695; }
+    .scrap-4 { top: 120px; left: 8%; width: 100px; height: 100px; background: #D8EEE9; border: 1px solid #7CC3B8; transform: rotate(-3deg); }
+    .scrap-5 { top: 95px; left: 45%; width: 160px; height: 70px; background: #ffffff; color: #1a2340; font-size: 12px; padding: 8px; transform: rotate(-5deg); border: 1px solid #D0D9E8; }
+    .scrap-6 { top: 150px; left: 68%; width: 110px; height: 90px; background: #E6F4F1; color: #167567; font-size: 30px; transform: rotate(6deg); }
+    .scrap-7 { top: 30px; left: 76%; width: 95px; height: 130px; background: repeating-linear-gradient(45deg, #D0D9E8, #D0D9E8 6px, #EEF1F8 6px, #EEF1F8 12px); transform: rotate(-8deg); }
+    .collage-caption { text-align: center; font-size: 13px; color: #6b7a99; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q2 &middot; Studio 6 of 18</div>
+        <div style="font-size: 12px; color: #666;">Layers of Meaning</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">1 of 6</div>
+        <div style="font-size: 12px; color: #666;">Observe</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Scraps That Speak</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Studio Project</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">Memory in Layers</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 6 &middot; LESSON 1</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Scraps That Speak</div>
+        <div style="font-size: 16px; color: #666;">This Studio builds meaning out of things that, on their own, meant something else entirely. <span class="time-pill">~45 min</span></div>
+    </div>
+
+    <!-- Essential Question -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128214; ESSENTIAL QUESTION</div>
+        <div style="font-size: 20px; color: #0e1c42; font-style: italic; margin-bottom: 10px;">How can torn scraps of unrelated things add up to a single meaning?</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">Every Studio so far has asked you to draw or paint a mark. This one asks you to build with pieces that already existed somewhere else: a newspaper headline, a ticket stub, a scrap of wallpaper, a photograph cut from a magazine. Collage does not invent its materials. It finds new meaning by placing old materials next to each other on purpose.</div>
+    </div>
+
+    <!-- PART 1 · LOOK FIRST -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128064; PART 1 &middot; LOOK FIRST</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Before any names or dates, look at a stage the way an artist building a collage sees it: separate pieces, waiting to be placed. Nothing here was drawn. It was gathered, cut, and arranged.</p>
+
+        <div class="collage-stage" role="img" aria-label="A mockup collage stage showing seven scraps arranged and overlapping at different angles: a torn scrap of handwritten text, a tall dark panel with a large white shape, a torn scrap of red-toned text, a teal fabric-textured square, a plain paper scrap with typed lines, a teal circular shape, and a striped scrap suggesting corrugated cardboard.">
+            <div class="collage-scrap scrap-1">hand&shy;written<br/>fragment,<br/>torn edge</div>
+            <div class="collage-scrap scrap-2">&#9670;</div>
+            <div class="collage-scrap scrap-3">clipped<br/>headline<br/>text</div>
+            <div class="collage-scrap scrap-4"></div>
+            <div class="collage-scrap scrap-5">ticket stub / typed line</div>
+            <div class="collage-scrap scrap-6">&#9711;</div>
+            <div class="collage-scrap scrap-7"></div>
+        </div>
+        <p class="collage-caption">A mockup collage stage: seven unrelated scraps, torn and overlapped at different angles, before any single meaning has been chosen.</p>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 14px 0 10px 0;">On its own, each scrap above is nothing: a torn corner, a shape, a strip of text. None of them were made to go together. But the moment an artist starts overlapping them, choosing what sits on top of what, and where the eye lands first, the pile stops being scraps and becomes a composition that says one thing.</p>
+
+        <div class="callout c-art">
+            <div class="ck">&#128172; WONDER FIRST</div>
+            <div class="cb">Look again at the mockup. Which two scraps, if placed directly beside each other, would create the strangest or most interesting relationship? Why do you think that pairing catches your eye more than the others? Hold that thought. The artists in Lesson 2 built entire careers on exactly that instinct.</div>
+        </div>
+
+        <div class="optima-widget ow-reflect">
+            <div class="widget-kicker">&#128173; QUICK CHECK-IN &middot; NO WRONG ANSWER</div>
+            <div class="widget-question">Have you ever kept a physical scrap (a ticket, a note, a photo, a piece of fabric) just because of what it reminded you of?</div>
+            <div class="widget-options">
+                <button data-response="Good. That instinct, keeping a small physical thing because of what it holds, is exactly what collage artists build on. Your Studio Project will ask you to find several of these and let them argue with each other on one page.">Yes, I still have something like that</button>
+                <button data-response="Think about it for a moment longer. A movie stub, a fabric swatch, a page from an old book, a photograph, a candy wrapper: most people have at least one small object charged with memory. Start noticing them this week; you will need several for your Studio Project.">Not that I can think of right now</button>
+                <button data-response="That habit of collecting small charged objects is a head start for this Studio. Collage artists work the same way: they gather far more scraps than they need, then choose the few that argue with each other in an interesting way.">I collect small things like that often</button>
+            </div>
+            <div class="widget-feedback"></div>
+            <button class="widget-reset">Reset</button>
+        </div>
+    </div>
+
+    <!-- PART 2 · NAME WHAT YOU SEE -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 2 &middot; NAME WHAT YOU SEE</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;"><strong>Collage</strong> (from the French <em>coller</em>, "to glue") is art built by gluing or arranging existing materials, paper, fabric, photographs, printed text, onto a surface. When those materials include photographs or printed images specifically, the technique is often called <strong>photomontage</strong>. Either way, the artist is not inventing new marks so much as finding new relationships between marks that already existed.</p>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">The engine that makes collage work is <strong>juxtaposition</strong>: placing two or more things side by side so that each changes how you read the other. A photograph of an eye alone is just an eye. That same eye pasted onto a mechanical gear, at the scale of a machine part, becomes a comment on how humans and machines are starting to look alike. Neither piece changed. Only their relationship did.</p>
+
+        <div class="compare-wrap">
+            <div class="compare-box memory">
+                <h4>&#128196; A SCRAP ALONE</h4>
+                <ul>
+                    <li>Carries its original, single meaning</li>
+                    <li>A headline is just a headline</li>
+                    <li>A photograph is just a photograph</li>
+                    <li>No relationship to argue with</li>
+                    <li>The viewer's eye has nowhere new to go</li>
+                </ul>
+            </div>
+            <div class="compare-box observe">
+                <h4>&#128260; THE SAME SCRAP, JUXTAPOSED</h4>
+                <ul>
+                    <li>Gains a second, new meaning from its neighbor</li>
+                    <li>A headline beside a torn photo becomes commentary</li>
+                    <li>Scale, texture, and material clash on purpose</li>
+                    <li>The relationship is the artwork</li>
+                    <li>The viewer's eye moves and compares</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="concept-card">
+            <div class="cc-k">THE ONE IDEA OF THIS STUDIO</div>
+            <div class="cc-main">Meaning is not glued <em>onto</em> the page.<br/>It is built <strong>between</strong> the pieces.</div>
+            <div class="cc-sub">Every technique in the next five lessons is a way of controlling what happens in the gap where two unrelated scraps meet.</div>
+        </div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Collage of this kind has deep roots in <strong>Dada</strong>, an early-20th-century art movement that used chance, absurdity, and found materials to protest the destruction of the First World War and question whether traditional "fine art" still made sense. Cutting up newspapers and gluing them back together in disordered ways was, for the Dadaists, a serious act: it mirrored a world that felt cut up and reassembled wrong. Meet four terms now that you will use in every lesson this Studio.</p>
+
+        <div class="vocab-grid" style="margin-top: 6px;">
+            <div class="vocab-card"><strong>Collage</strong>Art built from existing materials arranged and glued onto a surface.</div>
+            <div class="vocab-card"><strong>Photomontage</strong>Collage built specifically from cut and combined photographs or printed images.</div>
+            <div class="vocab-card"><strong>Juxtaposition</strong>Placing unrelated things side by side so each changes how the other is read.</div>
+            <div class="vocab-card"><strong>Mixed media</strong>Artwork combining more than one material or technique in a single piece.</div>
+        </div>
+    </div>
+
+    <!-- PART 3 · WHY IT MATTERS -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128269; PART 3 &middot; WHY THIS COMES NOW</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Every Studio before this one asked you to make marks from scratch: drawn lines, mixed colors, invented space. Studio 6 asks something different: can you compose meaning out of materials you did not make? This matters because most images a person encounters daily, in ads, in the news, on a screen, were not made by that person either. Arranging found material with intention is learning to read, and eventually control, that visual language.</p>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Your project for these two weeks is called <strong>Memory in Layers</strong>. You will build a mixed-media collage that communicates one personal memory or experience, using paper, magazine scraps, found textures, and glue to say something a single drawn image could not say alone.</p>
+
+        <details>
+            <summary>&#9654;&nbsp; Before you read on, name one object you could tear or cut a small piece from right now (a receipt, an envelope, a wrapper). Then open this.</summary>
+            <div class="ac-body">Almost anything qualifies. That is exactly the point of collage: the raw material is already all around you, in forms most people throw away without a second look. Start a small pile of scraps this week, magazine pages, ticket stubs, patterned paper, fabric swatches, receipts. You will need more material than you think, because most collage artists use only a fraction of what they gather.</div>
+        </details>
+    </div>
+
+    <!-- WHAT'S NEXT IN THIS STUDIO -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#128506;&#65039; YOUR PATH THROUGH STUDIO 6</div>
+        <ul class="roadmap">
+            <li class="current"><span class="rn">1</span> <div><strong>Scraps That Speak</strong> &middot; you are here. Why juxtaposition builds new meaning.</div></li>
+            <li><span class="rn">2</span> <div><strong>The Cut and the Glue</strong> &middot; Hannah H&ouml;ch, Kurt Schwitters, and Romare Bearden (critique).</div></li>
+            <li><span class="rn">3</span> <div><strong>Juxtaposition &amp; Composition</strong> &middot; skill builder: unity from disparate parts.</div></li>
+            <li><span class="rn">4</span> <div><strong>Real vs. Implied Texture</strong> &middot; skill builder: layering, edges, and surface.</div></li>
+            <li><span class="rn">5</span> <div><strong>Plan &amp; Create</strong> &middot; gather materials, plan the collage, VR gallery, begin the artwork.</div></li>
+            <li><span class="rn">6</span> <div><strong>Refine, Reflect &amp; Present</strong> &middot; finish, self-critique, artist statement, portfolio.</div></li>
+        </ul>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT (IN CANVAS) -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num now">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Start gathering scraps</strong> &middot; Week 1</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Begin a small pile of collage material this week: old magazines, patterned paper, ticket stubs, fabric scraps, receipts, photographs you are willing to cut. You will need it by Lesson 5.</div></div></div>
+        <div class="next-item"><div class="num learn">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 2: The Cut and the Glue</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Meet three artists who turned scraps into some of the 20th century's most influential images.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">Nothing in a collage is invented from nothing. Every scrap already meant something before the artist touched it. The art is in the choosing and the placing: deciding which old meanings will collide to make a new one.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 2 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 6 &middot; Layers of Meaning &middot; Lesson 1 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. Concept visual is original HTML/CSS built with course design tokens; no artwork images used.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

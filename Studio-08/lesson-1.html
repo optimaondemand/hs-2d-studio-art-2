@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 8, Lesson 1: Look Back at Your Body of Work</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components (teal/coral accents; green retired; red = AI only) ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    .roadmap { list-style: none; margin: 10px 0 0; padding: 0; }
+    .roadmap li { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border: 1px solid #D0D9E8; border-radius: 6px; margin-bottom: 8px; font-size: 15px; color: #1a2340; }
+    .roadmap li.current { background: #E6F4F1; border-color: #1B8A7A; color: #0E1C42; }
+    .roadmap li .rn { min-width: 24px; height: 24px; border-radius: 50%; background: #EEF1F8; color: #0E1C42; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .roadmap li.current .rn { background: #1B8A7A; color: #fff; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+
+    /* ===== Studio 8 concept visuals: portfolio wall ===== */
+    .wall { background: #EEF1F8; border: 1px solid #D0D9E8; border-radius: 10px; padding: 22px; margin: 18px 0; }
+    .wall-title { font-size: 11px; color: #6b7a99; letter-spacing: 0.5px; margin-bottom: 14px; text-align: center; }
+    .wall-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .frame { background: #ffffff; border: 1px solid #D0D9E8; border-radius: 6px; padding: 8px; box-shadow: 0 3px 6px rgba(14,28,66,0.08); text-align: center; }
+    .frame .swatch { height: 70px; border-radius: 4px; margin-bottom: 8px; }
+    .frame .lbl { font-size: 11px; color: #0E1C42; }
+    .frame .lbl span { display: block; font-size: 10px; color: #6b7a99; margin-top: 2px; }
+    .s1 { background: linear-gradient(135deg,#c9d3e6,#eef1f8); }
+    .s2 { background: linear-gradient(135deg,#dfe6f2,#c9d3e6); }
+    .s3 { background: linear-gradient(135deg,#F0B39E,#FBEEE9); }
+    .s4 { background: linear-gradient(135deg,#a9e4f5,#f8f9fc); }
+    .s5 { background: repeating-linear-gradient(45deg,#7CC3B8,#7CC3B8 8px,#E6F4F1 8px,#E6F4F1 16px); }
+    .s6 { background: linear-gradient(135deg,#D0D9E8,#f8f9fc 40%, #F0B39E 40%, #f8f9fc); }
+    .s7 { background: radial-gradient(circle at 35% 35%, #9a6f16, #E7D3A1 70%); }
+    .frame.blank { border: 2px dashed #C7922C; background: #FDF3E3; }
+    .frame.blank .swatch { background: transparent; display: flex; align-items: center; justify-content: center; font-size: 26px; color: #C7922C; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q2 &middot; Studio 8 of 18</div>
+        <div style="font-size: 12px; color: #666;">Mid-Year Portfolio Review</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">1 of 6</div>
+        <div style="font-size: 12px; color: #666;">Look Back</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Your body of work, Studios 1&ndash;7</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Studio Project</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">Mid-Year Portfolio + Statement</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 8 &middot; LESSON 1</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Look Back at Your Body of Work</div>
+        <div style="font-size: 16px; color: #666;">No new artist this Studio. The subject is seven Studios of your own work. <span class="time-pill">~45 min</span></div>
+    </div>
+
+    <!-- Essential Question -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128214; ESSENTIAL QUESTION</div>
+        <div style="font-size: 20px; color: #0e1c42; font-style: italic; margin-bottom: 10px;">What does your work so far reveal about the artist you are becoming?</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">You have finished seven Studios: observation, composition, color, space, pattern and print, collage, and identity. Each one asked something different of you. This Studio steps back from making new work to look at all of it together, choose what deserves revision, and build the first real portfolio of your year.</div>
+    </div>
+
+    <!-- PART 1 · LOOK FIRST (portfolio wall visual) -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128064; PART 1 &middot; LOOK FIRST</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Picture a wall, not a folder buried on a drive: an actual gallery wall, with every Studio you have completed hanging on it in order. Look at the wall below and imagine your own seven pieces filling those first frames.</p>
+
+        <div class="wall">
+            <div class="wall-title">YOUR STUDIOS 1&ndash;7, HUNG IN ORDER</div>
+            <div class="wall-grid">
+                <div class="frame"><div class="swatch s1"></div><div class="lbl">Studio 1<span>Learning to See</span></div></div>
+                <div class="frame"><div class="swatch s2"></div><div class="lbl">Studio 2<span>Organizing the Image</span></div></div>
+                <div class="frame"><div class="swatch s3"></div><div class="lbl">Studio 3<span>Color Speaks</span></div></div>
+                <div class="frame"><div class="swatch s4"></div><div class="lbl">Studio 4<span>Creating Space</span></div></div>
+                <div class="frame"><div class="swatch s5"></div><div class="lbl">Studio 5<span>Pattern, Print &amp; Design</span></div></div>
+                <div class="frame"><div class="swatch s6"></div><div class="lbl">Studio 6<span>Layers of Meaning</span></div></div>
+                <div class="frame"><div class="swatch s7"></div><div class="lbl">Studio 7<span>Identity</span></div></div>
+                <div class="frame blank"><div class="swatch">?</div><div class="lbl">Studio 8<span>Your curated set</span></div></div>
+            </div>
+        </div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Working artists do this on purpose: step back from the easel, look at a stretch of finished work as a set, and ask what it says as a whole rather than piece by piece. That eighth frame, the question mark, is what you build this Studio: not a ninth new artwork, but a curated argument built from the seven you already have.</p>
+
+        <div class="callout c-art">
+            <div class="ck">&#128172; WONDER FIRST</div>
+            <div class="cb">Look at your imagined wall again. If a stranger walked past it and had thirty seconds, what is the one thing you would want them to notice about how you have grown from Studio 1 to Studio 7? Hold that answer. You will build your entire portfolio and artist statement around it.</div>
+        </div>
+
+        <div class="optima-widget ow-reflect">
+            <div class="widget-kicker">&#128173; QUICK CHECK-IN &middot; NO WRONG ANSWER</div>
+            <div class="widget-question">Be honest: have you looked at your Studios 1 through 7 together, side by side, since you finished them?</div>
+            <div class="widget-options">
+                <button data-response="Very common. Most students finish a piece, submit it, and move straight to the next Studio without a backward glance. That is exactly the gap this lesson closes.">Not really, I moved on to the next one each time</button>
+                <button data-response="Good instinct, and it will make this Studio faster. Even so, look again now with fresh eyes; two weeks or two months of distance changes what you notice.">I have glanced back once or twice</button>
+                <button data-response="You are ahead of most artists. Reviewing your own body of work as it grows is a professional habit. This Studio will give it more structure through critique and curation.">Yes, I check my past work often</button>
+            </div>
+            <div class="widget-feedback"></div>
+            <button class="widget-reset">Reset</button>
+        </div>
+    </div>
+
+    <!-- PART 2 · NAME WHAT YOU SEE -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 2 &middot; A PORTFOLIO IS AN ARGUMENT</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">A common mistake is to think a portfolio is just a pile: everything you made, in the order you made it. A stronger portfolio is a <strong>curated argument</strong>: choosing a smaller set of works on purpose, then arranging them so a viewer understands your growth without you standing there explaining it.</p>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">This Studio, your argument is simple: <em>here is what I have learned so far, and here is proof that I can revise, not just produce.</em> Two ideas carry that argument: <strong>revision</strong> and <strong>curation</strong>. You will practice both this week before building the real thing next week.</p>
+
+        <div class="vocab-grid" style="margin-top: 6px;">
+            <div class="vocab-card"><strong>Portfolio</strong>A curated, purposeful selection of an artist's work, not a complete archive of everything made.</div>
+            <div class="vocab-card"><strong>Curation</strong>Choosing which works to include and in what order, so the set makes a clear statement together.</div>
+            <div class="vocab-card"><strong>Revision</strong>Returning to a finished piece to genuinely improve it, guided by specific critique.</div>
+            <div class="vocab-card"><strong>Body of work</strong>Everything an artist has made over a period of time, considered as a whole.</div>
+        </div>
+
+        <details>
+            <summary>&#9654;&nbsp; In your notebook, list the titles of your seven Studio pieces from memory before you open this.</summary>
+            <div class="ac-body">Most students can name three or four instantly and have to think hard about the rest. That gap between "I made it" and "I can call it to mind clearly" is worth noticing. The piece you struggled to remember may be exactly the one that needs a second look this Studio.</div>
+        </details>
+    </div>
+
+    <!-- PART 3 · WHY IT MATTERS -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128269; PART 3 &middot; WHY THIS STUDIO EXISTS</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Every other Studio this year has moved forward: a new technique, a new artist, a new project. Studio 8 moves sideways: a checkpoint built in on purpose, at the halfway point, because artists who never pause to review their own growth tend to repeat the same habits without noticing.</p>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Your project for these two weeks is the <strong>Mid-Year Portfolio</strong>: you will revise one or two earlier pieces, select and sequence four to six works from Studios 1 through 7 into a curated set, and write a reflective artist statement about your growth. No new subject matter, no new artist study. The material is entirely your own.</p>
+    </div>
+
+    <!-- WHAT'S NEXT IN THIS STUDIO -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#128506;&#65039; YOUR PATH THROUGH STUDIO 8</div>
+        <ul class="roadmap">
+            <li class="current"><span class="rn">1</span> <div><strong>Look Back at Your Body of Work</strong> &middot; you are here. Why review matters.</div></li>
+            <li><span class="rn">2</span> <div><strong>Self-Critique Across Your Work</strong> &middot; run critique across multiple pieces of your own.</div></li>
+            <li><span class="rn">3</span> <div><strong>Skill Builder A</strong> &middot; choosing what to revise, and how.</div></li>
+            <li><span class="rn">4</span> <div><strong>Skill Builder B</strong> &middot; curation, sequencing, and photographing your work well.</div></li>
+            <li><span class="rn">5</span> <div><strong>Plan &amp; Create</strong> &middot; plan your revisions, VR mid-year gallery, begin the portfolio.</div></li>
+            <li><span class="rn">6</span> <div><strong>Refine, Reflect &amp; Present</strong> &middot; finalize your set, write the artist statement, submission checklist.</div></li>
+        </ul>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT (IN CANVAS) -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num now">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Gather your Studios 1&ndash;7</strong> &middot; Week 1</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Pull every piece, and every photo of a piece, into one place: your OneDrive portfolio folder. You cannot curate what you cannot see together. Do this before Lesson 2.</div></div></div>
+        <div class="next-item"><div class="num learn">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 2: Self-Critique Across Your Work</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Turn the critique tool you already know on your own body of work.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">Artists revise. A portfolio is a curated argument about growth, not a pile of everything. For the next two weeks you look backward on purpose, so the rest of the year can build forward on solid ground.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 2 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 8 &middot; Mid-Year Portfolio Review &middot; Lesson 1 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. All visuals on this page are original CSS/SVG; no third-party images used.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

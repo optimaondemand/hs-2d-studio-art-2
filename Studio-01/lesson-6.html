@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 1, Lesson 6: Refine, Reflect &amp; Present</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .daij-check { border-left: 3px solid #1B8A7A; padding: 4px 0 4px 16px; margin: 0 0 12px 0; }
+    .daij-check h4 { font-size: 16px; color: #0E1C42; margin: 0 0 3px 0; }
+    .daij-check h4 span { color: #1B8A7A; }
+    .daij-check p { font-size: 15px; color: #1a2340; line-height: 1.6; margin: 0; }
+    .statement-box { background: #EEF1F8; border-radius: 8px; padding: 16px 20px; margin: 14px 0; }
+    .statement-box p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 8px 0; }
+    .statement-box ul { margin: 6px 0 0; padding-left: 20px; }
+    .statement-box li { font-size: 16px; color: #1a2340; line-height: 1.6; margin-bottom: 5px; }
+    .rubric-table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+    .rubric-table th { background: #0E1C42; color: #fff; padding: 8px 10px; text-align: left; font-size: 12px; letter-spacing: 0.4px; }
+    .rubric-table td { padding: 8px 10px; border: 1px solid #E1E7F0; vertical-align: top; color: #1a2340; line-height: 1.5; }
+    .rubric-table td:first-child { font-weight: 600; color: #0E1C42; background: #f8f9fc; }
+    .checklist { list-style: none; padding: 0; margin: 12px 0; }
+    .checklist li { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; border: 1px solid #D0D9E8; border-radius: 6px; margin-bottom: 8px; font-size: 16px; color: #1a2340; line-height: 1.55; background: #fff; }
+    .checklist li .cbx { min-width: 22px; height: 22px; border: 2px solid #1B8A7A; border-radius: 5px; flex-shrink: 0; margin-top: 2px; }
+    .submit-card { background: #E6F4F1; border: 2px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .submit-card .sc-k { font-size: 11px; color: #167567; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .submit-card h3 { margin: 0 0 8px 0; font-size: 19px; color: #0E1C42; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q1 &middot; Studio 1 of 18</div>
+        <div style="font-size: 12px; color: #666;">Learning to See</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">6 of 6</div>
+        <div style="font-size: 12px; color: #666;">Refine, Reflect &amp; Present</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Finish &amp; submit</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Due</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">End of Week 2</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 1 &middot; LESSON 6</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Refine, Reflect &amp; Present</div>
+        <div style="font-size: 16px; color: #666;">Great drawings are finished, not abandoned. Critique your own work, refine it, and present it well. <span class="time-pill">~55 min + studio time</span></div>
+    </div>
+
+    <!-- PART 1 · THE BEFORE/AFTER -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128260; PART 1 &middot; PROVE YOUR GROWTH</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Remember the memory draw from Lesson 1, the one you made before you learned anything? Take it out now and set it beside your Studio Project. This is your two-week before and after.</p>
+
+        <div class="callout c-art">
+            <div class="ck">&#128064; LOOK AT THE TWO SIDE BY SIDE</div>
+            <div class="cb">What is different? Almost always: the proportions are truer, the edges follow the real object instead of a remembered symbol, and value gives the form weight it did not have before. That difference is not talent. It is what observation does. Keep both drawings in your portfolio; they are evidence of what your eye learned.</div>
+        </div>
+    </div>
+
+    <!-- PART 2 · SELF-CRITIQUE -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128269; PART 2 &middot; CRITIQUE YOUR OWN WORK</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 12px 0;">Before you call it done, critique your own drawing using the same four-step order you used on Leonardo in Lesson 2: describe, analyze, interpret, judge. Be your own first critic. This is where good drawings become finished ones.</p>
+
+        <div class="daij-check">
+            <h4><span>D &middot; Describe</span></h4>
+            <p>Step back. What does the drawing actually show? Squint: do the big shapes read clearly from across the room?</p>
+        </div>
+        <div class="daij-check">
+            <h4><span>A &middot; Analyze</span></h4>
+            <p>Check your tools. Are the proportions accurate (re-sight the trickiest relationship)? Do contours follow the real edges? Is there a full value range, or is everything a timid middle gray?</p>
+        </div>
+        <div class="daij-check">
+            <h4><span>I &middot; Interpret</span></h4>
+            <p>Does the drawing show why this object matters to you? Does the care you took come through?</p>
+        </div>
+        <div class="daij-check">
+            <h4><span>J &middot; Judge</span></h4>
+            <p>What one change would most improve it? Usually it is pushing the darkest darks darker or fixing one proportion. Make that change before you submit.</p>
+        </div>
+
+        <div class="optima-widget ow-reflect">
+            <div class="widget-kicker">&#128173; REVISION CHECK-IN &middot; NO WRONG ANSWER</div>
+            <div class="widget-question">You squint at your drawing and it looks flat and gray. What is the most likely fix?</div>
+            <div class="widget-options">
+                <button data-response="Very likely the right call. Flat, gray drawings almost always need a wider value range: push the core and cast shadows much darker and protect the highlights. Contrast is what creates form.">Push my darkest values darker</button>
+                <button data-response="Possible, but usually not the first fix for flatness. If proportions are off it will look wrong, not flat. Check value range first, then re-sight any part that still looks off.">Redraw the proportions</button>
+                <button data-response="Detail rarely fixes flatness and can make it worse. A drawing reads as solid because of its value structure, not its tiny marks. Get the big lights and darks right first, then add select detail.">Add lots of small details</button>
+            </div>
+            <div class="widget-feedback"></div>
+            <button class="widget-reset">Reset</button>
+        </div>
+    </div>
+
+    <!-- PART 3 · ARTIST STATEMENT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; PART 3 &middot; WRITE YOUR ARTIST STATEMENT</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">Your artist statement travels with the artwork. It is two or three focused sentences, in your own voice, that show you made deliberate choices. Type it into the submission text box with your drawing.</p>
+
+        <div class="statement-box">
+            <p>A strong statement answers three things:</p>
+            <ul>
+                <li>What object did you choose, and why does it matter to you?</li>
+                <li>Which observation tools did you use on purpose, and where? (Name at least two: contour, sighting for proportion, value zones, negative space.)</li>
+                <li>What surprised you, or what would you do differently next time?</li>
+            </ul>
+        </div>
+
+        <details>
+            <summary>&#9654;&nbsp; Draft your three sentences in your notebook first, then open this for a sample of the register (do not copy it).</summary>
+            <div class="ac-body">"I drew my grandfather's pocketknife because it is the one object of his I kept. I used sighting to get the blade-to-handle proportion right and built the metal's shine with a tight value range, saving the paper white for the brightest edge. I was surprised how much the worn texture on the handle carried the feeling I wanted." Your statement should be this specific, but about your object and your choices.</div>
+        </details>
+    </div>
+
+    <!-- PART 4 · RUBRIC PREVIEW -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128203; PART 4 &middot; HOW YOU WILL BE GRADED</div>
+        <p style="font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 6px 0;">Your Studio Project is scored on this rubric (4 points per row, 20 total). Read it before you submit and make sure each row is as strong as you can make it.</p>
+        <table class="rubric-table">
+            <thead><tr><th style="width:20%">Criteria</th><th>Excellent (4)</th><th>Proficient (3)</th><th>Developing (2)</th><th>Beginning (1)</th></tr></thead>
+            <tbody>
+                <tr><td>Observation &amp; Proportion</td><td>Proportions precise; clearly drawn from life</td><td>Accurate overall, minor issues</td><td>Some accuracy, noticeable distortions</td><td>Little observational accuracy</td></tr>
+                <tr><td>Value &amp; Form</td><td>Full value range; form reads as solid</td><td>Clear value, form mostly convincing</td><td>Limited range, form flat in places</td><td>Little value; stays flat</td></tr>
+                <tr><td>Technique / Craftsmanship</td><td>Exceptional care in graphite or charcoal</td><td>Competent, minor issues</td><td>Uneven execution</td><td>Little care evident</td></tr>
+                <tr><td>Artist Statement</td><td>Specific; names tools; owns choices</td><td>Clear and personal</td><td>Vague or general</td><td>Minimal or missing</td></tr>
+                <tr><td>Completion &amp; Signature</td><td>Complete, all requirements met, signed</td><td>Mostly complete, signed</td><td>Partially complete</td><td>Incomplete or unsigned</td></tr>
+            </tbody>
+        </table>
+        <div class="callout c-help">
+            <div class="ck">&#9997;&#65039; DO NOT FORGET</div>
+            <div class="cb">Every finished artwork carries its artist's name. Sign your drawing. A signature is how you say: this is mine, I made it, I stand behind it.</div>
+        </div>
+    </div>
+
+    <!-- SUBMISSION CHECKLIST -->
+    <div class="submit-card">
+        <div class="sc-k">&#9989; CONFIRM YOUR SUBMISSIONS &middot; STUDIO 1</div>
+        <h3>Before you close Studio 1, check all six</h3>
+        <ul class="checklist">
+            <li><span class="cbx"></span> <div><strong>Skill Builder 1: Contour Warm-Up</strong> submitted (Week 1).</div></li>
+            <li><span class="cbx"></span> <div><strong>Skill Builder 2: Value &amp; Form</strong> submitted (Week 1).</div></li>
+            <li><span class="cbx"></span> <div><strong>Quiz: Observation &amp; the Masters</strong> completed (Week 2).</div></li>
+            <li><span class="cbx"></span> <div><strong>VR Session: The Observation Gallery</strong> completed (Week 2).</div></li>
+            <li><span class="cbx"></span> <div><strong>Studio Project: The Extraordinary Ordinary</strong> uploaded, <em>signed</em>, with your artist statement typed in the text box (Week 2).</div></li>
+            <li><span class="cbx"></span> <div>All files saved to your <strong>OneDrive art portfolio folder</strong> with consistent naming (for example <em>SA2_S01_ExtraordinaryOrdinary_LastName</em>).</div></li>
+        </ul>
+    </div>
+
+    <!-- WHAT'S NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; LOOKING AHEAD</div>
+        <div class="next-item"><div class="num create">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Submit the Studio Project</strong> &middot; End of Week 2</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Your one graded artwork for Studio 1, with artist statement and signature.</div></div></div>
+        <div class="next-item"><div class="num now">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Studio 2: Organizing the Image</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">You can see accurately now. Next you decide how to arrange what you see: composition, focal point, and balance.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">You began Studio 1 unable to draw an everyday object accurately from memory. Two weeks of real looking changed that. The ordinary became extraordinary through attention, and that skill is now the foundation for everything else this course will ask you to make.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 1 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 1 &middot; Learning to See &middot; Lesson 6 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

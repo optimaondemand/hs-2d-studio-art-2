@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 8, Lesson 4: Curation, Sequencing &amp; Capturing Your Work</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 12px 0; }
+    .steps li { position: relative; padding: 10px 0 10px 46px; border-bottom: 1px solid #EEF1F8; font-size: 16px; color: #1a2340; line-height: 1.6; }
+    .steps li:last-child { border-bottom: none; }
+    .steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 9px; width: 30px; height: 30px; background: #D9583B; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .skillbox { background: #FFFFFF; border: 2px solid #D9583B; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .skillbox .sk-k { font-size: 11px; color: #D9583B; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .skillbox h3 { margin: 0 0 8px 0; font-size: 19px; color: #0E1C42; }
+    .skillbox p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 8px 0; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+
+    /* ===== Studio 8 concept visuals: sequencing strip + capture-quality comparison ===== */
+    .seq-strip { display: flex; gap: 10px; margin: 16px 0; flex-wrap: wrap; align-items: center; }
+    .seq-frame { flex: 1; min-width: 90px; background: #ffffff; border: 1px solid #D0D9E8; border-radius: 6px; padding: 7px; text-align: center; box-shadow: 0 2px 5px rgba(14,28,66,0.07); }
+    .seq-frame .sw { height: 54px; border-radius: 4px; margin-bottom: 6px; }
+    .seq-frame .lbl { font-size: 10.5px; color: #0E1C42; }
+    .seq-arrow-sm { color: #C7922C; font-size: 18px; }
+    .sf1 { background: linear-gradient(135deg,#c9d3e6,#eef1f8); }
+    .sf2 { background: linear-gradient(135deg,#dfe6f2,#c9d3e6); }
+    .sf3 { background: repeating-linear-gradient(45deg,#7CC3B8,#7CC3B8 8px,#E6F4F1 8px,#E6F4F1 16px); }
+    .sf4 { background: radial-gradient(circle at 35% 35%, #9a6f16, #E7D3A1 70%); }
+    .capture-compare { display: flex; gap: 14px; margin: 16px 0; flex-wrap: wrap; }
+    .cap-card { flex: 1; min-width: 220px; border-radius: 8px; padding: 14px 16px; border: 1px solid #D0D9E8; }
+    .cap-card.poor { background: #FBEEE9; }
+    .cap-card.good { background: #E6F4F1; }
+    .cap-card h5 { font-size: 12px; letter-spacing: 0.4px; margin: 0 0 8px 0; }
+    .cap-card.poor h5 { color: #A93B22; }
+    .cap-card.good h5 { color: #167567; }
+    .cap-shot { height: 80px; border-radius: 6px; margin-bottom: 8px; position: relative; overflow: hidden; }
+    .cap-shot.poor-shot { background: linear-gradient(115deg, #cfcfcf 0%, #8a8a8a 30%, #cfcfcf 55%, #6b6b6b 100%); filter: brightness(0.7) contrast(0.7); transform: skewX(-4deg) scale(1.08); }
+    .cap-shot.good-shot { background: linear-gradient(135deg, #F0B39E, #FBEEE9 60%, #7CC3B8); }
+    .cap-card p { font-size: 13.5px; color: #1a2340; line-height: 1.5; margin: 0; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q2 &middot; Studio 8 of 18</div>
+        <div style="font-size: 12px; color: #666;">Mid-Year Portfolio Review</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">4 of 6</div>
+        <div style="font-size: 12px; color: #666;">Skill Builder B</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Curation, sequencing, capture</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">You Will Make</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">A sequence order + capture checklist</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 8 &middot; LESSON 4</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Curation, Sequencing &amp; Capturing Your Work Well</div>
+        <div style="font-size: 16px; color: #666;">Choosing which pieces to show, what order to show them in, and how to photograph them so the choices are visible. <span class="time-pill">~50 min</span></div>
+    </div>
+
+    <!-- Objective -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#127919; WHAT YOU WILL BE ABLE TO DO</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">Select four to six pieces from Studios 1&ndash;7 for your portfolio, arrange them in a sequence that tells a clear story of growth, and photograph or scan each one so a viewer can actually see what you made.</div>
+    </div>
+
+    <!-- PART 1 · SEQUENCING TELLS A STORY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 1 &middot; ORDER IS A DECISION, NOT AN ACCIDENT</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Two curators could select the exact same six pieces and still build two very different portfolios, just by changing the order. Chronological order (Studio 1 first, Studio 7 last) tells one story: growth over time. Grouping by theme or technique tells another: range and versatility. Ending on your strongest piece tells a third: this is what I can do. Every order says something, whether you plan it or not.</p>
+
+        <div class="seq-strip">
+            <div class="seq-frame"><div class="sw sf1"></div><div class="lbl">Earliest, weakest value</div></div>
+            <div class="seq-arrow-sm">&#8594;</div>
+            <div class="seq-frame"><div class="sw sf2"></div><div class="lbl">Mid-year, revised</div></div>
+            <div class="seq-arrow-sm">&#8594;</div>
+            <div class="seq-frame"><div class="sw sf3"></div><div class="lbl">A different medium</div></div>
+            <div class="seq-arrow-sm">&#8594;</div>
+            <div class="seq-frame"><div class="sw sf4"></div><div class="lbl">Strongest, ends the set</div></div>
+        </div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">The sequence above ends on strength on purpose. A viewer's last impression tends to stick, so most curators close a set with one of its best pieces rather than its weakest, even if the weakest piece came last chronologically.</p>
+
+        <div class="callout c-art">
+            <div class="ck">&#128172; WONDER FIRST</div>
+            <div class="cb">If you sequenced your six chosen pieces purely by date made, would the story it tells be the one you actually want to tell? Try laying your shortlist out in date order, then try it again ending on your strongest piece. Notice what changes.</div>
+        </div>
+    </div>
+
+    <!-- PART 2 · CHOOSING WHAT MAKES THE CUT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#9878;&#65039; PART 2 &middot; CURATION MEANS LEAVING SOME OUT</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">You have seven Studio pieces and only need four to six, which means leaving one to three out entirely. Leaving a piece out is not a punishment; it is what curation is. A crowded portfolio with every piece included, strong and weak alike, is harder to read than a tight one that makes a clear point.</p>
+
+        <ol class="steps">
+            <li><strong>Sort into three piles.</strong> Definitely include, definitely leave out, and undecided. Most students find this fast for the first two piles.</li>
+            <li><strong>Break ties with your Lesson 2 pattern.</strong> If two pieces are close, keep the one that best shows the strength or the honest growth-in-progress you named in your self-critique.</li>
+            <li><strong>Include at least one revised piece.</strong> Your Lesson 3 revision plan should show up somewhere in this set; it is proof you can improve, not just produce.</li>
+            <li><strong>Land on four to six.</strong> Fewer than four does not show enough range; more than six starts to dilute your strongest choices.</li>
+        </ol>
+
+        <div class="optima-widget ow-select">
+            <div class="widget-kicker">&#9889; TRY IT &middot; CURATION OR JUST INCLUDING EVERYTHING?</div>
+            <div class="widget-question">Read each approach to building a mid-year set. Decide whether it is genuine curation, then check it.</div>
+            <div class="widget-row" data-correct="curation" data-hint="Does this involve a deliberate choice to leave something out, or does it keep everything regardless of strength? Try again.">
+                <div class="widget-row-prompt">"I am including five of my seven pieces. I left out my weakest observation drawing and a collage that repeats the same idea as a stronger piece I kept."</div>
+                <div class="widget-options">
+                    <button data-choice="curation" data-fb="Right. Deliberately leaving out the weakest piece and a redundant one, for stated reasons, is exactly what curation means.">Genuine curation</button>
+                    <button data-choice="everything">Just including everything</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="everything" data-hint="Does this leave anything out on purpose, or keep the full set regardless of quality? Try again.">
+                <div class="widget-row-prompt">"I am submitting all seven pieces so the teacher can see everything I made this semester."</div>
+                <div class="widget-options">
+                    <button data-choice="curation">Genuine curation</button>
+                    <button data-choice="everything" data-fb="Correct. Submitting the full, unedited set is an archive, not a curated argument. Nothing was chosen or left out on purpose.">Just including everything</button>
+                </div>
+            </div>
+            <button class="widget-reset">Reset</button>
+        </div>
+    </div>
+
+    <!-- PART 3 · PHOTOGRAPHING AND SCANNING WELL -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128247; PART 3 &middot; A BLURRY PHOTO UNDOES A STRONG PIECE</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">A viewer can only judge what the photo shows them. A well-made piece captured under a yellow lamp, at an angle, with a shadow across half of it, reads as weaker than it actually is. Capturing your own work well is a real skill and a real part of curation, not an afterthought.</p>
+
+        <div class="capture-compare">
+            <div class="cap-card poor">
+                <h5>AVOID</h5>
+                <div class="cap-shot poor-shot"></div>
+                <p>Shot at an angle under mixed indoor lighting, one corner in shadow, glare across the surface, the piece filling only part of the frame.</p>
+            </div>
+            <div class="cap-card good">
+                <h5>AIM FOR</h5>
+                <div class="cap-shot good-shot"></div>
+                <p>Shot straight-on in even daylight or diffuse light, no glare or shadow, the piece filling the frame with a clean, uncluttered background.</p>
+            </div>
+        </div>
+
+        <div class="vocab-grid" style="margin-top: 6px;">
+            <div class="vocab-card"><strong>Straight-on</strong>Camera held parallel to the flat artwork, not tilted, so edges stay rectangular and nothing distorts.</div>
+            <div class="vocab-card"><strong>Even light</strong>Diffuse daylight or bounced light with no single strong lamp casting a hot spot or a hard shadow.</div>
+            <div class="vocab-card"><strong>Fill the frame</strong>The artwork takes up most of the photo, with a plain, uncluttered background around the edges.</div>
+            <div class="vocab-card"><strong>Resolution</strong>Enough image detail that texture and fine value changes are still visible when viewed at full size.</div>
+        </div>
+
+        <details>
+            <summary>&#9654;&nbsp; Before you open this, photograph one of your own pieces right now and check it against the four capture terms above.</summary>
+            <div class="ac-body">Most first attempts fail on lighting before anything else: a lamp or a window creates a hot glare or a long shadow across part of the piece. Move near a window with indirect daylight, hold the camera flat and parallel to the work, and retake the shot. Compare the two; the difference is usually immediate.</div>
+        </details>
+    </div>
+
+    <!-- SKILL BUILDER ASSIGNMENT POINTER -->
+    <div class="skillbox">
+        <div class="sk-k">&#128393;&#65039; PROCESS CHECK (turn in this week)</div>
+        <h3>Sequence &amp; Capture Plan</h3>
+        <p>List your four to six shortlisted pieces in your planned portfolio order, with one sentence explaining the story that order tells. Then confirm you have a clean, well-lit, straight-on photo or scan of each piece ready to use.</p>
+        <p style="margin:0;">Full directions and submission steps are in the Canvas assignment <em>Portfolio Review Check-In</em>. You will assemble the actual portfolio starting in Lesson 5.</p>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num create">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Update: Portfolio Review Check-In</strong> &middot; Week 1</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Add your sequence order and confirm your photos or scans. Completion graded.</div></div></div>
+        <div class="next-item"><div class="num learn">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 5: Plan &amp; Create</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Plan your revisions, hang a mid-year gallery in VR, and begin building the actual portfolio.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">Curation is choosing what to leave out. Sequencing is choosing what story the choices tell. Capture is making sure a viewer can actually see the choices you made. All three are skills, and all three are gradable, teachable parts of being an artist.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 2 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 8 &middot; Mid-Year Portfolio Review &middot; Lesson 4 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. All visuals on this page are original CSS/SVG; no third-party images used.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 1, Lesson 2: The Master's Eye</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components (teal/coral accents; green retired; red = AI only) ===== */
+    .art-fig { margin: 14px 0; text-align: center; }
+    .art-fig img { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #D0D9E8; }
+    .art-fig figcaption { font-size: 13px; color: #666; margin-top: 8px; line-height: 1.5; }
+    .art-fig figcaption a { color: #167567; }
+    .linkout-card { background: #EEF1F8; border: 1px solid #D0D9E8; border-left: 5px solid #1B8A7A; border-radius: 6px; padding: 14px 18px; margin: 14px 0; }
+    .linkout-card .lk-k { font-size: 11px; color: #167567; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .linkout-card .lk-t { font-size: 16px; color: #0E1C42; margin-bottom: 6px; }
+    .linkout-card p { margin: 0 0 8px 0; font-size: 15px; color: #1a2340; line-height: 1.6; }
+    .linkout-card a { color: #167567; font-size: 15px; }
+    .artist-card { display: flex; gap: 16px; align-items: flex-start; padding: 16px; background: #f8f9fc; border: 1px solid #D0D9E8; border-radius: 8px; margin-bottom: 14px; }
+    .artist-avatar { width: 48px; height: 48px; border-radius: 50%; background: #0E1C42; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+    .artist-name { font-size: 17px; color: #0E1C42; }
+    .artist-dates { font-size: 13px; color: #6b7a99; margin-bottom: 4px; }
+    .artist-tag { display: inline-block; margin: 2px 0 8px; font-size: 11px; letter-spacing: 0.5px; padding: 3px 10px; border-radius: 99px; background: #E6F4F1; color: #167567; border: 1px solid #7CC3B8; }
+    .artist-card p { font-size: 15px; color: #1a2340; line-height: 1.6; margin: 0 0 6px 0; }
+    .daij-step { border-left: 3px solid #1B8A7A; padding: 4px 0 4px 16px; margin: 0 0 14px 0; }
+    .daij-step h4 { font-size: 16px; color: #0E1C42; margin: 0 0 4px 0; }
+    .daij-step h4 span { color: #1B8A7A; }
+    .daij-step p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0; }
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.now { background: #0E1C42; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q1 &middot; Studio 1 of 18</div>
+        <div style="font-size: 12px; color: #666;">Learning to See</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">2 of 6</div>
+        <div style="font-size: 12px; color: #666;">Investigate</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">The Master's Eye</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Method</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">DAIJ criticism</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 1 &middot; LESSON 2</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">The Master's Eye</div>
+        <div style="font-size: 16px; color: #666;">Two artists, five centuries apart, who built everything on observation. Then a tool for reading any artwork. <span class="time-pill">~50 min</span></div>
+    </div>
+
+    <!-- Essential Question -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128214; ESSENTIAL QUESTION</div>
+        <div style="font-size: 20px; color: #0e1c42; font-style: italic; margin-bottom: 10px;">When a great artist looks at something, what are they doing that the rest of us are not?</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">In Lesson 1 you learned that seeing is a skill. Now watch two masters use it, and learn the four-step method critics use to read any work of art. You will use that same method on your own drawing in Lesson 6.</div>
+    </div>
+
+    <!-- PART 1 · LOOK FIRST -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128064; PART 1 &middot; LOOK FIRST</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">This is not the famous mural. It is Leonardo working out the mural before he painted it: a page of studies for <em>The Last Supper</em>, testing how each figure sits, leans, and gestures. Watch how much he solves with line alone, long before any color.</p>
+
+        <figure class="art-fig">
+            <img src="images/leonardo-last-supper-study-c1495.jpg" alt="Leonardo da Vinci's preparatory study of figures for The Last Supper: quick pen studies of seated and gesturing figures, testing poses and the arrangement of hands and heads." />
+            <figcaption>Leonardo da Vinci (Italian, 1452&ndash;1519), study of figures for <em>The Last Supper</em>, c.1495. Pen and ink. Public domain. Source: provided course archive (Studio Art 2 Images, Unit 1).</figcaption>
+        </figure>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Every gesture in the finished mural was observed and rehearsed first. Leonardo watched how real people react when startled, then recorded those reactions here so the painting would feel true. The masterpiece was built on a foundation of looking.</p>
+    </div>
+
+    <!-- PART 2 · NAME WHAT YOU SEE -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 2 &middot; TWO ARTISTS, ONE HABIT</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 14px 0;">Observation is not one style. It looks completely different in different hands. Compare a Renaissance scientist-artist with a modern American painter who turned looking into a system.</p>
+
+        <div class="artist-card">
+            <div class="artist-avatar">LdV</div>
+            <div>
+                <div class="artist-name">Leonardo da Vinci</div>
+                <div class="artist-dates">Italian, 1452&ndash;1519</div>
+                <span class="artist-tag">THE SCIENTIFIC OBSERVER</span>
+                <p>Leonardo treated the sketchbook as a laboratory. He dissected bodies, tracked the flow of water, and studied light on curved surfaces, drawing each subject from many angles to understand it fully. For him, to draw a thing was to ask how it worked. His accuracy came from relentless, curious attention.</p>
+            </div>
+        </div>
+
+        <div class="artist-card">
+            <div class="artist-avatar">CC</div>
+            <div>
+                <div class="artist-name">Chuck Close</div>
+                <div class="artist-dates">American, 1940&ndash;2021</div>
+                <span class="artist-tag">THE SYSTEMATIC OBSERVER</span>
+                <p>Close built enormous, hyper-detailed portraits by dividing a photograph into a grid and observing just one small square at a time, transferring exactly what he saw before moving to the next. He said he did not make decisions, he made observations. By trusting each tiny cell of what was actually there, an accurate whole emerged. It is observation turned into method, and it is the same idea behind the sighting technique you will practice in Lesson 4.</p>
+            </div>
+        </div>
+
+        <div class="linkout-card">
+            <div class="lk-k">&#128279; VIEW THE WORK (opens the museum site)</div>
+            <div class="lk-t">Chuck Close, Self-Portraits</div>
+            <p>Close's work is under copyright, so we view it at the source rather than reproduce it here. Open a self-portrait and look for the grid: up close it dissolves into hundreds of small marked squares, and only at a distance does the face resolve.</p>
+            <a href="https://www.moma.org/collection/works/79170" target="_blank" rel="noopener">Chuck Close, <em>Self-Portrait</em>, 1997, at the Museum of Modern Art</a><br/>
+            <a href="https://www.moma.org/collection/artists/1156" target="_blank" rel="noopener">More Chuck Close works in the MoMA collection</a>
+        </div>
+
+        <div class="callout c-help">
+            <div class="ck">&#128161; HELPFUL TO KNOW</div>
+            <div class="cb"><strong>Photorealism</strong> is a movement in which artists made paintings and drawings as detailed and exact as a photograph. Close was one of its leaders. The goal was not to copy a photo lazily, but to observe so completely that nothing was left to guessing.</div>
+        </div>
+    </div>
+
+    <!-- PART 3 · WATCH IT WORK (DAIJ) -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128269; PART 3 &middot; WATCH IT WORK</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 12px 0;">Artists and critics read a work in a deliberate order so that judgment is earned, not blurted. The four steps spell <strong>DAIJ</strong>: Describe, Analyze, Interpret, Judge. The rule is simple: you may not skip ahead. Describe before you analyze; analyze before you interpret; interpret before you judge. Here is DAIJ applied to Leonardo's <em>Last Supper</em> figure study above.</p>
+
+        <div class="daij-step">
+            <h4><span>D &middot; Describe</span> (just the facts)</h4>
+            <p>Several seated and half-standing figures sketched in brown ink. Hands are drawn larger and darker than the rest. Some heads lean toward a center; a few lines are gone over twice.</p>
+        </div>
+        <div class="daij-step">
+            <h4><span>A &middot; Analyze</span> (how is it built?)</h4>
+            <p>Leonardo leans on <strong>line</strong> and <strong>gesture</strong>. The repeated, darker lines on the hands show he is problem-solving the poses there, because hands carry the emotion. The leaning heads create <strong>movement</strong> that pulls the eye toward the center of the future composition.</p>
+        </div>
+        <div class="daij-step">
+            <h4><span>I &middot; Interpret</span> (what is it saying?)</h4>
+            <p>This is a mind thinking on paper. The study is about reaction: how bodies register a shock. Leonardo is testing how to make a still image feel like a single charged moment.</p>
+        </div>
+        <div class="daij-step">
+            <h4><span>J &middot; Judge</span> (does it succeed?)</h4>
+            <p>As a study, it succeeds completely. The gestures worked out here became the emotional engine of one of the most famous paintings ever made. The looking paid off.</p>
+        </div>
+
+        <div class="optima-widget ow-select">
+            <div class="widget-kicker">&#9889; TRY IT &middot; WHICH DAIJ STEP?</div>
+            <div class="widget-question">Read each statement about an artwork. Decide which DAIJ step it belongs to, then check it.</div>
+            <div class="widget-row" data-correct="interpret" data-hint="Is this a plain fact, a breakdown of technique, a meaning, or a verdict? Try again.">
+                <div class="widget-row-prompt">"The empty chair makes the room feel like it is waiting for someone who will never come."</div>
+                <div class="widget-options">
+                    <button data-choice="describe">Describe</button>
+                    <button data-choice="analyze">Analyze</button>
+                    <button data-choice="interpret" data-fb="Yes. A statement about meaning or mood, going beyond the facts, is Interpret. Notice it rests on things you would have described and analyzed first.">Interpret</button>
+                    <button data-choice="judge">Judge</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="describe" data-hint="This one adds no opinion and no technique. It only reports. Try again.">
+                <div class="widget-row-prompt">"There are three green bottles and a white cloth on a wooden table."</div>
+                <div class="widget-options">
+                    <button data-choice="analyze">Analyze</button>
+                    <button data-choice="describe" data-fb="Right. Pure fact, no opinion, no technique named. That is Describe, always the first step.">Describe</button>
+                    <button data-choice="judge">Judge</button>
+                    <button data-choice="interpret">Interpret</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="analyze" data-hint="This names an element and how it is working. That is not a fact list, a meaning, or a verdict. Try again.">
+                <div class="widget-row-prompt">"Strong diagonal lines lead the eye from the corner straight to the figure's face."</div>
+                <div class="widget-options">
+                    <button data-choice="describe">Describe</button>
+                    <button data-choice="interpret">Interpret</button>
+                    <button data-choice="analyze" data-fb="Correct. Naming an element (line) and explaining how it organizes the work is Analyze.">Analyze</button>
+                    <button data-choice="judge">Judge</button>
+                </div>
+            </div>
+            <button class="widget-reset">Reset</button>
+        </div>
+
+        <details>
+            <summary>&#9654;&nbsp; In your notebook, write one Judge sentence about Leonardo's study before you open this. Then compare.</summary>
+            <div class="ac-body">A strong Judge sentence points back to evidence. For example: "It succeeds as a study because the gestures Leonardo tested here, especially the hands, became the exact source of emotion in the finished mural." Your wording will differ; what matters is that your verdict rests on what you described and analyzed.</div>
+        </details>
+
+        <div class="callout c-help">
+            <div class="ck">&#9997;&#65039; NOW YOU TRY</div>
+            <div class="cb">Choose whichever work pulls your eye more: Leonardo's figure study above, or the Chuck Close self-portraits at the museum link. In your notebook, run the same four steps, describe, analyze, interpret, judge, on the one you picked.</div>
+        </div>
+    </div>
+
+    <!-- VOCABULARY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; VOCABULARY</div>
+        <div class="vocab-grid">
+            <div class="vocab-card"><strong>DAIJ</strong>The four-step critique order: Describe, Analyze, Interpret, Judge.</div>
+            <div class="vocab-card"><strong>Gesture</strong>The pose and movement of a figure; how the body expresses action or feeling.</div>
+            <div class="vocab-card"><strong>Grid method</strong>Dividing an image into squares and observing one square at a time to transfer it accurately.</div>
+            <div class="vocab-card"><strong>Photorealism</strong>A movement making art as exact and detailed as a photograph.</div>
+            <div class="vocab-card"><strong>Study</strong>A practice drawing made to work out a problem before a finished artwork.</div>
+        </div>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num now">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Canvas Quiz: Observation &amp; the Masters</strong> &middot; Week 2</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">A short auto-graded check on Lessons 1 and 2: seeing vs. looking, the critique order, and the two artists.</div></div></div>
+        <div class="next-item"><div class="num learn">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 3: Line &amp; Contour</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Put the eye to work. Your first hands-on observation techniques.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">Leonardo dissected; Close built a grid. Different centuries, different methods, one habit: they trusted careful looking over confident guessing. DAIJ is how you slow your own eye down to their speed.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 1 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 1 &middot; Learning to See &middot; Lesson 2 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. Public-domain artwork shown with attribution; in-copyright work is linked to its museum source.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

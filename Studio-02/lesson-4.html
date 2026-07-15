@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 2, Lesson 4: Balance &amp; Movement</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .bal-demo { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; margin: 16px 0; }
+    .bal-demo figure { margin: 0; text-align: center; flex: 1; min-width: 240px; }
+    .bal-demo img { max-width: 100%; height: 160px; width: 100%; object-fit: cover; border-radius: 6px; border: 1px solid #D0D9E8; }
+    .bal-demo figcaption { font-size: 13px; color: #6b7a99; margin-top: 6px; line-height: 1.5; }
+    .bal-demo figcaption a { color: #167567; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 12px 0; }
+    .steps li { position: relative; padding: 10px 0 10px 46px; border-bottom: 1px solid #EEF1F8; font-size: 16px; color: #1a2340; line-height: 1.6; }
+    .steps li:last-child { border-bottom: none; }
+    .steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 9px; width: 30px; height: 30px; background: #D9583B; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .skillbox { background: #FFFFFF; border: 2px solid #D9583B; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .skillbox .sk-k { font-size: 11px; color: #D9583B; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .skillbox h3 { margin: 0 0 8px 0; font-size: 19px; color: #0E1C42; }
+    .skillbox p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 8px 0; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q1 &middot; Studio 2 of 18</div>
+        <div style="font-size: 12px; color: #666;">Organizing the Image</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">4 of 6</div>
+        <div style="font-size: 12px; color: #666;">Skill Builder</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Balance &amp; Movement</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">You Will Make</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">Balance + eye-path studies</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 2 &middot; LESSON 4</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Balance &amp; Movement</div>
+        <div style="font-size: 16px; color: #666;">Distribute the weight across the frame, then build a path for the eye to travel. Keep pencil and paper close. <span class="time-pill">~55 min</span></div>
+    </div>
+
+    <!-- Objective -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#127919; WHAT YOU WILL BE ABLE TO DO</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">Distribute visual weight with <strong>symmetrical</strong> and <strong>asymmetrical balance</strong>, and design <strong>movement</strong>, the path the eye follows, using leading lines and placement. Focal point (Lesson 3) decides where the eye starts; balance and movement decide how the whole frame holds together and where the eye travels next.</div>
+    </div>
+
+    <!-- PART 1 · BALANCE -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#9878;&#65039; PART 1 &middot; BALANCE IS VISUAL WEIGHT</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;"><strong>Balance</strong> is how the visual weight of a composition is spread across the frame. Large, dark, detailed, or high-contrast things feel "heavy"; small, light, or plain things feel "light." A balanced picture feels settled; an unbalanced one feels like it might tip. There are two main kinds.</p>
+
+        <div class="bal-demo">
+            <figure>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Tour_Eiffel_-_01.jpg" alt="A close-up photograph of one pillar of the Eiffel Tower, its ironwork mirrored evenly left to right around a central vertical axis." />
+                <figcaption>Symmetrical balance: equal weight mirrored on both sides. Calm, formal, stable.<br/>Carlos Delgado, <em>Tour Eiffel</em>. <a href="https://commons.wikimedia.org/wiki/File:Tour_Eiffel_-_01.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 3.0.</figcaption>
+            </figure>
+            <figure>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Diagonal_asymmetry.jpg" alt="A photograph of a path climbing a hillside on a strong diagonal, with open sky and terrain unevenly distributed on either side of the frame." />
+                <figcaption>Asymmetrical balance: the diagonal path and uneven terrain differ left to right, but the frame still feels settled. Dynamic.<br/>Sajid.Tab, <em>Diagonal asymmetry</em>. <a href="https://commons.wikimedia.org/wiki/File:Diagonal_asymmetry.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 4.0.</figcaption>
+            </figure>
+        </div>
+
+        <div class="callout c-help">
+            <div class="ck">&#128161; ASYMMETRY IS NOT IMBALANCE</div>
+            <div class="cb">Asymmetrical does not mean lopsided. It means the two sides differ but still weigh about the same to the eye. One big object can be balanced by a few small ones, or by a large area of empty space. Asymmetry usually feels more alive than perfect symmetry, which is why most artists reach for it.</div>
+        </div>
+    </div>
+
+    <!-- PART 2 · MOVEMENT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128260; PART 2 &middot; MOVEMENT IS THE EYE'S PATH</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;"><strong>Movement</strong> is the route the artist builds for the viewer's eye. A strong composition does not just have a focal point; it sends the eye on a journey and, ideally, keeps it circulating inside the frame instead of sliding off the edge. <strong>Leading lines</strong>, overlapping objects, and the direction things point all steer that path.</p>
+
+        <div class="bal-demo">
+            <figure>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Canberra_%28AU%29%2C_Commonwealth_Avenue_Bridge_--_2019_--_1811.jpg" alt="A photograph of a bridge and its reflection in calm water, its symmetrical lines converging toward a distant building and drawing the eye through the frame." />
+                <figcaption>Movement designed on purpose: the bridge's converging lines and its reflection carry the eye straight through the frame toward the building in the distance.<br/>Dietmar Rabich, <em>Canberra (AU), Commonwealth Avenue Bridge</em>. <a href="https://commons.wikimedia.org/wiki/File:Canberra_(AU),_Commonwealth_Avenue_Bridge_--_2019_--_1811.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, CC BY-SA 4.0.</figcaption>
+            </figure>
+            <figure>
+                <div style="border: 1px solid #D0D9E8; border-radius: 6px; overflow: hidden;">
+                    <svg width="100%" viewBox="0 0 240 160" aria-hidden="true"><rect width="240" height="160" fill="#f8f9fc"/><circle cx="120" cy="80" r="16" fill="#0E1C42"/><rect x="40" y="30" width="20" height="20" fill="#c3ccdb"/><rect x="185" y="30" width="20" height="20" fill="#c3ccdb"/><rect x="40" y="112" width="20" height="20" fill="#c3ccdb"/><rect x="185" y="112" width="20" height="20" fill="#c3ccdb"/></svg>
+                </div>
+                <figcaption>No movement (original schematic diagram): scattered objects with nothing linking them. The eye bounces and finds no path. Flat.</figcaption>
+            </figure>
+        </div>
+
+        <div class="optima-widget ow-select">
+            <div class="widget-kicker">&#9889; TRY IT &middot; READ THE ARRANGEMENT</div>
+            <div class="widget-question">Answer each from what you just learned. Commit, then check.</div>
+            <div class="widget-row" data-correct="asym" data-hint="Two sides that differ but weigh about the same to the eye have a specific name. Try again.">
+                <div class="widget-row-prompt">A large tree fills the left of a picture; three small birds and open sky fill the right, and it still feels settled. This is:</div>
+                <div class="widget-options">
+                    <button data-choice="sym">Symmetrical balance</button>
+                    <button data-choice="asym" data-fb="Yes. Different content on each side that still weighs about the same is asymmetrical balance. The one big shape is offset by several small ones plus open space.">Asymmetrical balance</button>
+                    <button data-choice="none">No balance at all</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="movement" data-hint="Which term names the PATH the eye travels through a work? Try again.">
+                <div class="widget-row-prompt">A curving road leads from the front of a scene back to a distant house, and your eye follows it. This is an example of:</div>
+                <div class="widget-options">
+                    <button data-choice="sym">Symmetry</button>
+                    <button data-choice="movement" data-fb="Right. The road is a leading line that creates movement: it gives the eye a path to travel through the frame.">Movement</button>
+                    <button data-choice="contrast">Cropping</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="sym" data-hint="Which kind of balance mirrors one side onto the other, and tends to feel formal and calm? Try again.">
+                <div class="widget-row-prompt">A doorway drawn with matching columns and equal weight on the left and right feels formal and still. This balance is:</div>
+                <div class="widget-options">
+                    <button data-choice="movement">Movement</button>
+                    <button data-choice="asym">Asymmetrical</button>
+                    <button data-choice="sym" data-fb="Correct. Mirror-equal weight on both sides is symmetrical balance, which usually reads as formal, calm, and stable.">Symmetrical</button>
+                </div>
+            </div>
+            <button class="widget-reset">Reset</button>
+        </div>
+
+        <details>
+            <summary>&#9654;&nbsp; In your notebook, sketch three objects and draw the eye path you would want a viewer to take, before you open this. Then check your thinking.</summary>
+            <div class="ac-body">A strong eye path usually enters at the focal point, moves through the supporting objects along a line or curve, and loops back inward rather than running off the edge. If your arrow shoots straight out of the frame, add an object or a line near that edge to turn the eye back in. There is no single right path; what matters is that you designed one on purpose.</div>
+        </details>
+    </div>
+
+    <!-- SKILL BUILDER ASSIGNMENT POINTER -->
+    <div class="skillbox">
+        <div class="sk-k">&#128393;&#65039; SKILL BUILDER SKETCH (turn in this week)</div>
+        <h3>Balance &amp; Eye-Path Studies</h3>
+        <p>On one sheet: make one small thumbnail with <strong>symmetrical</strong> balance and one with <strong>asymmetrical</strong> balance of the same objects, then on a third thumbnail draw a dashed arrow showing the <strong>eye path</strong> your arrangement creates. Label each. This is a completion-graded practice rung. Focus on clearly different balance types and a designed eye path.</p>
+        <p style="margin:0;">Full directions and submission steps are in the Canvas assignment <em>Skill Builder 2: Balance &amp; Movement</em>. Photograph your page, upload it, and save a copy to your OneDrive portfolio folder.</p>
+    </div>
+
+    <!-- VOCABULARY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; VOCABULARY</div>
+        <div class="vocab-grid">
+            <div class="vocab-card"><strong>Balance</strong>How visual weight is distributed across the frame.</div>
+            <div class="vocab-card"><strong>Symmetrical balance</strong>Equal, mirrored weight on both sides; formal and calm.</div>
+            <div class="vocab-card"><strong>Asymmetrical balance</strong>Different content on each side that still weighs the same; dynamic.</div>
+            <div class="vocab-card"><strong>Visual weight</strong>How much a shape pulls the eye, based on size, value, and detail.</div>
+            <div class="vocab-card"><strong>Movement</strong>The path the artist builds for the eye to follow.</div>
+            <div class="vocab-card"><strong>Leading lines</strong>Lines that steer the eye along that path toward the focal point.</div>
+        </div>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num create">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Submit: Skill Builder 2 &middot; Balance &amp; Movement</strong> &middot; Week 1</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Your balance and eye-path studies. Completion graded.</div></div></div>
+        <div class="next-item"><div class="num learn">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 5: Plan &amp; Create</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Choose your objects, plan three arrangements, visit the VR gallery, and begin the Studio Project.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">Focal point starts the eye; balance holds the frame together; movement decides where the eye travels next. With these three tools plus placement from Lesson 3, you now control the whole viewer experience. Next you put them to work on objects that matter to you.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 1 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 2 &middot; Organizing the Image &middot; Lesson 4 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. Balance and movement photos are Creative Commons licensed; see each caption for source and attribution. The no-movement diagram is original HTML/CSS/SVG built with course design tokens.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

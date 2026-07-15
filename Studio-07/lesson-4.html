@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 7, Lesson 4: Symbolism &amp; Setting</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components ===== */
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 16px 0; }
+    .tech-card { border: 1px solid #D0D9E8; border-radius: 8px; overflow: hidden; background: #fff; }
+    .tech-demo { height: 130px; display: flex; align-items: center; justify-content: center; background: #f8f9fc; border-bottom: 1px solid #EEF1F8; overflow: hidden; }
+    .tech-demo img { max-width: 100%; max-height: 130px; object-fit: cover; }
+    .tech-body { padding: 12px 15px; }
+    .tech-body strong { color: #167567; display: block; margin-bottom: 4px; font-size: 16px; }
+    .tech-body span { font-size: 14px; color: #1a2340; line-height: 1.55; }
+    .tech-credit { font-size: 11px; color: #6b7a99; padding: 0 15px 12px; line-height: 1.5; }
+    .tech-credit a { color: #167567; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 12px 0; }
+    .steps li { position: relative; padding: 10px 0 10px 46px; border-bottom: 1px solid #EEF1F8; font-size: 16px; color: #1a2340; line-height: 1.6; }
+    .steps li:last-child { border-bottom: none; }
+    .steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 9px; width: 30px; height: 30px; background: #D9583B; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .skillbox { background: #FFFFFF; border: 2px solid #D9583B; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .skillbox .sk-k { font-size: 11px; color: #D9583B; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .skillbox h3 { margin: 0 0 8px 0; font-size: 19px; color: #0E1C42; }
+    .skillbox p { font-size: 16px; color: #1a2340; line-height: 1.6; margin: 0 0 8px 0; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q2 &middot; Studio 7 of 18</div>
+        <div style="font-size: 12px; color: #666;">Identity</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">4 of 6</div>
+        <div style="font-size: 12px; color: #666;">Skill Builder B</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Symbolism &amp; Setting</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">You Will Make</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">Symbol &amp; setting thumbnail</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 7 &middot; LESSON 4</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Symbolism &amp; Setting</div>
+        <div style="font-size: 16px; color: #666;">The face is believable now. This lesson decides what surrounds it, and why. <span class="time-pill">~50 min</span></div>
+    </div>
+
+    <!-- Objective -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#127919; WHAT YOU WILL BE ABLE TO DO</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">Choose objects, patterns, and a setting for a portrait so that each one carries specific meaning rather than filling empty space, and test whether your choices actually communicate before you commit them to your Studio Project.</div>
+    </div>
+
+    <!-- PART 1 · THREE TOOLS OF MEANING -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 1 &middot; THREE WAYS TO CARRY MEANING</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 6px 0;">Lesson 2 showed you three artists using three different strategies. Underneath all three are the same three tools, and you now get to practice each one before you choose which to lean on.</p>
+
+        <div class="tech-grid">
+            <div class="tech-card">
+                <div class="tech-demo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/88/Hans_Holbein_the_Younger_-_The_Ambassadors_-_Google_Art_Project.jpg" alt="Hans Holbein the Younger's The Ambassadors: two richly dressed men flank a two-tiered table crowded with globes, scientific instruments, and a lute, each object carrying its own symbolic meaning." />
+                </div>
+                <div class="tech-body"><strong>Symbolic Object</strong><span>A held or nearby item chosen because it stands for a role, a value, a memory, or a part of the sitter's identity, not because it looks nice. Holbein filled an entire tabletop with them.</span></div>
+                <div class="tech-credit">Hans Holbein the Younger, <em>The Ambassadors</em>, 1533. Public domain. <a href="https://commons.wikimedia.org/wiki/File:Hans_Holbein_the_Younger_-_The_Ambassadors_-_Google_Art_Project.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>.</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-demo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Morris_Strawberry_Thief_1883.jpg" alt="William Morris's Strawberry Thief textile pattern: repeating thrushes stealing strawberries among stylized leaves and flowers, printed in indigo, red, and cream." />
+                </div>
+                <div class="tech-body"><strong>Pattern / Iconography</strong><span>A repeated motif or design system filling the background that adds cultural, decorative, or symbolic weight, the way Wiley's ornamental wallpaper does.</span></div>
+                <div class="tech-credit">William Morris, <em>Strawberry Thief</em> textile design, 1883. Public domain. <a href="https://commons.wikimedia.org/wiki/File:Morris_Strawberry_Thief_1883.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>.</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-demo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/52/Thomas_Gainsborough_-_Mr_and_Mrs_Andrews.jpg" alt="Thomas Gainsborough's Mr and Mrs Andrews: a seated couple posed at the left edge of the canvas beside a tree, with their own farmland stretching across the rest of the composition." />
+                </div>
+                <div class="tech-body"><strong>Setting</strong><span>The place a sitter is shown in, whether a real room, a plain flat color, or an invented backdrop, chosen to say something about where the sitter belongs or what they value.</span></div>
+                <div class="tech-credit">Thomas Gainsborough, <em>Mr and Mrs Andrews</em>, c.1750. Public domain. <a href="https://commons.wikimedia.org/wiki/File:Thomas_Gainsborough_-_Mr_and_Mrs_Andrews.jpg" target="_blank" rel="noopener">Wikimedia Commons</a>.</div>
+            </div>
+        </div>
+
+        <div class="callout c-help">
+            <div class="ck">&#128161; A PLAIN BACKGROUND IS ALSO A CHOICE</div>
+            <div class="cb">Sherald's flat pale blue background is not an absence of a setting decision, it IS the decision. Removing detail on purpose, so nothing competes with pose and gaze, is just as intentional as filling a background with pattern. "Nothing" and "everything" are both settings; the only mistake is a setting that is simply left over, not chosen.</div>
+        </div>
+    </div>
+
+    <!-- PART 2 · TESTING A SYMBOL -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#9997;&#65039; PART 2 &middot; DOES YOUR SYMBOL ACTUALLY WORK?</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Not every object that matters to you will read clearly to a stranger. A good test: could you explain the connection between the object and your story in one sentence, without saying "it just does"? If yes, it is probably strong enough to use. If you struggle to explain it, either sharpen how you show it or choose a different object.</p>
+
+        <ol class="steps">
+            <li><strong>List (5 min).</strong> Pull out your Lesson 1 warm-up list of three meaningful objects. For each, write the one-sentence connection.</li>
+            <li><strong>Test (5 min).</strong> Read each sentence aloud. Does it sound specific to you, or could it apply to almost anyone? Specific beats general.</li>
+            <li><strong>Choose a setting (5 min).</strong> Decide: a real place that matters to you, an invented backdrop, a pattern, or intentional plainness. Name your reason in one sentence, same test as above.</li>
+            <li><strong>Thumbnail (10 min).</strong> Sketch one small, fast thumbnail placing your face, your chosen objects, and your setting together. Do not detail it. You are testing arrangement only.</li>
+        </ol>
+
+        <div class="optima-widget ow-select">
+            <div class="widget-kicker">&#9889; TRY IT &middot; STRONG SYMBOL OR WEAK SYMBOL?</div>
+            <div class="widget-question">Read each planned choice. Decide if the reasoning given is strong (specific to that person) or weak (too general to say anything real).</div>
+            <div class="widget-row" data-correct="strong" data-hint="Does this reasoning apply to almost anyone, or is it tied to one specific person's story? Try again.">
+                <div class="widget-row-prompt">"I am placing my grandmother's sewing needle in the portrait because she taught me to sew during the year she lived with us, and it is the one skill of hers I kept."</div>
+                <div class="widget-options">
+                    <button data-choice="strong" data-fb="Right. This connects a specific object to a specific memory and a specific ongoing skill. That is a strong, well-earned symbol.">Strong reasoning</button>
+                    <button data-choice="weak">Weak reasoning</button>
+                </div>
+            </div>
+            <div class="widget-row" data-correct="weak" data-hint="Could this exact sentence be said by almost any student choosing almost any object? Try again.">
+                <div class="widget-row-prompt">"I am putting a basketball in my portrait because I like sports and it looks cool."</div>
+                <div class="widget-options">
+                    <button data-choice="strong">Strong reasoning</button>
+                    <button data-choice="weak" data-fb="Correct. This could describe thousands of students and any generic sports object. It needs a specific memory, achievement, or meaning to become a real symbol rather than decoration.">Weak reasoning</button>
+                </div>
+            </div>
+            <button class="widget-reset">Reset</button>
+        </div>
+    </div>
+
+    <!-- SKILL BUILDER ASSIGNMENT POINTER -->
+    <div class="skillbox">
+        <div class="sk-k">&#128393;&#65039; SKILL BUILDER (turn in this week)</div>
+        <h3>Symbol &amp; Setting Thumbnail</h3>
+        <p>Choose at least two symbolic objects and one setting decision for your planned portrait. Write the one-sentence "why" for each, then sketch one small thumbnail showing how the face, objects, and setting will be arranged. This is a planning rung, not the final artwork; loose sketching is expected.</p>
+        <p style="margin:0;">Full directions and submission steps are in the Canvas assignment <em>Skill Builder B: Symbol &amp; Setting Thumbnail</em>. Photograph your page and upload it, then save a copy to your OneDrive portfolio folder.</p>
+    </div>
+
+    <!-- VOCABULARY -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128221; VOCABULARY</div>
+        <div class="vocab-grid">
+            <div class="vocab-card"><strong>Symbol / attribute</strong>An object included to represent an idea, value, role, or story detail.</div>
+            <div class="vocab-card"><strong>Iconography</strong>A system of symbols and their shared or agreed meanings.</div>
+            <div class="vocab-card"><strong>Setting</strong>The place or background a sitter is shown in, chosen for meaning.</div>
+            <div class="vocab-card"><strong>Motif</strong>A recurring visual element, often used to build pattern.</div>
+            <div class="vocab-card"><strong>Intentional plainness</strong>A deliberately simple or empty background used to focus attention elsewhere.</div>
+        </div>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num create">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Submit: Skill Builder B &middot; Symbol &amp; Setting Thumbnail</strong> &middot; Week 1</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Your planning sketch and one-sentence reasoning. Completion graded.</div></div></div>
+        <div class="next-item"><div class="num now">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Canvas Quiz: Identity in Portraiture</strong> &middot; Week 2</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Auto-graded check on proportion, symbolism, and the three featured artists.</div></div></div>
+        <div class="next-item"><div class="num learn">3</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 5: Plan &amp; Create</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Turn your thumbnail into a real plan and begin the Studio Project.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">A symbol only works if you can explain it in one honest sentence. If you cannot, it is decoration, not meaning. The strongest portraits in this Studio's history lesson all pass that test, and yours should too.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 2 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 7 &middot; Identity &middot; Lesson 4 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. Reference images are public domain; see each caption for source and attribution.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
