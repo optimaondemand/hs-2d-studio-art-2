@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>2D Studio Art 2 &mdash; Studio 14, Lesson 1: Can an Image Change a Mind?</title>
+<style>
+    body { margin: 0; padding: 0; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f6fa; }
+    .canvas-frame { max-width: 1100px; margin: 0 auto; background: #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+    /* ===== WIDGET CSS — from optima-lesson-format template (teal correct / coral try-again; green retired) ===== */
+    .optima-widget { background: linear-gradient(135deg, #EEF8F5 0%, #F6FBFA 100%); border: 1px solid #CFE5DF; border-left: 5px solid #1B8A7A; border-radius: 8px; padding: 18px 22px; margin: 18px 0; }
+    .widget-kicker { font-size: 11px; color: #167567; margin-bottom: 10px; letter-spacing: 0.4px; }
+    .widget-question { font-size: 17px; color: #0E1C42; margin-bottom: 14px; line-height: 1.55; }
+    .widget-row { background: #FFFFFF; border: 1px solid #D0D9E8; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; }
+    .widget-row-prompt { font-size: 15px; color: #0E1C42; margin-bottom: 8px; line-height: 1.5; font-style: italic; }
+    .widget-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .widget-options button { background: #FFFFFF; border: 1.5px solid #D0D9E8; border-radius: 8px; padding: 8px 14px; font-size: 14px; color: #0E1C42; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+    .widget-options button:hover { background: #F4F6FA; border-color: #55C8E8; }
+    .widget-options button.selected { background: #0E1C42; color: #FFFFFF; border-color: #0E1C42; }
+    .widget-options button.correct { background: #D8EEE9; border-color: #1B8A7A; color: #167567; }
+    .widget-options button.incorrect { background: #FBE6E0; border-color: #D9583B; color: #A93B22; }
+    .widget-feedback { background: #FFFFFF; border-left: 3px solid #C7922C; padding: 10px 14px; font-size: 15px; color: #1a2340; line-height: 1.55; margin: 10px 0; display: none; border-radius: 4px; }
+    .widget-feedback.show { display: block; }
+    .row-feedback { padding: 8px 12px; margin-top: 8px; font-size: 14px; border-radius: 4px; line-height: 1.5; }
+    .row-feedback.correct { background: #D8EEE9; border-left: 3px solid #1B8A7A; color: #167567; }
+    .row-feedback.incorrect { background: #FBE6E0; border-left: 3px solid #D9583B; color: #A93B22; }
+    .widget-reset { background: transparent; border: 1px solid #C7922C; color: #C7922C; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-family: inherit; margin-top: 6px; }
+    .widget-reset:hover { background: #FDF3E3; }
+
+    /* ===== Art-course components (teal/coral accents; green retired; red = AI only) ===== */
+    .art-fig { margin: 14px 0; text-align: center; }
+    .art-fig img { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid #D0D9E8; }
+    .art-fig figcaption { font-size: 13px; color: #666; margin-top: 8px; line-height: 1.5; }
+    .art-fig figcaption a { color: #167567; }
+    .linkout-card { background: #EEF1F8; border: 1px solid #D0D9E8; border-left: 5px solid #1B8A7A; border-radius: 6px; padding: 14px 18px; margin: 14px 0; }
+    .linkout-card .lk-k { font-size: 11px; color: #167567; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .linkout-card .lk-t { font-size: 16px; color: #0E1C42; margin-bottom: 6px; }
+    .linkout-card p { margin: 0 0 8px 0; font-size: 15px; color: #1a2340; line-height: 1.6; }
+    .linkout-card a { color: #167567; font-size: 15px; }
+    .agit-visual { background: #ffffff; border-radius: 6px; overflow: hidden; }
+    .agit-panel { position: relative; aspect-ratio: 4/3; background: #1a1a1a; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .agit-panel .band { position: absolute; background: #C7922C; }
+    .agit-panel .band.b1 { top: 0; left: 0; right: 0; height: 18%; }
+    .agit-panel .band.b2 { bottom: 0; left: 0; right: 0; height: 14%; background: #D9583B; }
+    .agit-panel .agit-text { position: relative; z-index: 2; color: #ffffff; font-size: 30px; letter-spacing: 0.5px; text-align: center; line-height: 1.25; padding: 0 18px; text-transform: uppercase; }
+    .agit-panel .agit-sub { position: absolute; bottom: 6%; left: 0; right: 0; z-index: 2; text-align: center; color: #1a1a1a; font-size: 13px; letter-spacing: 1px; }
+    .compare-wrap { display: flex; gap: 14px; flex-wrap: wrap; margin: 16px 0; }
+    .compare-box { flex: 1; min-width: 220px; border-radius: 8px; padding: 14px 18px; border: 1.5px solid; }
+    .compare-box.memory  { background: #FBEEE9; border-color: #E0A695; }
+    .compare-box.observe { background: #E6F4F1; border-color: #7CC3B8; }
+    .compare-box h4 { font-size: 13px; letter-spacing: 0.5px; margin: 0 0 8px 0; }
+    .compare-box.memory  h4 { color: #A93B22; }
+    .compare-box.observe h4 { color: #167567; }
+    .compare-box ul { margin: 0; padding-left: 18px; font-size: 15px; color: #1a2340; line-height: 1.6; }
+    .concept-card { background: #0E1C42; border-radius: 10px; padding: 26px 28px; margin: 20px 0; text-align: center; border-top: 5px solid #1B8A7A; }
+    .concept-card .cc-k { font-size: 11px; color: #55C8E8; letter-spacing: 1px; margin-bottom: 10px; }
+    .concept-card .cc-main { font-size: 26px; color: #ffffff; line-height: 1.35; }
+    .concept-card .cc-main em { color: #F0B39E; font-style: normal; }
+    .concept-card .cc-main strong { color: #7FD4C6; }
+    .concept-card .cc-sub { font-size: 15px; color: #c8d4e8; margin-top: 12px; line-height: 1.6; }
+    .callout { border-radius: 6px; padding: 14px 20px; margin: 16px 0; }
+    .callout .ck { font-size: 11px; margin-bottom: 8px; letter-spacing: 0.5px; }
+    .callout .cb { font-size: 16px; line-height: 1.6; color: #0E1C42; }
+    .c-help { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-help .ck { color: #167567; }
+    .c-art { background: #E6F4F1; border-left: 5px solid #1B8A7A; }
+    .c-art .ck { color: #167567; }
+    .next-item { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .next-item .num { min-width: 30px; height: 30px; border-radius: 50%; color: #fff; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .num.learn { background: #1B8A7A; }
+    .num.create { background: #D9583B; }
+    .num.now { background: #0E1C42; }
+    .roadmap { list-style: none; margin: 10px 0 0; padding: 0; }
+    .roadmap li { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border: 1px solid #D0D9E8; border-radius: 6px; margin-bottom: 8px; font-size: 15px; color: #1a2340; }
+    .roadmap li.current { background: #E6F4F1; border-color: #1B8A7A; color: #0E1C42; }
+    .roadmap li .rn { min-width: 24px; height: 24px; border-radius: 50%; background: #EEF1F8; color: #0E1C42; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .roadmap li.current .rn { background: #1B8A7A; color: #fff; }
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .vocab-card { background: #EEF1F8; border-radius: 6px; padding: 10px 13px; font-size: 14px; color: #1a2340; }
+    .vocab-card strong { color: #0E1C42; display: block; margin-bottom: 2px; }
+    details { background: #FFFFFF; border: 1px solid #D0D9E8; border-left: 4px solid #C7922C; border-radius: 6px; padding: 12px 18px; margin: 14px 0; }
+    details summary { font-size: 16px; color: #0E1C42; cursor: pointer; }
+    details .ac-body { font-size: 16px; color: #1a2340; margin-top: 10px; padding-top: 10px; border-top: 1px solid #EEF1F8; line-height: 1.6; }
+    .time-pill { display: inline-block; background: #FBF1DC; color: #9a6f16; border: 1px solid #E7D3A1; border-radius: 99px; font-size: 12px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="canvas-frame">
+
+<!-- ===== HEADER ===== -->
+<div style="background: #0E1C42; border-bottom: 5px solid #55C8E8; padding: 22px 34px;">
+    <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px;">
+        <div style="width: 52px; height: 52px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;"><img src="https://raw.githubusercontent.com/optimaondemand/optima-assets/eeb0b335630058906d52f478028361d352253a93/images/Optima%20Final%20Circle%20-%20Owl%20Only.png" alt="Optima Academy" style="width: 50px; height: 40px; object-fit: contain;" /></div>
+        <div>
+            <div style="font-size: 28px; color: #ffffff; line-height: 1.2;">Optima Academy Online</div>
+            <div style="font-size: 12px; color: #55c8e8;">An Education Experience Company</div>
+        </div>
+    </div>
+    <div style="font-size: 36px; color: #ffffff; margin-bottom: 6px;">2D STUDIO ART 2</div>
+</div>
+
+<!-- ===== METADATA STRIP ===== -->
+<div style="background: #FFFFFF; border-bottom: 2px solid #D0D9E8; display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Quarter / Studio</div>
+        <div style="font-size: 17px; color: #0e1c42;">Q4 &middot; Studio 14 of 18</div>
+        <div style="font-size: 12px; color: #666;">Art &amp; Society</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Lesson</div>
+        <div style="font-size: 17px; color: #0e1c42;">1 of 6</div>
+        <div style="font-size: 12px; color: #666;">Observe</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px; border-right: 1px solid #D0D9E8;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Focus</div>
+        <div style="font-size: 17px; color: #0e1c42;">Can an Image Change a Mind?</div>
+    </div>
+    <div style="flex: 1; min-width: 140px; padding: 12px 16px;">
+        <div style="font-size: 11px; color: #6b7a99; margin-bottom: 4px;">Studio Project</div>
+        <div style="font-size: 16px; color: #0e1c42; font-style: italic;">A Cause Worth Making</div>
+    </div>
+</div>
+
+<!-- ===== BODY WRAPPER ===== -->
+<div style="padding: 24px 34px;">
+
+<!-- ═══ OPTIMA READ-ALOUD PLAYER ═══ -->
+<div id="optima-read-aloud">
+<style>
+    #optima-read-aloud { background: linear-gradient(135deg, #E8F6FB 0%, #F4F9FC 100%); border: 1px solid #C5DCE5; border-left: 5px solid #2196D0; border-radius: 8px; padding: 14px 18px; margin: 0 0 20px 0; }
+    #optima-read-aloud .ora-kicker { font-size: 11px; color: #1B6A94; letter-spacing: 0.4px; margin-bottom: 10px; }
+    #optima-read-aloud .ora-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    #optima-read-aloud .ora-controls button { border-radius: 8px; padding: 8px 16px; font-size: 14px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+    #ora-play { background: #0E1C42; color: #FFFFFF; border: 1.5px solid #0E1C42; }
+    #ora-play:hover:enabled { background: #1B2D5E; }
+    #ora-play:disabled { background: #D0D9E8; border-color: #D0D9E8; color: #6b7a99; cursor: default; }
+    #ora-stop { background: #FFFFFF; color: #0E1C42; border: 1.5px solid #D0D9E8; }
+    #ora-stop:hover:enabled { background: #F4F6FA; border-color: #55C8E8; }
+    #ora-stop:disabled { color: #999; border-color: #E4E9F2; cursor: default; }
+    #optima-read-aloud .ora-speed { font-size: 12px; color: #6b7a99; display: flex; align-items: center; gap: 6px; }
+    #ora-rate { font-family: inherit; font-size: 13px; color: #0E1C42; border: 1.5px solid #D0D9E8; border-radius: 6px; padding: 5px 8px; background: #FFFFFF; }
+    #ora-status { font-size: 12px; color: #666; }
+    .ora-highlight { background: #FDF3E3 !important; box-shadow: inset 4px 0 0 #C7922C; border-radius: 4px; transition: background 0.2s; }
+</style>
+    <div class="ora-kicker">&#128266; READ ALOUD &mdash; LISTEN TO THIS PAGE</div>
+    <div class="ora-controls">
+        <button id="ora-play" type="button" aria-label="Listen to this page">&#9654;&#65039; Listen</button>
+        <button id="ora-stop" type="button" aria-label="Stop reading" disabled>&#9632; Stop</button>
+        <label class="ora-speed">Speed
+            <select id="ora-rate" aria-label="Reading speed">
+                <option value="0.8">Slower</option>
+                <option value="1" selected>Normal</option>
+                <option value="1.25">Faster</option>
+            </select>
+        </label>
+        <span id="ora-status" role="status" aria-live="polite"></span>
+    </div>
+<script>
+(function () {
+    "use strict";
+    var playBtn  = document.getElementById("ora-play");
+    var stopBtn  = document.getElementById("ora-stop");
+    var rateSel  = document.getElementById("ora-rate");
+    var statusEl = document.getElementById("ora-status");
+
+    if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
+        playBtn.disabled = true;
+        rateSel.disabled = true;
+        statusEl.textContent = "Read-aloud is not supported in this browser.";
+        return;
+    }
+
+    var LABEL_PLAY   = "▶️ Listen";
+    var LABEL_PAUSE  = "⏸️ Pause";
+    var LABEL_RESUME = "▶️ Resume";
+    var BLOCK_SEL = "p, li, h1, h2, h3, h4, h5, h6, blockquote, td, th, dt, dd, figcaption, div";
+    var SKIP_SEL  = "#optima-read-aloud, [data-ra-skip], button, script, style, select, noscript, iframe";
+
+    var queue = [];        // [{ el, text }] — one entry per sentence
+    var idx = 0;
+    var playing = false, paused = false, stopping = false;
+    var currentBlock = null;
+    var currentUtterance = null;  // held to dodge a Chrome garbage-collection bug
+
+    var voices = [];
+    function loadVoices() { voices = window.speechSynthesis.getVoices(); }
+    loadVoices();
+    if ("onvoiceschanged" in window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+    function pickVoice() {
+        if (!voices.length) loadVoices();
+        var en = voices.filter(function (v) { return /^en/i.test(v.lang); });
+        return en.filter(function (v) { return /natural/i.test(v.name); })[0]
+            || en.filter(function (v) { return /google us english/i.test(v.name); })[0]
+            || en.filter(function (v) { return v.default; })[0]
+            || en[0] || null;
+    }
+
+    function isVisible(el) {
+        return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+    }
+
+    // Walk text nodes, attach each to its nearest block ancestor, split into sentences.
+    function collectQueue() {
+        var root = document.querySelector("[data-readaloud-root]")
+                || document.querySelector(".canvas-frame")
+                || document.body;
+        var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+        var items = [];   // [{ el, text }] — one entry per block, in reading order
+        var node;
+        while ((node = walker.nextNode())) {
+            if (!/\S/.test(node.textContent)) continue;
+            var el = node.parentElement;
+            if (!el || el.closest(SKIP_SEL)) continue;
+            if (!isVisible(el)) continue;
+            var block = el.closest(BLOCK_SEL) || root;
+            var last = items[items.length - 1];
+            if (last && last.el === block) last.text += " " + node.textContent;
+            else items.push({ el: block, text: node.textContent });
+        }
+        var q = [];
+        items.forEach(function (item) {
+            var clean = item.text.replace(/\s+/g, " ").trim();
+            if (!clean) return;
+            var sentences = clean.match(/[^.!?]+[.!?]+[”"')\]]*\s*|[^.!?]+$/g) || [clean];
+            sentences.forEach(function (s) {
+                s = s.trim();
+                if (s) q.push({ el: item.el, text: s });
+            });
+        });
+        return q;
+    }
+
+    function highlight(el) {
+        if (el === currentBlock) return;
+        clearHighlight();
+        currentBlock = el;
+        if (el && el !== document.body) {
+            el.classList.add("ora-highlight");
+            try { el.scrollIntoView({ behavior: "smooth", block: "nearest" }); } catch (e) {}
+        }
+    }
+    function clearHighlight() {
+        if (currentBlock) currentBlock.classList.remove("ora-highlight");
+        currentBlock = null;
+    }
+
+    function speakNext() {
+        if (idx >= queue.length) { finish("Finished reading this page."); return; }
+        var item = queue[idx];
+        highlight(item.el);
+        var u = new SpeechSynthesisUtterance(item.text);
+        u.rate = parseFloat(rateSel.value) || 1;
+        var v = pickVoice();
+        if (v) u.voice = v;
+        u.onend = function () {
+            if (stopping) return;
+            idx++;
+            speakNext();
+        };
+        u.onerror = function (e) {
+            if (stopping || e.error === "canceled" || e.error === "interrupted") return;
+            idx++;
+            speakNext();
+        };
+        currentUtterance = u;
+        window.speechSynthesis.speak(u);
+        statusEl.textContent = "Reading… " + (idx + 1) + " / " + queue.length;
+    }
+
+    function finish(message) {
+        playing = false;
+        paused = false;
+        clearHighlight();
+        playBtn.textContent = LABEL_PLAY;
+        stopBtn.disabled = true;
+        statusEl.textContent = message || "";
+        currentUtterance = null;
+    }
+
+    playBtn.addEventListener("click", function () {
+        if (playing && !paused) {
+            window.speechSynthesis.pause();
+            paused = true;
+            playBtn.textContent = LABEL_RESUME;
+            statusEl.textContent = "Paused";
+            return;
+        }
+        if (playing && paused) {
+            window.speechSynthesis.resume();
+            paused = false;
+            playBtn.textContent = LABEL_PAUSE;
+            statusEl.textContent = "Reading… " + (idx + 1) + " / " + queue.length;
+            return;
+        }
+        queue = collectQueue();
+        if (!queue.length) { statusEl.textContent = "Nothing to read on this page."; return; }
+        idx = 0;
+        stopping = false;
+        playing = true;
+        paused = false;
+        window.speechSynthesis.cancel();
+        playBtn.textContent = LABEL_PAUSE;
+        stopBtn.disabled = false;
+        speakNext();
+    });
+
+    stopBtn.addEventListener("click", function () {
+        stopping = true;
+        window.speechSynthesis.cancel();
+        finish("");
+    });
+
+    // Changing speed mid-read restarts the current sentence at the new rate.
+    rateSel.addEventListener("change", function () {
+        if (!playing || paused) return;
+        stopping = true;
+        window.speechSynthesis.cancel();
+        setTimeout(function () { stopping = false; speakNext(); }, 60);
+    });
+
+    window.addEventListener("pagehide", function () { window.speechSynthesis.cancel(); });
+})();
+</script>
+</div>
+<!-- ═══ END OPTIMA READ-ALOUD PLAYER ═══ -->
+
+    <!-- Title strip -->
+    <div style="background: #EEF1F8; border-left: 5px solid #0E1C42; border-radius: 7px; padding: 18px 22px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #0e1c42; margin-bottom: 6px;">STUDIO 14 &middot; LESSON 1</div>
+        <div style="font-size: 22px; color: #0e1c42; margin-bottom: 4px;">Can an Image Change a Mind?</div>
+        <div style="font-size: 16px; color: #666;">This Studio treats art as a tool that argues, not only one that decorates. <span class="time-pill">~45 min</span></div>
+    </div>
+
+    <!-- Essential Question -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128214; ESSENTIAL QUESTION</div>
+        <div style="font-size: 20px; color: #0e1c42; font-style: italic; margin-bottom: 10px;">How does an image change what people believe or do?</div>
+        <div style="font-size: 18px; color: #1a2340; line-height: 1.65;">Over the next two weeks you will make an artwork about a contemporary issue or cause that matters to you. Before you make one, look closely at how images like this have always worked: through a deliberate combination of picture, words, and placement, aimed at a specific audience.</div>
+    </div>
+
+    <!-- PART 1 · LOOK FIRST -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128064; PART 1 &middot; LOOK FIRST</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Look at the visual below for a full minute before reading on. Notice what it does to you in the first two seconds, before you have consciously "read" anything.</p>
+
+        <div class="agit-visual">
+            <div class="agit-panel">
+                <div class="band b1"></div>
+                <div class="agit-text">YOUR EYE<br/>STOPPED HERE.</div>
+                <div class="band b2"></div>
+                <div class="agit-sub">THAT WAS THE DESIGN, NOT THE ACCIDENT.</div>
+            </div>
+        </div>
+
+        <p style="font-size: 15px; color: #666; line-height: 1.5; margin: 8px 0 10px 0; text-align: center;">Original concept graphic built for this lesson (CSS/SVG), demonstrating bold type over a high-contrast field, a stripped-down device this Studio's featured artists use often.</p>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Big block letters, a short declarative phrase, high contrast, almost no extra detail. None of that is accidental. Every choice serves one goal: stop a scrolling or walking viewer for one extra second and plant a single sentence in their head. That is the visual language of <strong>social commentary art</strong>, art that comments on society and tries to move an audience, not just describe a scene.</p>
+
+        <div class="callout c-art">
+            <div class="ck">&#128172; WONDER FIRST</div>
+            <div class="cb">The visual above told you something about looking, using almost no words. What is the fewest words an image could use and still change your mind about something? Hold that question. This Studio's featured artists have built entire careers experimenting with exactly that limit.</div>
+        </div>
+
+        <div class="optima-widget ow-reflect">
+            <div class="widget-kicker">&#128173; QUICK CHECK-IN &middot; NO WRONG ANSWER</div>
+            <div class="widget-question">Think of a poster, ad, or social post that actually changed how you thought or acted, even a little. What made it stick?</div>
+            <div class="widget-options">
+                <button data-response="A striking image is often the hook that gets you to stop scrolling, but the hook alone rarely changes minds by itself. This Studio asks you to pair a strong image with a clear message on purpose.">A striking image grabbed me first</button>
+                <button data-response="Words that land in very few syllables are doing exactly what a slogan is built to do: compress an argument into something memorable enough to repeat. You will practice slogan economy in Lesson 3.">A short phrase or slogan stuck with me</button>
+                <button data-response="Feeling addressed directly, as if the message was made for you, is one of the most powerful persuasion tools artists use. You will study how artists choose an audience and speak straight to them in Lesson 3.">It felt like it was speaking directly to me</button>
+            </div>
+            <div class="widget-feedback"></div>
+            <button class="widget-reset">Reset</button>
+        </div>
+    </div>
+
+    <!-- PART 2 · NAME WHAT YOU SEE -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128218; PART 2 &middot; ART THAT ARGUES</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Most of the artworks you have studied this year asked you to look, feel, or wonder. This Studio's artworks ask you to <em>agree or disagree</em>. They combine an image with text and put both in front of a chosen audience, on a street corner, in a gallery, on a screen, in order to change a belief or spark an action.</p>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">That combination has a long history and two names you will use carefully all Studio: <strong>persuasion</strong> and <strong>propaganda</strong>. The difference is not the tools; it is the relationship to truth and to the audience's own judgment.</p>
+
+        <div class="compare-wrap">
+            <div class="compare-box memory">
+                <h4>&#9888;&#65039; PROPAGANDA</h4>
+                <ul>
+                    <li>Distorts, oversimplifies, or hides facts</li>
+                    <li>Aims to bypass the audience's own reasoning</li>
+                    <li>Often demonizes a group rather than a claim</li>
+                    <li>Wants obedience, not agreement</li>
+                </ul>
+            </div>
+            <div class="compare-box observe">
+                <h4>&#9989; RESPONSIBLE PERSUASION</h4>
+                <ul>
+                    <li>Is honest about what is fact and what is the artist's opinion</li>
+                    <li>Appeals to the audience's reasoning and values</li>
+                    <li>Argues against an idea or policy, not a group of people</li>
+                    <li>Wants the viewer to think, and lets them disagree</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="concept-card">
+            <div class="cc-k">THE ONE IDEA OF THIS STUDIO</div>
+            <div class="cc-main">Art can <strong>argue</strong>,<br/>and an artist is <em>responsible</em> for the argument.</div>
+            <div class="cc-sub">Image, text, and audience are the three levers. This Studio teaches you to pull them on purpose, and honestly.</div>
+        </div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Meet four tools that every social-commentary artist relies on. You will use all four in your own Studio Project.</p>
+
+        <div class="vocab-grid" style="margin-top: 6px;">
+            <div class="vocab-card"><strong>Image-text</strong>Combining a picture and words so each changes how you read the other.</div>
+            <div class="vocab-card"><strong>Slogan</strong>A short, memorable phrase built to be repeated and to stick.</div>
+            <div class="vocab-card"><strong>Audience</strong>The specific group of people a work is built to reach and move.</div>
+            <div class="vocab-card"><strong>Appropriation</strong>Borrowing an existing image or style and re-using it to make a new point.</div>
+        </div>
+    </div>
+
+    <!-- PART 3 · WHY IT MATTERS -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 14px;">&#128269; PART 3 &middot; WHY THIS COMES NOW</div>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">Every technical skill you have built this year, composition, color, contrast, layout, exists to serve a decision. This Studio asks the biggest decision yet: what do you actually want to say to the world, and how will you say it honestly? Your project, <strong>A Cause Worth Making</strong>, is an artwork about a contemporary issue or cause that matters to you, made in a way that is accurate, fair, and school-appropriate.</p>
+
+        <p style="font-size: 17px; color: #1a2340; line-height: 1.65; margin: 0 0 10px 0;">This is also where your Art &amp; Society Studio differs from a personal expression piece. A cause-based artwork is judged partly on craftsmanship and partly on whether its argument is responsible: is it fair to the people it is about, and does it separate fact from opinion? You will practice that skill directly in Lesson 4.</p>
+
+        <details>
+            <summary>&#9654;&nbsp; Before you read on, name one issue in your school, community, or the wider world that you actually care about. Then open this.</summary>
+            <div class="ac-body">Hold onto that issue loosely for now; you will not commit to your final topic until Lesson 5. For today, notice whether you found it easy or hard to name one. Causes you can explain in one honest sentence, without exaggerating, tend to make the strongest artworks later.</div>
+        </details>
+    </div>
+
+    <!-- WHAT'S NEXT IN THIS STUDIO -->
+    <div style="background: #FFFFFF; border-top: 3px solid #0E1C42; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#128506;&#65039; YOUR PATH THROUGH STUDIO 14</div>
+        <ul class="roadmap">
+            <li class="current"><span class="rn">1</span> <div><strong>Can an Image Change a Mind?</strong> &middot; you are here. Persuasion vs. propaganda, the tools of social commentary.</div></li>
+            <li><span class="rn">2</span> <div><strong>Kruger &amp; Fairey</strong> &middot; two artists who built careers on image and text (guided critique).</div></li>
+            <li><span class="rn">3</span> <div><strong>Message &amp; Audience</strong> &middot; skill builder: image/text combination and slogan economy.</div></li>
+            <li><span class="rn">4</span> <div><strong>Responsible Commentary</strong> &middot; skill builder: fact vs. opinion, respect, avoiding harm; AI-awareness on manipulated images.</div></li>
+            <li><span class="rn">5</span> <div><strong>Plan &amp; Create</strong> &middot; choose your cause, plan the piece, VR gallery, AI awareness, begin the artwork.</div></li>
+            <li><span class="rn">6</span> <div><strong>Refine, Reflect &amp; Present</strong> &middot; finish, self-critique, artist statement, portfolio.</div></li>
+        </ul>
+    </div>
+
+    <!-- WHAT YOU'LL DO NEXT (IN CANVAS) -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 16px;">&#10145;&#65039; AFTER THIS LESSON</div>
+        <div class="next-item"><div class="num now">1</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Notebook warm-up: One Sentence, One Image</strong> &middot; Week 1</div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">Write one true sentence about an issue you care about. Then sketch, in thumbnail size, one image that could sit beside that sentence. Keep this; you will revisit it in Lesson 3.</div></div></div>
+        <div class="next-item"><div class="num learn">2</div><div><div style="font-size: 18px; color: #0e1c42;"><strong>Continue to Lesson 2: Kruger &amp; Fairey</strong></div><div style="font-size: 16px; color: #1a2340; line-height: 1.55;">See how two very different artists turned image and text into public argument.</div></div></div>
+    </div>
+
+    <!-- BIG IDEA -->
+    <div style="background: #FFFFFF; border-top: 3px solid #C7922C; border: 1px solid #D0D9E8; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; color: #c7922c; margin-bottom: 12px;">&#128170; THE BIG IDEA</div>
+        <p style="font-size: 18px; color: #1a2340; line-height: 1.65; margin: 0;">Art can argue, and arguing well is a craft with real techniques: image and text combined on purpose, a message built for a specific audience, and an artist who takes responsibility for what the work claims. You will learn those techniques this Studio and use them to make an artwork about a cause that is actually yours.</p>
+    </div>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="background: #0E1C42; border-top: 3px solid #55C8E8; padding: 18px 34px; text-align: center;">
+    <div style="font-size: 18px; color: #ffffff; margin-bottom: 6px;"><span style="color: #55c8e8;">Optima Academy Online</span> &middot; 2D STUDIO ART 2 &middot; Quarter 4 &middot; Student Lesson Page</div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 4px;">Studio 14 &middot; Art &amp; Society &middot; Lesson 1 of 6</div>
+    <div style="font-size: 12px; color: rgba(255,255,255,0.4);">&copy; Optima Academy Online &middot; An Education Experience Company. Concept graphic is original HTML/CSS built with course design tokens; no third-party or AI-generated imagery.</div>
+</div>
+
+</div>
+
+<!-- ===== WIDGET RUNTIME — from optima-lesson-format template ===== -->
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var reset = e.target.closest('.widget-reset');
+    if (reset) {
+      var w = reset.closest('.optima-widget');
+      w.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      w.querySelectorAll('.widget-feedback').forEach(function (f) { f.classList.remove('show'); f.textContent = ''; });
+      w.querySelectorAll('.row-feedback').forEach(function (f) { f.remove(); });
+      return;
+    }
+    var rBtn = e.target.closest('.ow-reflect .widget-options button');
+    if (rBtn) {
+      var rw = rBtn.closest('.optima-widget');
+      rw.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected'); });
+      rBtn.classList.add('selected');
+      var fb = rw.querySelector('.widget-feedback');
+      fb.textContent = rBtn.dataset.response || '';
+      fb.classList.add('show');
+      return;
+    }
+    var sBtn = e.target.closest('.ow-select .widget-row .widget-options button');
+    if (sBtn) {
+      var row = sBtn.closest('.widget-row');
+      var correct = row.dataset.correct;
+      row.querySelectorAll('.widget-options button').forEach(function (b) { b.classList.remove('selected', 'correct', 'incorrect'); });
+      var right = sBtn.dataset.choice === correct;
+      sBtn.classList.add(right ? 'correct' : 'incorrect');
+      var text = right ? (sBtn.dataset.fb || row.dataset.fb || 'Right.') : (sBtn.dataset.fb || row.dataset.hint || 'Not quite. Try again.');
+      var rf = row.querySelector('.row-feedback') || row.appendChild(document.createElement('div'));
+      rf.className = 'row-feedback ' + (right ? 'correct' : 'incorrect');
+      rf.textContent = text;
+      return;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
